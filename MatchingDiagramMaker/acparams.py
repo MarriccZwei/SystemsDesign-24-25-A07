@@ -5,3 +5,4 @@
 
 TMIN=0.7
 CLMAX = 1.2
+VSTALL = 5 # [m/s]

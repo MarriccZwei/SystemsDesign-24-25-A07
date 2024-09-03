@@ -11,9 +11,14 @@ def TWconstraint(WSaxis):
 constraints.append(TWconstraint)
 
 def StallSpeedconstraint(WSaxis): #here we need to start using the adsee book xd, just to demo a v line now
-    return np.zeros(len(WSaxis))+acparams.TMIN, WSaxis
+    return np.zeros(len(WSaxis))+acparams.VSTALL**2*1.225/2*acparams.CLMAX, WSaxis
 
 constraints.append(StallSpeedconstraint)
+
+def TestLinFunConstraint(WSaxis):
+    return WSaxis, np.sqrt(WSaxis)/WSaxis
+
+constraints.append(TestLinFunConstraint)
 
 if __name__ == "__main__":
     print(TWconstraint(np.linspace(0, 10,11)))
