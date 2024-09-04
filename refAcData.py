@@ -20,7 +20,7 @@ def generateLoadingPoints():
         trustRatio = (trustList[idx]*1000)/(MTOWList[idx] * g)
         dataPoint = [wingLoading, trustRatio, aircraft]
         pointList.append(dataPoint)
-    return(pointList)
+    return pointList
 
 if __name__ == "__main__":
     print(generateLoadingPoints())
