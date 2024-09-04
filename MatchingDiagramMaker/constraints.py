@@ -1,5 +1,6 @@
 import numpy as np
 import acparams
+import thrustLapse
 
 #here be the list of all constraint functions
 constraints = []
@@ -19,6 +20,10 @@ def TestLinFunConstraint(WSaxis):
     return WSaxis, np.sqrt(WSaxis)/WSaxis
 
 constraints.append(TestLinFunConstraint)
+
+def CruiseSpeedConstraint(WSaxis):
+    crmf = 0.95 #cruise mass fraction, assumed. Can be changed as needed!
+    return WSaxis, crmf/thrustLapse.thrustLapse()
 
 if __name__ == "__main__":
     print(TWconstraint(np.linspace(0, 10,11)))
