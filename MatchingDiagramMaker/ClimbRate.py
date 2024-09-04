@@ -7,8 +7,8 @@ import thrustLapse
 def ClimbRate(W_S):
     beta = acparams.BETA_CRUISE
     altitude = acparams.CRUISE_ALTITUDE
-    # c to be moved to acparams
-    c = 5.3
+    
+    c = acparams.ROC_CRUISE_ALT
     rho = ISA.density(altitude)
     C_D0 = acparams.CD_0
     AR = acparams.ASPECT

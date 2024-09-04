@@ -21,6 +21,7 @@ CLMAX_TAKEOFF = 1.8
 CRUISE_ALTITUDE = 12000 # [m]
 MACH_CRUISE = 0.82
 BETA_CRUISE = 0.95
+ROC_CRUISE_ALT = 2 # [m/s]
 
 #Landing constants
 VSTALL = 5 # [m/s]

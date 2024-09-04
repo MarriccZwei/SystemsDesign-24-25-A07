@@ -45,6 +45,10 @@ def climb_gradient_general(WSaxis, nEngines, nEnginesInoper, massFraction, gradi
     return WSaxis, np.zeros(len(WSaxis))+situationFraction*(gradient+freeTerm)
 
 constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 1, 0.032, 3, True))
+constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0, 5, True))
+constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0.024, 5, False))
+constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0.012, 0, False))
+constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 0.92, 0.021, 3, True))
 
 def TakeOffFieldLength(WSaxis):
     return WSaxis, np.zeros(len(WSaxis))+(1.15*thrustLapse.thrustLapse(0, 0)*np.sqrt(WSaxis/(acparams.TAKEOFF_LENGTH*acparams.K_T*acparams.RHO_LAND*acparams.g*np.pi*acparams.ASPECT*acparams.OSWALD)) + 44/acparams.TAKEOFF_LENGTH)
