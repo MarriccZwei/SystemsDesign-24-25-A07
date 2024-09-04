@@ -4,6 +4,7 @@ import thrustLapse
 import ISA
 import math
 import Cd0_Oswald_Flaps
+import ClimbRate
 
 #here be the list of all constraint functions
 constraints = []
@@ -62,6 +63,8 @@ def CruiseSpeedConstraint(WSaxis):
     return WSaxis, (crmf/thrustLapse.thrustLapse(acparams.CRUISE_ALTITUDE,acparams.MACH_CRUISE))*( (acparams.CD_0*0.5*cr_density*Vcr*Vcr)/(acparams.BETA_CRUISE*WSaxis) + (acparams.BETA_CRUISE*WSaxis)/(math.pi*acparams.ASPECT*0.5*acparams.OSWALD*cr_density*Vcr*Vcr) )
 
 constraints.append(CruiseSpeedConstraint)
+
+constraints.append(ClimbRate.ClimbRate)
 
 if __name__ == "__main__":
     print(climb_gradient_general(np.linspace(0, 10000, 100), 2, 0, 1, 0.032, 3, True))
