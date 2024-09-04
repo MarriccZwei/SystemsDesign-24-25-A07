@@ -19,7 +19,8 @@ for constraint in constraints.constraints:
 
 #input refrence aircraft data loading points
 loadingPointsList = refAcData.generateLoadingPoints()
-for point in loadingPointsList:
-    plt.plot(point[0], point[1], label=point[2])
+for i, point in enumerate(loadingPointsList):
+    plt.plot(point[0], point[1], 'r+')
+    plt.text(point[0] + 30, point[1] + 0.005, i+1) #Hard coded numbers are offset of labels.
 
 plt.show()
