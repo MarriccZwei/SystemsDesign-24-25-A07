@@ -5,7 +5,7 @@ import numpy as np
 
 import constraints
 
-WSmax = 100
+WSmax = 10000
 TWmax = 1
 WSres = 1000
 
