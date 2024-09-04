@@ -1,6 +1,8 @@
 import numpy as np
 import acparams
 import thrustLapse
+import ISA
+import math
 
 #here be the list of all constraint functions
 constraints = []
@@ -24,11 +26,13 @@ constraints.append(StallSpeedconstraint)
 constraints.append(TestLinFunConstraint)'''
 
 '''Climb gradient calculations'''
-def climb_gradient_general(WSaxis, density, nEngines, massFraction, gradient, thrustLapse): #do not append this one directly to constraints!!!
-    situationFraction = nEngines*massFraction/thrustLapse/(nEngines-1)
+def climb_gradient_general(WSaxis, density, nEngines, nEnginesInoper, massFraction, gradient, thrustLapse): #do not append this one directly to constraints!!!
+    #the expression for T/W is divided into subterms, as it is quite a big one
+    #the subterm names are arbitrary
+    situationFraction = nEngines*massFraction/thrustLapse/(nEngines-nEnginesInoper)
     gradientFraction = gradient*gradient*density/2/WSaxis/massFraction
-    innerSqrt = (acparams.CD0*np.pi*acparams.ASPECT*acparams.OSWALD)**0.5
-    freeTerm = 4*acparams.CD0/np.pi/acparams.ASPECT/acparams.OSWALD
+    innerSqrt = (acparams.CD_0*np.pi*acparams.ASPECT*acparams.OSWALD)**0.5
+    freeTerm = 4*acparams.CD_0/np.pi/acparams.ASPECT/acparams.OSWALD
     return situationFraction*np.sqrt(gradientFraction*innerSqrt+freeTerm)
 
 def TakeOffFieldLength(WSaxis):
@@ -36,8 +40,10 @@ def TakeOffFieldLength(WSaxis):
 
 
 def CruiseSpeedConstraint(WSaxis):
-    crmf = 0.95 #cruise mass fraction, assumed. Can be changed as needed!
-    return WSaxis, crmf/thrustLapse.thrustLapse()
+    crmf = acparams.BETA_CRUISE
+    cr_density = ISA.density(acparams.CRUISE_ALTITUDE)
+    Vcr = math.sqrt(287*1.4*ISA.temperature(acparams.CRUISE_ALTITUDE))*acparams.MACH_CRUISE
+    return WSaxis, (crmf/thrustLapse.thrustLapse(0,0))*( (acparams.CD_0*0.5*cr_density*Vcr*Vcr)/(acparams.BETA_CRUISE*WSaxis) + (acparams.BETA_CRUISE*WSaxis)/(math.pi()*acparams.ASPECT*0.5*acparams.OSWALD*cr_density*Vcr*Vcr) )
 
 if __name__ == "__main__":
-    pass
+    print(climb_gradient_general(np.linspace(0, 40000, 100), 1.225, 2, 1, 0.9, 0.03, 0.5))
