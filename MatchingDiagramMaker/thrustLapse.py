@@ -1,8 +1,14 @@
+import ISA
+import acparams
+import math
 def thrustlapse(altitude, mach):
     GAMMA = 1.4
     SLpressure = 101325
     SLtemp = 288.15
     thetaBreak = 1.07 #between 1.06 and 1.08, can be changed
+
+    pressure = ISA.pressure(altitude)
+    temperature = ISA.temperature(altitude)
 
     #TODO: get pressure and temp from ISA via altitude
 
@@ -11,7 +17,10 @@ def thrustlapse(altitude, mach):
     delta = totalPressure/SLpressure#useful constant
     theta = totalTemp/SLtemp#useful constant
 
+    if theta <= thetaBreak:
+        thrustLapse = delta*(1 - (0.43+0.014*acparams.BYPASS)*math.sqrt(mach) )
+
     if theta > thetaBreak:
-        thrustLapse = 0
+        thrustLapse = delta*(1 - (0.43+0.014*acparams.BYPASS)*math.sqrt(mach) - 3*(theta - thetaBreak)/(1.5+mach))
     
-    return(0)
+    return(thrustLapse)
