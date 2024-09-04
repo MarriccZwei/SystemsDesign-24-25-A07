@@ -6,7 +6,7 @@ import numpy as np
 import constraints
 import refAcData
 
-WSmax = 100
+WSmax = 10000
 TWmax = 1
 WSres = 1000
 
