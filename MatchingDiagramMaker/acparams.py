@@ -3,6 +3,9 @@
 #in the form of python variables
 #if u don't use a var, don't change it
 
+#Propulsion constants
+BYPASS = 10 #pls keep between 5 and 15
+
 #Aerodynamics + wing form constants
 TMIN=0.7
 CLMAX = 1.2
