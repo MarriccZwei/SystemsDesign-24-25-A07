@@ -1,6 +1,8 @@
 import numpy as np
 import acparams
 import thrustLapse
+import ISA
+import math
 
 #here be the list of all constraint functions
 constraints = []
@@ -34,7 +36,9 @@ def climb_gradient_general(WSaxis, density, nEngines, massFraction, gradient, th
 
 def CruiseSpeedConstraint(WSaxis):
     crmf = 0.95 #cruise mass fraction, assumed. Can be changed as needed!
-    return WSaxis, crmf/thrustLapse.thrustLapse()
+    cr_density = ISA.density(acparams.CRUISE_ALTITUDE)
+    Vcr = math.sqrt(287*1.4*ISA.temperature(acparams.CRUISE_ALTITUDE))*acparams.MACH_CRUISE
+    return WSaxis, (crmf/thrustLapse.thrustLapse(0,0))*( (acparams.CD_0*0.5*cr_density*Vcr*Vcr)/(acparams.BETA_CRUISE*WSaxis) + (acparams.BETA_CRUISE*WSaxis)/(math.pi()*acparams.ASPECT*0.5*acparams.OSWALD*cr_density*Vcr*Vcr) )
 
 if __name__ == "__main__":
     pass
