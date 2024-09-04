@@ -10,13 +10,12 @@ def thrustlapse(altitude, mach):
     pressure = ISA.pressure(altitude)
     temperature = ISA.temperature(altitude)
 
-    #TODO: get pressure and temp from ISA via altitude
-
     totalTemp = temperature*(1+ (GAMMA-1)/2*mach*mach)#total temperature accounting for transsonic effects
     totalPressure = pressure*(1+ (GAMMA-1)/2*mach*mach)**(GAMMA/(GAMMA-1))#total pressure accounting for transsonic effects
     delta = totalPressure/SLpressure#useful constant
     theta = totalTemp/SLtemp#useful constant
 
+    #these calculations assume a BYPASS value between 5 and 15
     if theta <= thetaBreak:
         thrustLapse = delta*(1 - (0.43+0.014*acparams.BYPASS)*math.sqrt(mach) )
 

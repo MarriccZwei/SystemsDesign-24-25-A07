@@ -6,4 +6,4 @@
 TMIN=0.7
 CLMAX = 1.2
 VSTALL = 5 # [m/s]
-BYPASS = 10
+BYPASS = 10 #bypass ratio of the engines
