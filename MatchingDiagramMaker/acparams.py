@@ -12,6 +12,7 @@ OSWALD = 0.8 # to be changed
 
 #Takeoff constants
 TAKEOFF_LENGTH = 2790  # [m]
+CLMAX_TAKEOFF = 1.8
 
 #Cruise constants
 CRUISE_ALTITUDE = 12000 # [m]

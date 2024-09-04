@@ -64,10 +64,6 @@ def pressure_meso2(height):
     T = temp_height(71000, height, gradientCoeff, tP)
     return gradient_pressure(pP, gradientCoeff, tP, T), T
 
-def format_calc(pressure, temperature, height):
-    density = (pressure)/(R_0*temperature)
-    print(f'The temperature is {temperature} Kelvin, the pressure is {pressure} Pascals and the density is {density} kilogram per cubic metre at an height of {height} metres')
-
 def main_calc(height):
     inp = height
     match inp:
@@ -93,4 +89,6 @@ def density(altitude):
     return (data[0])/(R_0*data[1])
 
 if __name__ == '__main__':
+    print(pressure(1000))
+    print(temperature(1000))
     print(density(1000))
