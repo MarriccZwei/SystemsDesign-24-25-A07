@@ -36,9 +36,14 @@ def climb_gradient_general(WSaxis, density, nEngines, nEnginesInoper, massFracti
     return situationFraction*np.sqrt(gradientFraction*innerSqrt+freeTerm)
 
 def TakeOffFieldLength(WSaxis):
-    return np.zeros(len(WSaxis)) + (1.15*thrustLapse*np.sqrt(WSaxis/(acparams.TAKEOFF_LENGTH*acparams.K_T*acparams.RHO_LAND*acparams.g*np.pi*acparams.ASPECT*acparams.OSWALD)) + 44/acparams.TAKEOFF_LENGTH)
+    return WSaxis, np.zeros(len(WSaxis))+(1.15*thrustLapse.thrustLapse(0, 0)*np.sqrt(WSaxis/(acparams.TAKEOFF_LENGTH*acparams.K_T*acparams.RHO_LAND*acparams.g*np.pi*acparams.ASPECT*acparams.OSWALD)) + 44/acparams.TAKEOFF_LENGTH)
 
-constraints.append(TakeOffFieldLength())
+constraints.append(TakeOffFieldLength)
+
+def LandingFieldLengthConstraint(WSaxis):
+    return np.zeros(len(WSaxis))+((acparams.LAND_LENGTH*acparams.RHO_LAND*acparams.CLMAX_LAND)/(acparams.BETA_LAND*acparams.CLFL*2)), WSaxis
+
+constraints.append(LandingFieldLengthConstraint)
 
 def CruiseSpeedConstraint(WSaxis):
     crmf = acparams.BETA_CRUISE
