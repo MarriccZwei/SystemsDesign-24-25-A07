@@ -59,7 +59,9 @@ def CruiseSpeedConstraint(WSaxis):
     crmf = acparams.BETA_CRUISE
     cr_density = ISA.density(acparams.CRUISE_ALTITUDE)
     Vcr = math.sqrt(287*1.4*ISA.temperature(acparams.CRUISE_ALTITUDE))*acparams.MACH_CRUISE
-    return WSaxis, (crmf/thrustLapse.thrustLapse(0,0))*( (acparams.CD_0*0.5*cr_density*Vcr*Vcr)/(acparams.BETA_CRUISE*WSaxis) + (acparams.BETA_CRUISE*WSaxis)/(math.pi()*acparams.ASPECT*0.5*acparams.OSWALD*cr_density*Vcr*Vcr) )
+    return WSaxis, (crmf/thrustLapse.thrustLapse(acparams.CRUISE_ALTITUDE,acparams.MACH_CRUISE))*( (acparams.CD_0*0.5*cr_density*Vcr*Vcr)/(acparams.BETA_CRUISE*WSaxis) + (acparams.BETA_CRUISE*WSaxis)/(math.pi()*acparams.ASPECT*0.5*acparams.OSWALD*cr_density*Vcr*Vcr) )
+
+constraints.append(CruiseSpeedConstraint)
 
 if __name__ == "__main__":
     print(climb_gradient_general(np.linspace(0, 10000, 100), 2, 0, 1, 0.032, 3, True))
