@@ -1,4 +1,4 @@
-def Cd0_Oswald_flaps(flap_defl, normal_e, Cd0):
+def Cd0_Oswald_flaps(flap_defl, normal_e, Cd0): #flap defl in deg
     
     change_e = 0.0026 * flap_defl
     change_Cd0_flaps = 0.0013 * flap_defl
