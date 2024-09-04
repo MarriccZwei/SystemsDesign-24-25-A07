@@ -33,7 +33,7 @@ def climb_gradient_general(WSaxis, nEngines, nEnginesInoper, massFraction, gradi
     #the subterm names are arbitrary
     optCl = (Cd0*np.pi*acparams.ASPECT*oswald)**0.5
     mach = (WSaxis*2/acparams.RHO_LAND/optCl)**0.5/340
-    situationFraction = nEngines*massFraction/(nEngines-nEnginesInoper)/thrustLapse.thrustLapse(0, mach)
+    situationFraction = nEngines*massFraction/(nEngines-nEnginesInoper)/thrustLapse.thrustLapseNP(0, mach)
     freeTerm = 2*(Cd0/np.pi/acparams.ASPECT/oswald)**0.5
     '''print(f"sf: {situationFraction}")
     print(f"ft: {freeTerm}")
