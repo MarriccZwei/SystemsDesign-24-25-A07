@@ -42,6 +42,7 @@ constraints.append(TakeOffFieldLength())
 
 def LandingFieldLengthConstraint(WSaxis):
     return np.zeros(len(WSaxis)) + ((acparams.LAND_LENGTH*acparams.RHO_LAND*acparams.CLMAX_LAND)/(acparams.BETA_LAND*acparams.CLFL*2))
+
 constraints.append(LandingFieldLengthConstraint)
 
 def CruiseSpeedConstraint(WSaxis):
