@@ -41,7 +41,7 @@ def TakeOffFieldLength(WSaxis):
 constraints.append(TakeOffFieldLength)
 
 def LandingFieldLengthConstraint(WSaxis):
-    return WSaxis, np.zeros(len(WSaxis))+((acparams.LAND_LENGTH*acparams.RHO_LAND*acparams.CLMAX_LAND)/(acparams.BETA_LAND*acparams.CLFL*2))
+    return np.zeros(len(WSaxis))+((acparams.LAND_LENGTH*acparams.RHO_LAND*acparams.CLMAX_LAND)/(acparams.BETA_LAND*acparams.CLFL*2)), WSaxis
 
 constraints.append(LandingFieldLengthConstraint)
 
