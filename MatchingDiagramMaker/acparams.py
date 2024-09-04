@@ -24,7 +24,7 @@ BETA_CRUISE = 0.95
 
 #Landing constants
 VSTALL = 5 # [m/s]
-CLMAX_LAND = 2.2 
+CLMAX_LAND = 2.8 
 LAND_LENGTH = 1500 # [m]
 RHO_LAND = 1.225 # [kg/m^3]
 BETA_LAND = 0.9 # Landing mass fraction
