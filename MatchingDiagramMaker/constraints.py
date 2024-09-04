@@ -24,11 +24,13 @@ constraints.append(StallSpeedconstraint)
 constraints.append(TestLinFunConstraint)'''
 
 '''Climb gradient calculations'''
-def climb_gradient_general(WSaxis, density, nEngines, massFraction, gradient, thrustLapse): #do not append this one directly to constraints!!!
-    situationFraction = nEngines*massFraction/thrustLapse/(nEngines-1)
+def climb_gradient_general(WSaxis, density, nEngines, nEnginesInoper, massFraction, gradient, thrustLapse): #do not append this one directly to constraints!!!
+    #the expression for T/W is divided into subterms, as it is quite a big one
+    #the subterm names are arbitrary
+    situationFraction = nEngines*massFraction/thrustLapse/(nEngines-nEnginesInoper)
     gradientFraction = gradient*gradient*density/2/WSaxis/massFraction
-    innerSqrt = (acparams.CD0*np.pi*acparams.ASPECT*acparams.OSWALD)**0.5
-    freeTerm = 4*acparams.CD0/np.pi/acparams.ASPECT/acparams.OSWALD
+    innerSqrt = (acparams.CD_0*np.pi*acparams.ASPECT*acparams.OSWALD)**0.5
+    freeTerm = 4*acparams.CD_0/np.pi/acparams.ASPECT/acparams.OSWALD
     return situationFraction*np.sqrt(gradientFraction*innerSqrt+freeTerm)
 
 
@@ -37,4 +39,4 @@ def CruiseSpeedConstraint(WSaxis):
     return WSaxis, crmf/thrustLapse.thrustLapse()
 
 if __name__ == "__main__":
-    pass
+    print(climb_gradient_general(np.linspace(0, 40000, 100), 1.225, 2, 1, 0.9, 0.03, 0.5))
