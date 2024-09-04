@@ -56,5 +56,7 @@ def CruiseSpeedConstraint(WSaxis):
     Vcr = math.sqrt(287*1.4*ISA.temperature(acparams.CRUISE_ALTITUDE))*acparams.MACH_CRUISE
     return WSaxis, (crmf/thrustLapse.thrustLapse(0,0))*( (acparams.CD_0*0.5*cr_density*Vcr*Vcr)/(acparams.BETA_CRUISE*WSaxis) + (acparams.BETA_CRUISE*WSaxis)/(math.pi()*acparams.ASPECT*0.5*acparams.OSWALD*cr_density*Vcr*Vcr) )
 
+constraints.append(CruiseSpeedConstraint)
+
 if __name__ == "__main__":
     print(climb_gradient_general(np.linspace(0, 40000, 100), 1.225, 2, 1, 0.9, 0.03, 0.5, 3))
