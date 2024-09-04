@@ -6,4 +6,4 @@ aircraftDataExcelPath = os.path.join(os.getcwd(), 'aircraftReferenceData.xlsx')
 aircraftDataFrame = pd.read_excel(aircraftDataExcelPath)
 
 if __name__ == "__main__":
-    display(aircraftDataFrame)
+    print(aircraftDataFrame)
