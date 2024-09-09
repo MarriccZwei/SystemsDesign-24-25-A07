@@ -20,15 +20,15 @@ plt.axis((0, WSmax, 0, TWmax))
 #9 - climb speed
 print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 
-
-f = constraints.StallSpeedconstraint(WSaxis)
-g = constraints.ClimbRate.ClimbRate(WSaxis)
+intxInterval = np.linspace(1, WSmax+1, WSres+1)
+f = constraints.StallSpeedconstraint(intxInterval)
+g = constraints.ClimbRate.ClimbRate(intxInterval)
 h =[]
-for i in range(1000):
+for i in range(WSmax):
     h.append(abs(f[0][i] - g[0][i]))
 print(min(h))
 print(h.index(min(h)))
-intx = h.index(min(h))*WSmax/WSres
+intx = h.index(min(h))*intxInterval/WSres
 inty = constraints.CruiseSpeedConstraint(intx)[1]
 plt.plot(intx, inty, '+r')
 plt.text(intx + 30, inty + 0.005, "POINT")
