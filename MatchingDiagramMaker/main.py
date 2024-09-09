@@ -18,18 +18,26 @@ plt.axis((0, WSmax, 0, TWmax))
 #6,7 - TO/Landing distance
 #8 - cruise speed
 #9 - climb speed
-print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 
-intxInterval = np.linspace(1, WSmax+1, WSres+1)
+
+intxInterval = np.linspace(1, WSmax+1, WSres*10+1)
 f = constraints.StallSpeedconstraint(intxInterval)
 g = constraints.ClimbRate.ClimbRate(intxInterval)
 h =[]
-for i in range(WSmax):
-    h.append(abs(f[0][i] - g[0][i]))
-print(min(h))
-print(h.index(min(h)))
-intx = h.index(min(h))*intxInterval/WSres
-inty = constraints.CruiseSpeedConstraint(intx)[1]
+for i in range(WSres*10):
+    h.append(f[0][i] - g[0][i])
+j=0
+stop = False
+while j<(len(h)-1) and stop == False:
+    if abs(h[j] - h[j+1]) > abs(h[j]):
+        stop = True
+
+intx = j
+inty = g[0][j]
+print("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+print(intx)
+print(inty)
+
 plt.plot(intx, inty, '+r')
 plt.text(intx + 30, inty + 0.005, "POINT")
 
