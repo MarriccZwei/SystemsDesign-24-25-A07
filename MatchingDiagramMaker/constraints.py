@@ -35,7 +35,8 @@ def climb_gradient_general(WSaxis, nEngines, nEnginesInoper, massFraction, gradi
     #the expression for T/W is divided into subterms, as it is quite a big one
     #the subterm names are arbitrary
     optCl = (Cd0*np.pi*acparams.ASPECT*oswald)**0.5
-    mach = (WSaxis*2/acparams.RHO_LAND/optCl)**0.5/340
+    speed = (WSaxis*2/acparams.RHO_LAND/optCl)**0.5
+    mach = speed/340
     situationFraction = nEngines*massFraction/(nEngines-nEnginesInoper)/thrustLapse.thrustLapseNP(0, mach)
     freeTerm = 2*(Cd0/np.pi/acparams.ASPECT/oswald)**0.5
     '''print(f"sf: {situationFraction}")
@@ -46,15 +47,15 @@ def climb_gradient_general(WSaxis, nEngines, nEnginesInoper, massFraction, gradi
     print(f"os: {oswald}")'''
     return WSaxis, np.zeros(len(WSaxis))+situationFraction*(gradient+freeTerm)
 
-constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 1, 0.032, 3, True))
+constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 1, 0.032, 30, True))
 constraintNames.append("climb 1")
-constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0, 5, True))
+constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0, 15, True))
 constraintNames.append("climb 2")
-constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0.024, 5, False))
+constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0.024, 15, False))
 constraintNames.append("climb 3")
 constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0.012, 0, False))
 constraintNames.append("climb 4")
-constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 0.92, 0.021, 3, True))
+constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 0.92, 0.021, 30, True))
 constraintNames.append("climb 5")
 
 def TakeOffFieldLength(WSaxis):
