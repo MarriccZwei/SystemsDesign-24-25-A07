@@ -19,26 +19,31 @@ plt.axis((0, WSmax, 0, TWmax))
 #8 - cruise speed
 #9 - climb speed
 
-intxInterval = np.linspace(1, WSmax+1, WSres*10+1)
-f = constraints.StallSpeedconstraint(intxInterval)
+resFactor = 10 #do not change, might break
+intxInterval = np.linspace(1, WSmax+1, WSres*resFactor+1)#custom interval to avoid div by zero errors
+f = constraints.CruiseSpeedConstraint(intxInterval)
 g = constraints.ClimbRate.ClimbRate(intxInterval)
 h =[]
-for i in range(WSres*10):
-    h.append(f[0][i] - g[0][i])
-j=0
+
+for i in range(WSres*resFactor):
+    h.append(f[1][i] - g[1][i])
+
+j=int(0.6*len(h)) #only looks for points above ~6000k W/S
+
 stop = False
+
 while j<(len(h)-1) and stop == False:
     if abs(h[j] - h[j+1]) > abs(h[j]):
         stop = True
+    j=j+1
 
 intx = j
-inty = g[0][j]
-print("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+inty = g[1][intx]
 print(intx)
 print(inty)
 
 plt.plot(intx, inty, '+r')
-plt.text(intx + 30, inty + 0.005, "POINT")
+plt.text(intx + 30, inty + 0.005, )
 
 #generating constraints
 for constraint in constraints.constraints: 
