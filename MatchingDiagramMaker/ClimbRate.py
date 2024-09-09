@@ -5,8 +5,6 @@ import acparams
 import ISA
 import thrustLapse
 def ClimbRate(W_S):
-    if W_S == 0:
-        W_S = 1
     beta = acparams.BETA_CRUISE
     altitude = acparams.CRUISE_ALTITUDE
     
