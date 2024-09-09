@@ -1,6 +1,8 @@
 import ISA
 import acparams
 import math
+import numpy as np
+
 def thrustLapse(altitude, mach):
     GAMMA = 1.4
     SLpressure = 101325
@@ -21,5 +23,11 @@ def thrustLapse(altitude, mach):
 
     if theta > thetaBreak:
         thrustlapse = delta*(1 - (0.43+0.014*acparams.BYPASS)*math.sqrt(mach) - 3*(theta - thetaBreak)/(1.5+mach))
-    
+
     return(thrustlapse)
+
+def thrustLapseNP(altitude, mach):
+    lapseList = []
+    for m in mach:
+        lapseList.append(thrustLapse(altitude,m))
+    return(np.array(lapseList))
