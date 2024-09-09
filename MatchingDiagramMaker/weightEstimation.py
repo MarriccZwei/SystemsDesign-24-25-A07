@@ -5,20 +5,19 @@ import numpy as np
 #weights
 M_pl_max = 49442 #maximum payload
 M_pl_des = 27669
-Mf_oe = 0.473 #operational empty mass fraction (M_oe/M_mtow)
+Mf_oe = 0.473 #operational empty mass fraction (M_oe/M_mtow) avg of the similar aircraft
 
 #variables used for C_d0 calculations, based on equation 6.15 from the adsee reader
-wet_wing_area = 6.2 #wetted area to wing area ratio
-C_f = 0.0026 #skin friction coeff
+wet_wing_area = 6.2 #wetted area to wing area ratio found in the ADSEE book
+C_f = 0.0026 #skin friction coeff found in the ADSEE book
 
 #variables used to calculate oswald factor, based on equation 6.17
-eff_span = 0.97 #span efficiency
-D_par = 0.0075 #lift dependent parasite drag
+eff_span = 0.97 #span efficiency found in the ADSEE book
+D_par = 0.0075 #lift dependent parasite drag found in the ADSEE book
+ 
+AR = 9.28375 #aspect ratio using the average of the reference aircraft
 
-#
-AR = 9.28375 #aspect ratio
-eff_eng = 0.379 #engine efficiency
-e_spec = 43.5 *10**6 #specific energy for kerosene
+e_spec = 43.5 *10**6 #specific energy for kerosene, value found in the ADSEE book
 g = 9.81 #gravitational acceleration constant
 h_cr = 11887.2 #cruise altitude [m]
 v_cr = 241.9 #cruise speed [m/s]
@@ -26,6 +25,7 @@ F_con = 0.05 #fraction of fuel used for contingency
 R_div = 370000 #diversion range of aircraft
 t_e = 45 * 60 #loiter time
 R_nom = 13797000 #design mission range
+eff_eng = 0.379 #engine efficiency based on equation 6.23 in the ADSEE book
 
 Cd_0 = C_f * wet_wing_area #zero lift drag calculation
 
