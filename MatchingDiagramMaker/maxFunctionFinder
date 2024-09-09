@@ -1,0 +1,19 @@
+import numpy as np
+import acparams
+import constraints
+import matplotlib.pyplot as plt
+
+def maxFunctionFinder():#
+    allFunctions = np.zeros(9)
+    maxFunction = []
+    WSaxis = np.linspace(0, 10000, 1001)
+    i=0
+    for constraint in constraints.constraints: 
+        allFunctions[i] = constraint(WSaxis)
+        i=i+1
+    for j in range(allFunctions.size):
+        maxFunction.append(np.argmax(allFunctions[:,j]))
+    print(maxFunction)
+    print(":3")
+
+maxFunctionFinder()
