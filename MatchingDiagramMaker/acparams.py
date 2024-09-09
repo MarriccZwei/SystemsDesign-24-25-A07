@@ -1,3 +1,5 @@
+import weightEstimation
+
 #here be all the aircraft parameters needed for the matching diagram
 #such as e.g. skin friction coefficient
 #in the form of python variables
