@@ -26,9 +26,9 @@ ROC_CRUISE_ALT = 2 # [m/s]
 #Landing constants
 VSTALL = 75 # [m/s]
 CLMAX_LAND = 2.5 # estimation
-LAND_LENGTH = 1940 # [m] (estimation)
+LAND_LENGTH = 1856 # [m] (Class I weight estimation)
 RHO_LAND = 1.225 # [kg/m^3]
-BETA_LAND = 0.73 # Landing mass fraction (estimation)
+BETA_LAND = 0.73 # Landing mass fraction (estimation from reference aircraft)
 
 #Misc. constants
 CLFL = 0.45 # CS-25 specification
