@@ -17,8 +17,8 @@ plt.axis((0, WSmax, 0, TWmax))
 #Start of intersection calculator
 resFactor = 10 #do not change, might break
 intxInterval = np.linspace(1, WSmax+1, WSres*resFactor+1)#custom interval to avoid div by zero errors
-f = constraints.CruiseSpeedConstraint(intxInterval)
-g = constraints.ClimbRate.ClimbRate(intxInterval)
+f = constraints.constraints[7](intxInterval)
+g = constraints.constraints[2](intxInterval)
 h =[]
 
 for i in range(WSres*resFactor):
