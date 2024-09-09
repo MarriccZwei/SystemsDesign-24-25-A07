@@ -14,7 +14,7 @@ def Cd0_Oswald_flaps(flap_defl, normal_e, Cd0, lg_deflected):
     print('Total Oswald efficiency: ', round(total_e, 2))
     print('Total Cd0: ', round(total_Cd0, 2))
 
-    return total_Cd0, total_e
+    return total_e, total_Cd0
 
 
 
