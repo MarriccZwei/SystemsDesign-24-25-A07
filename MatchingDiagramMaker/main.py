@@ -19,7 +19,6 @@ plt.axis((0, WSmax, 0, TWmax))
 #8 - cruise speed
 #9 - climb speed
 
-
 intxInterval = np.linspace(1, WSmax+1, WSres*10+1)
 f = constraints.StallSpeedconstraint(intxInterval)
 g = constraints.ClimbRate.ClimbRate(intxInterval)
