@@ -2,7 +2,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-
+import pointFinder
 import constraints
 import refAcData
 import ClimbRate
@@ -14,33 +14,17 @@ WSres = 1000
 WSaxis = np.linspace(0, WSmax, WSres+1)
 plt.axis((0, WSmax, 0, TWmax))
 
-#Start of intersection calculator
-resFactor = 10 #do not change, might break
-intxInterval = np.linspace(1, WSmax+1, WSres*resFactor+1)#custom interval to avoid div by zero errors
-f = constraints.CruiseSpeedConstraint(intxInterval)
-g = constraints.ClimbRate.ClimbRate(intxInterval)
-h =[]
-
-for i in range(WSres*resFactor):
-    h.append(f[1][i] - g[1][i])
-
-j=int(0.6*len(h)) #only looks for points above ~6000k W/S
-
-stop = False
-
-while j<(len(h)-1) and stop == False:
-    if abs(h[j] - h[j+1]) > abs(h[j]):
-        stop = True
-    j=j+1
-
-intx = j
-inty = g[1][intx]
-print(intx)
-print(inty)
-pointName = "W/S: " + str(intx) + ", T/W: " + str(inty)
-plt.plot(intx, inty, '+r')
-plt.text(intx + 30, inty + 0.005, pointName)
-#End of intersection calculator
+# 0 Stall
+# 1 Climb gradient I
+# 2 Climb gradient II: Electric Boogaloo
+# 3 Climb gradient III: Revenge of the CLmax
+# 4 Climb gradient IV: The Climb Rate Strikes Back
+# 5 Climb gradient V: Climbier Gradients
+# 6 TO dist
+# 7  Land dist
+# 8 Cruise speed
+# 9 Climb rate
+pointFinder.pointFinder(8, 9, 6000)
 
 #generating constraints
 i=0
