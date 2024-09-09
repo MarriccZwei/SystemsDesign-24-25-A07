@@ -19,6 +19,8 @@ plt.axis((0, WSmax, 0, TWmax))
 #8 - cruise speed
 #9 - climb speed
 print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+
+
 f = constraints.StallSpeedconstraint(WSaxis)
 g = constraints.ClimbRate.ClimbRate(WSaxis)
 h =[]
@@ -26,7 +28,10 @@ for i in range(1000):
     h.append(abs(f[0][i] - g[0][i]))
 print(min(h))
 print(h.index(min(h)))
-print("intx point is", WSmax/WSres*h.index(min(h)))
+intx = h.index(min(h))*WSmax/WSres
+inty = constraints.CruiseSpeedConstraint(intx)[1]
+plt.plot(intx, inty, '+r')
+plt.text(intx + 30, inty + 0.005, "POINT")
 
 #generating constraints
 for constraint in constraints.constraints: 
