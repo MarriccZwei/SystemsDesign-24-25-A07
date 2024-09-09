@@ -1,4 +1,4 @@
-import weightEstimation
+import weightEstimation as we
 
 #here be all the aircraft parameters needed for the matching diagram
 #such as e.g. skin friction coefficient
@@ -11,9 +11,9 @@ BYPASS = 10 #pls keep between 5 and 15
 #Aerodynamics + wing form constants
 TMIN=0.7
 CLMAX = 2.5 #est. equal to the highrer of the other cls
-CD_0 = 0.01 # to be changed
-ASPECT = 10 # to be changed
-OSWALD = 0.8 # to be changed
+CD_0 = we.Cd_0 # linked to previous assignments
+ASPECT = we.AR # linked to previous assignments
+OSWALD = we.e # linked to previous assignments
 
 #Takeoff constants
 TAKEOFF_LENGTH = 2790  # [m]
@@ -23,7 +23,7 @@ CLMAX_TAKEOFF = 1.8
 CRUISE_ALTITUDE = 12000 # [m]
 MACH_CRUISE = 0.82
 BETA_CRUISE = 0.95
-ROC_CRUISE_ALT = 2 # [m/s]
+ROC_CRUISE_ALT = 1 # [m/s]
 
 #Landing constants
 VSTALL = 75 # [m/s]
