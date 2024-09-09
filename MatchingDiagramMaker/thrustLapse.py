@@ -12,8 +12,8 @@ def thrustLapse(altitude, mach):
     pressure = ISA.pressure(altitude)
     temperature = ISA.temperature(altitude)
 
-    totalTemp = temperature*(1+ (GAMMA-1)/2*mach*mach)#total temperature accounting for transsonic effects
-    totalPressure = pressure*(1+ (GAMMA-1)/2*mach*mach)**(GAMMA/(GAMMA-1))#total pressure accounting for transsonic effects
+    totalTemp = temperature*(1+ (GAMMA-1)/GAMMA*mach*mach)#total temperature accounting for transsonic effects
+    totalPressure = pressure*(1+ (GAMMA-1)/GAMMA*mach*mach)**(GAMMA/(GAMMA-1))#total pressure accounting for transsonic effects
     delta = totalPressure/SLpressure#useful constant
     theta = totalTemp/SLtemp#useful constant
 
@@ -31,3 +31,6 @@ def thrustLapseNP(altitude, mach):
     for m in mach:
         lapseList.append(thrustLapse(altitude,m))
     return(np.array(lapseList))
+
+print(thrustLapse(10000, 0.6))
+print(thrustLapseNP(10000, [0.6, 0.6]))

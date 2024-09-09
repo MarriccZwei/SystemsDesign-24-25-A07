@@ -17,7 +17,7 @@ constraints = []
 constraints.append(TWconstraint)'''
 
 def StallSpeedconstraint(WSaxis): #here we need to start using the adsee book xd, just to demo a v line now
-    return np.zeros(len(WSaxis))+acparams.VSTALL**2*1.225/2*acparams.CLMAX, WSaxis
+    return np.zeros(len(WSaxis))+1/acparams.BETA_CRUISE*acparams.VSTALL**2*1.225/2*acparams.CLMAX, WSaxis
 
 constraints.append(StallSpeedconstraint)
 
