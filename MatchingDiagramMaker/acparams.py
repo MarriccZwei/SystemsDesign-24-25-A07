@@ -1,17 +1,19 @@
+import weightEstimation
+
 #here be all the aircraft parameters needed for the matching diagram
 #such as e.g. skin friction coefficient
 #in the form of python variables
 #if u don't use a var, don't change it
 
 #Propulsion constants
-BYPASS = 10 #pls keep between 5 and 15
+BYPASS = 8.25 #pls keep between 5 and 15
 
 #Aerodynamics + wing form constants
 TMIN=0.7
 CLMAX = 2.5 #est. equal to the highrer of the other cls
-CD_0 = 0.01 # to be changed
-ASPECT = 10 # to be changed
-OSWALD = 0.8 # to be changed
+CD_0 = weightEstimation.Cd_0# to be changed
+ASPECT = weightEstimation.AR # to be changed
+OSWALD = weightEstimation.e # to be changed
 
 #Takeoff constants
 TAKEOFF_LENGTH = 2790  # [m]
