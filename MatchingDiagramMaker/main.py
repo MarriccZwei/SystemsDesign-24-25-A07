@@ -13,6 +13,21 @@ WSres = 1000
 WSaxis = np.linspace(0, WSmax, WSres+1)
 plt.axis((0, WSmax, 0, TWmax))
 
+#0 - stallspeed
+#1 - 5 - climb gradient
+#6,7 - TO/Landing distance
+#8 - cruise speed
+#9 - climb speed
+print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+f = constraints.StallSpeedconstraint(WSaxis)
+g = constraints.ClimbRate.ClimbRate(WSaxis)
+h =[]
+for i in range(1000):
+    h.append(abs(f[0][i] - g[0][i]))
+print(min(h))
+print(h.index(min(h)))
+print("intx point is", WSmax/WSres*h.index(min(h)))
+
 #generating constraints
 for constraint in constraints.constraints: 
     plt.plot(*constraint(WSaxis))
