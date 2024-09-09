@@ -5,6 +5,7 @@ import numpy as np
 
 import constraints
 import refAcData
+import ClimbRate
 
 WSmax = 10000
 TWmax = 1
