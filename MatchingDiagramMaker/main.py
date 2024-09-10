@@ -24,7 +24,7 @@ plt.axis((0, WSmax, 0, TWmax))
 # 7  Land dist
 # 8 Cruise speed
 # 9 Climb rate
-pointFinder.pointFinder(8, 9, 6000)
+pointFinder.pointFinder(3, 7, 6000)
 
 #generating constraints
 i=0
