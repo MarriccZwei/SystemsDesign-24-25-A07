@@ -11,11 +11,9 @@ WSmax = 10000
 TWmax = 1
 WSres = 1000
 
+#Finding & marking points where constraints cross
 crossOverEvents = maxFunctionFinder.maxFunctionFinder()
-
-print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 for point in crossOverEvents:
-    #Point: tuple w/ the W/S co-ord and the indexes of the two functions
     print(point)
     print(point[1], point[2], point[0]-100, point[0]+100)
     pointFinder.pointFinder(point[1], point[2], point[0]-100, point[0]+100)
