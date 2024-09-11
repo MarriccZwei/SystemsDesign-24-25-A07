@@ -1,16 +1,20 @@
 #here the matching diagram will be created based the given constraints
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pointFinder
 import constraints
 import refAcData
 import ClimbRate
+import maxFunctionFinder
 
 WSmax = 10000
 TWmax = 1
 WSres = 1000
 
+crossOverEvents = maxFunctionFinder.maxFunctionFinder()
+
+for point in crossOverEvents:
+    pointFinder.pointFinder(9, 7, 6000)
 WSaxis = np.linspace(0, WSmax, WSres+1)
 plt.axis((0, WSmax, 0, TWmax))
 
@@ -24,7 +28,6 @@ plt.axis((0, WSmax, 0, TWmax))
 # 7  Land dist
 # 8 Cruise speed
 # 9 Climb rate
-pointFinder.pointFinder(3, 7, 6000)
 
 #generating constraints
 i=0
