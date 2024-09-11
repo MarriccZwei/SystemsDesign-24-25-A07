@@ -38,8 +38,11 @@ plt.axis((0, WSmax, 0, TWmax))
 
 #generating constraints
 i=0
+shading = 0.5 # change as needed 
+
 for constraint in constraints.constraints: 
     plt.plot(*constraint(WSaxis),label=constraints.constraintNames[i])
+    plt.fill_between(constraint(WSaxis)[0], constraint(WSaxis)[1], 0, alpha=shading)
     i=i+1
 plt.legend()
 #input refrence aircraft data loading points
