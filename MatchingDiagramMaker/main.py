@@ -13,19 +13,28 @@ WSres = 1000
 
 crossOverEvents = maxFunctionFinder.maxFunctionFinder()
 
+print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 for point in crossOverEvents:
-    pointFinder.pointFinder(9, 7, 6000)
+    #Point: tuple w/ the W/S co-ord and the indexes of the two functions
+    print(point)
+    print(point[1], point[2], point[0]-100, point[0]+100)
+    pointFinder.pointFinder(point[1], point[2], point[0]-100, point[0]+100)
+
+#intersection with stall speed and landing distance constraints, may break
+pointFinder.pointFinder(crossOverEvents[-1][2], 0, crossOverEvents[-1][0]-100)
+pointFinder.pointFinder(crossOverEvents[-1][2], 7, crossOverEvents[-1][0]-100)
+
 WSaxis = np.linspace(0, WSmax, WSres+1)
 plt.axis((0, WSmax, 0, TWmax))
 
-# 0 Stall
+# 0 Stall - Vert
 # 1 Climb gradient I
 # 2 Climb gradient II: Electric Boogaloo
 # 3 Climb gradient III: Revenge of the CLmax
 # 4 Climb gradient IV: The Climb Rate Strikes Back
 # 5 Climb gradient V: Climbier Gradients
 # 6 TO dist
-# 7  Land dist
+# 7  Land dist - Vert
 # 8 Cruise speed
 # 9 Climb rate
 

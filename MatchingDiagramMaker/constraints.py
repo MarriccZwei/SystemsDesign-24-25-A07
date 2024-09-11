@@ -9,6 +9,7 @@ import ClimbRate
 #here be the list of all constraint functions
 constraints = []
 constraintNames = []
+vertConstraints = []
 
 #min T/W constraint - used for UAVS which need a large TWR due to their highly suboptimal aerodynamics
 '''TestConstraint-Do not uncomment for offcial use'''
@@ -21,6 +22,7 @@ def StallSpeedconstraint(WSaxis): #here we need to start using the adsee book xd
     return np.zeros(len(WSaxis))+1/acparams.BETA_CRUISE*acparams.VSTALL**2*1.225/2*acparams.CLMAX, WSaxis
 
 constraints.append(StallSpeedconstraint)
+vertConstraints.append(StallSpeedconstraint)
 constraintNames.append("stall")
 
 '''TestConstraint-Do not uncomment for offcial use'''
@@ -68,6 +70,7 @@ def LandingFieldLengthConstraint(WSaxis):
     return np.zeros(len(WSaxis))+((acparams.LAND_LENGTH*acparams.RHO_LAND*acparams.CLMAX_LAND)/(acparams.BETA_LAND*acparams.CLFL*2)), WSaxis
 
 constraints.append(LandingFieldLengthConstraint)
+vertConstraints.append(LandingFieldLengthConstraint)
 constraintNames.append("land dist")
 
 def CruiseSpeedConstraint(WSaxis):
