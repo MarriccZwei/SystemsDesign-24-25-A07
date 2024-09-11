@@ -1,10 +1,7 @@
 import numpy as np
-import acparams
 import constraints
-import matplotlib.pyplot as plt
 
-def maxFunctionFinder():#
-    print('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
+def maxFunctionFinder():
     allFunctions = []
     maxFunction = []
     WSaxis = np.linspace(1, 10000, 10000)
@@ -13,7 +10,6 @@ def maxFunctionFinder():#
         allFunctions.append(constraint(WSaxis)[1])
         #print(constraint(WSaxis))
         i=i+1
-    print('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
     for j in range(10000):
         biggest = 0
         maxFunction.append(0)
@@ -31,5 +27,3 @@ def maxFunctionFinder():#
             crossPoints.append(cross)
     print(crossPoints)
     return(crossPoints)
-
-maxFunctionFinder()
