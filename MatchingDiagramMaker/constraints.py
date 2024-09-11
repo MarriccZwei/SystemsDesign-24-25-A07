@@ -21,7 +21,7 @@ def StallSpeedconstraint(WSaxis): #here we need to start using the adsee book xd
     return np.zeros(len(WSaxis))+1/acparams.BETA_CRUISE*acparams.VSTALL**2*1.225/2*acparams.CLMAX, WSaxis
 
 constraints.append(StallSpeedconstraint)
-constraintNames.append("stall")
+constraintNames.append("Minimum speed requirement")
 
 '''TestConstraint-Do not uncomment for offcial use'''
 '''def TestLinFunConstraint(WSaxis):
@@ -48,27 +48,27 @@ def climb_gradient_general(WSaxis, nEngines, nEnginesInoper, massFraction, gradi
     return WSaxis, np.zeros(len(WSaxis))+situationFraction*(gradient+freeTerm)
 
 constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 1, 0.032, 30, True))
-constraintNames.append("climb 1")
+constraintNames.append("Climb gradient requirement CS 25.119")
 constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0, 15, True))
-constraintNames.append("climb 2")
+constraintNames.append("Climb gradient requirement CS 25.121a")
 constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0.024, 15, False))
-constraintNames.append("climb 3")
+constraintNames.append("Climb gradient requirement CS 25.121b")
 constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0.012, 0, False))
-constraintNames.append("climb 4")
+constraintNames.append("Climb gradient requirement CS 25.121c")
 constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 0.92, 0.021, 30, True))
-constraintNames.append("climb 5")
+constraintNames.append("Climb gradient requirement CS 25.121d")
 
 def TakeOffFieldLength(WSaxis):
     return WSaxis, np.zeros(len(WSaxis))+(1.15*thrustLapse.thrustLapse(0, 0)*np.sqrt(WSaxis/(acparams.TAKEOFF_LENGTH*acparams.K_T*acparams.RHO_LAND*acparams.g*np.pi*acparams.ASPECT*acparams.OSWALD)) + 44/acparams.TAKEOFF_LENGTH)
 
 constraints.append(TakeOffFieldLength)
-constraintNames.append("TO dist")
+constraintNames.append("Take-off distance requirement")
 
 def LandingFieldLengthConstraint(WSaxis):
     return np.zeros(len(WSaxis))+((acparams.LAND_LENGTH*acparams.RHO_LAND*acparams.CLMAX_LAND)/(acparams.BETA_LAND*acparams.CLFL*2)), WSaxis
 
 constraints.append(LandingFieldLengthConstraint)
-constraintNames.append("land dist")
+constraintNames.append("Landing distance requirement")
 
 def CruiseSpeedConstraint(WSaxis):
     crmf = acparams.BETA_CRUISE
@@ -77,10 +77,10 @@ def CruiseSpeedConstraint(WSaxis):
     return WSaxis, (crmf/thrustLapse.thrustLapse(acparams.CRUISE_ALTITUDE,acparams.MACH_CRUISE))*( (acparams.CD_0*0.5*cr_density*Vcr*Vcr)/(acparams.BETA_CRUISE*WSaxis) + (acparams.BETA_CRUISE*WSaxis)/(math.pi*acparams.ASPECT*0.5*acparams.OSWALD*cr_density*Vcr*Vcr) )
 
 constraints.append(CruiseSpeedConstraint)
-constraintNames.append("cruise spd")
+constraintNames.append("Cruise speed requirement")
 
 constraints.append(ClimbRate.ClimbRate)
-constraintNames.append("climb rate")
+constraintNames.append("Rate of climb requirement")
 
 if __name__ == "__main__":
     print(climb_gradient_general(np.linspace(0, 10000, 100), 2, 0, 1, 0.032, 3, True))

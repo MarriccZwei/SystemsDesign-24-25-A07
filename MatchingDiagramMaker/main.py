@@ -37,5 +37,7 @@ loadingPointsList = refAcData.generateLoadingPoints()
 for i, point in enumerate(loadingPointsList):
     plt.plot(point[0], point[1], 'r+')
     plt.text(point[0] + 30, point[1] + 0.005, i+1) #Hard coded numbers are offset of labels.
+    plt.xlabel("Wing Loading, [N/m^2]")
+    plt.ylabel("Thrust-Weight Ratio, [-]")
 
 plt.show()
