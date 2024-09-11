@@ -6,6 +6,7 @@ import pointFinder
 import constraints
 import refAcData
 import ClimbRate
+import maxFunctionFinder
 
 WSmax = 10000
 TWmax = 1
@@ -24,6 +25,8 @@ plt.axis((0, WSmax, 0, TWmax))
 # 7  Land dist
 # 8 Cruise speed
 # 9 Climb rate
+
+for point in 
 pointFinder.pointFinder(3, 7, 6000)
 
 #generating constraints
