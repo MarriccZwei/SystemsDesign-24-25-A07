@@ -17,6 +17,8 @@ D_par = 0.0075 #lift dependent parasite drag found in the ADSEE book
  
 AR = 9.28375 #aspect ratio using the average of the reference aircraft
 
+B = 8.25
+TSFC = 22*B**-0.19
 e_spec = 43.5 *10**6 #specific energy for kerosene, value found in the ADSEE book
 g = 9.81 #gravitational acceleration constant
 h_cr = 11887.2 #cruise altitude [m]
@@ -25,7 +27,7 @@ F_con = 0.05 #fraction of fuel used for contingency
 R_div = 370000 #diversion range of aircraft
 t_e = 45 * 60 #loiter time
 R_nom = 13797000 #design mission range
-eff_eng = 0.379 #engine efficiency based on equation 6.23 in the ADSEE book
+eff_eng = v_cr / (TSFC * e_spec)*10**6 #0.379 #engine efficiency based on equation 6.23 in the ADSEE book
 
 Cd_0 = C_f * wet_wing_area #zero lift drag calculation
 
@@ -64,7 +66,7 @@ R = 0 #placeholder for the range to append to the lists
 for i in range(0, int(R_harm), ds):
     M_pl_list.append(M_pl) 
     R += ds
-    R_list.append(R)
+    R_list.append(R/1000)
 
 
 
@@ -74,16 +76,15 @@ for i in range(0, int(R_nom - R_harm), ds):
     M_pl = M_pl - curve_one_der * ds
     M_pl_list.append(M_pl)
     R += ds
-    R_list.append(R)
+    R_list.append(R/1000)
 
-print(R_list[-1])
 
 #generates the payload mass for the R_2 part of the curve
 for i in range(0, int(R_ferry - R_nom), ds):
     M_pl = M_pl - curve_two_der * ds
     M_pl_list.append(M_pl)
     R += ds
-    R_list.append(R)
+    R_list.append(R/1000)
 
 print("maximum payload [kg]:")
 print(M_pl_max)
@@ -104,11 +105,16 @@ print("ferry range [km]:")
 print(R_ferry/1000)
 print()
 print("maximum take-off weight [kg]:")
-print(M_mto)
+print(M_f)
 
 
 plt.plot(R_list, M_pl_list)
-plt.xlabel("range [km]")
-plt.ylabel("payload [kg]")
-plt.title("payload range diagram")
+plt.yticks(fontsize=15)
+plt.xticks(fontsize=15)
+plt.xlabel("range [km]", fontsize=18)
+plt.ylabel("payload [kg]", fontsize=18)
+plt.title("payload range diagram", fontsize=25)
+plt.grid(visible=True, which="major", axis="both")
+plt.xlim(0)
+plt.ylim(0)
 plt.show()
