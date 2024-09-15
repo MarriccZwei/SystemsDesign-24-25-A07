@@ -16,10 +16,10 @@ crossOverEvents = maxFunctionFinder.maxFunctionFinder()
 for point in crossOverEvents:
     print(point)
     print(point[1], point[2], point[0]-100, point[0]+100)
-    pointFinder.pointFinder(point[1], point[2], point[0]-100, point[0]+100)
+    #pointFinder.pointFinder(point[1], point[2], point[0]-100, point[0]+100)
 
 #intersection with stall speed and landing distance constraints, may break
-pointFinder.pointFinder(crossOverEvents[-1][2], 0, crossOverEvents[-1][0]-100)
+#pointFinder.pointFinder(crossOverEvents[-1][2], 0, crossOverEvents[-1][0]-100)
 pointFinder.pointFinder(crossOverEvents[-1][2], 7, crossOverEvents[-1][0]-100)
 
 WSaxis = np.linspace(0, WSmax, WSres+1)

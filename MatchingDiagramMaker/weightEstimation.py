@@ -17,7 +17,7 @@ D_par = 0.0075 #lift dependent parasite drag found in the ADSEE book
  
 AR = 9.28375 #aspect ratio using the average of the reference aircraft
 
-B = 8.25
+B = 9
 TSFC = 22*B**-0.19
 e_spec = 43.5 *10**6 #specific energy for kerosene, value found in the ADSEE book
 g = 9.81 #gravitational acceleration constant
@@ -105,7 +105,7 @@ print("ferry range [km]:")
 print(R_ferry/1000)
 print()
 print("maximum take-off weight [kg]:")
-print(M_f)
+print(M_mto)
 
 
 plt.plot(R_list, M_pl_list)

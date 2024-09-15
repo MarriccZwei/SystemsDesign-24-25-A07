@@ -6,7 +6,7 @@ import weightEstimation
 #if u don't use a var, don't change it
 
 #Propulsion constants
-BYPASS = 8.25 #pls keep between 5 and 15
+BYPASS = weightEstimation.B #pls keep between 5 and 15
 
 #Aerodynamics + wing form constants
 TMIN=0.7
