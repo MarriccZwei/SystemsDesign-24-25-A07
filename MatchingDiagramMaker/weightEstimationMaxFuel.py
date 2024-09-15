@@ -1,10 +1,12 @@
+'''!!!The two weight est. files have to be merged in the future!!! 
+this one is for the max fuel config to get max fuel mass'''
 from math import sqrt, pi, exp, log
 import matplotlib.pyplot as plt
 import numpy as np
 
 #weights
 M_pl_max = 49442 #maximum payload
-M_pl_des = 27669
+M_pl_des = 26308
 Mf_oe = 0.473 #operational empty mass fraction (M_oe/M_mtow) avg of the similar aircraft
 
 #variables used for C_d0 calculations, based on equation 6.15 from the adsee reader
@@ -26,7 +28,7 @@ v_cr = 241.9 #cruise speed [m/s]
 F_con = 0.05 #fraction of fuel used for contingency 
 R_div = 370000 #diversion range of aircraft
 t_e = 45 * 60 #loiter time
-R_nom = 13797000 #design mission range
+R_nom = 13983000 #design mission range
 eff_eng = v_cr / (TSFC * e_spec)*10**6 #0.379 #engine efficiency based on equation 6.23 in the ADSEE book
 
 Cd_0 = C_f * wet_wing_area #zero lift drag calculation
