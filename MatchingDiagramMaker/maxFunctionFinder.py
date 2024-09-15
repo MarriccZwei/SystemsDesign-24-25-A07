@@ -11,11 +11,16 @@ def maxFunctionFinder():
         allFunctions.append(constraint(WSaxis)[1]) #writes values to allFunctions
         #print(constraint(WSaxis))
         i=i+1
-    for j in range(10000): #finds the functions with the biggest value at each W/S
+
+    cutoff = 1500
+
+    for h in range(cutoff):
+        maxFunction.append(0)
+    for j in range(cutoff,10000): #finds the functions with the biggest value at each W/S
         biggest = 0
         maxFunction.append(0)
         for k in range(len(constraints.constraints)):
-            if allFunctions[k][j] > biggest and allFunctions[k][j] <=2:
+            if allFunctions[k][j] > biggest and allFunctions[k][j] <=1:
                 maxFunction[j] = k
                 biggest = allFunctions[k][j]
     #print("Maximum functions index list")
