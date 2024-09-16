@@ -62,8 +62,6 @@ def pointFinder(line1, line2, lowerBound=0, upperBound=10000):#upper and lower b
             inty = g[1][intx]
         else:
             inty = f[1][intx]
-    print(intx)
-    print(inty)
     if intx > 8500:
         pointName = "W/S: " + str(intx) + ", T/W: " + str(int(inty*10000)/10000) + "↘"
         plt.text(intx, inty, pointName, horizontalalignment = 'right', verticalalignment = 'bottom')
@@ -71,3 +69,4 @@ def pointFinder(line1, line2, lowerBound=0, upperBound=10000):#upper and lower b
         pointName = "↙ W/S: " + str(intx) + ", T/W: " + str(int(inty*100)/100)
         plt.text(intx, inty, pointName, horizontalalignment = 'left', verticalalignment = 'bottom')
     plt.plot(intx, inty, '+r')
+    return intx, inty
