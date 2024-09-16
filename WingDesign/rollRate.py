@@ -13,9 +13,12 @@ def tau(chordRatio): #this is an approximation of the chart in the slides; it is
         return (2 * x / 3) + (10 / 3)
 
 #b1 and b2 are the spanwise locations of the start + end of the aileron
-def rollRate(b1, b2, chordRatio, moment, clalpha, cd0, deflection = 10, diffRatio = 1):
+def rollRate(b1, b2, chordRatio, deflection = 10, diffRatio = 1):
     if diffRatio != 1:
         deflection = 0.5 * (1 + diffRatio)
+    
+    clalpha = 0.01 #TODO change
+    cd0 = 0.01 #TODO change
     
     mainData = json.loads(open("Protocols/main.json"))
     area = mainData["S"]
