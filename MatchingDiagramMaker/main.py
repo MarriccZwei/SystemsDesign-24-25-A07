@@ -20,9 +20,7 @@ for point in crossOverEvents:
 
 #intersection with stall speed and landing distance constraints, may break
 #pointFinder.pointFinder(crossOverEvents[-1][2], 0, crossOverEvents[-1][0]-100)
-pointFinder.pointFinder(crossOverEvents[-1][2], 7, crossOverEvents[-1][0]-100)
-#TWselected =
-#WSselected = 
+WSselected, TWselected = pointFinder.pointFinder(crossOverEvents[-1][2], 7, crossOverEvents[-1][0]-100)
 
 WSaxis = np.linspace(0, WSmax, WSres+1)
 plt.axis((0, WSmax, 0, TWmax))
