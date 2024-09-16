@@ -27,6 +27,7 @@ F_con = 0.05 #fraction of fuel used for contingency
 R_div = 370000 #diversion range of aircraft
 t_e = 45 * 60 #loiter time
 R_nom = 13797000 #design mission range
+
 eff_eng = v_cr / (TSFC * e_spec)*10**6 #0.379 #engine efficiency based on equation 6.23 in the ADSEE book
 
 Cd_0 = C_f * wet_wing_area #zero lift drag calculation
