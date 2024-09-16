@@ -15,6 +15,10 @@ import matplotlib.pyplot as plt
 # 9 Climb rate
 
 def pointFinder(line1, line2, lowerBound=0, upperBound=10000):#upper and lower bounds are optional and do not *need* to be specified
+    if lowerBound<0:
+        lowerBound = 0
+    if upperBound>10000:
+        upperBound = 10000
     l1vert = False
     l2vert = False
     if line1 == 0 or line1 == 7:#handles cases where line 1 is vertical
