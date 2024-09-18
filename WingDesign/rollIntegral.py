@@ -21,7 +21,7 @@ def c(y, b, LE, TE, cT):
     return (0.5*b*tan(LE) + cT - y*tan(LE) - (0.5*b-y)*tan(TE))
 
 def ck(y, dx1, dx2, LEK, TEK, cR):
-    return (cR + dx1 + dx2 - y(tan(LEK)+tan(TEK)))
+    return (cR + dx1 + dx2 - y*(tan(LEK)+tan(TEK)))
 
 def f1(y, b, LE, TE, cT):
     return y*c(y, b, LE, TE, cT)
@@ -55,5 +55,7 @@ def kinkIntegral2():
 
 
 
-
-print(Integral1(8, 9.5))
+if __name__ == "-__main__":
+    print(Integral1(8, 9.5))
+    print(Integral2())
+    print(kinkIntegral2())
