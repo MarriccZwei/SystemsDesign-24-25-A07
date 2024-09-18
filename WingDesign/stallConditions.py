@@ -37,5 +37,5 @@ def maxCL(airfoil, LEsweep, clmax2d, mach = 0.0):
     print(":3")
 
 def stallAlpha(airfoil):
+    
     print(":3")
-
