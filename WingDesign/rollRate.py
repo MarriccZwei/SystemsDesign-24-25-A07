@@ -18,7 +18,7 @@ def rollRate(b1, b2, chordRatio, speed, deflection = 10, diffRatio = 1):
     if diffRatio != 1:
         deflection = 0.5 * (1 + diffRatio)
 
-    clalpha = 0.08 #TODO change
+    clalpha = 0.08 #TODO CHANGE
     
     mainData = json.load(open("Protocols/main.json"))
     area = mainData["S"]
