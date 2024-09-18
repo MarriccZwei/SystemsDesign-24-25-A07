@@ -1,13 +1,13 @@
 from math import pi, sqrt, atan, tan, acos
 
 def LambdaFinder(b, CTip, CRoot, LambdaQuarter): #finds all useful sweep angles based on quarter chord, for a single trapezoid wing
-    Ltot = CTip + 0.5* (0.5*(CRoot - CTip) + b*tan(LambdaQuarter)) #total length of the wing
+    Ltot = 0.25*(CRoot + 3*CTip) + 0.5*b*tan(LambdaQuarter) #total length of the wing
     L1 = Ltot - 0.5*(CRoot + CTip)
     L2 = Ltot - CTip
     L3 = Ltot - CRoot
     LambdaHalf = atan(2*L1/b)
-    LambdaLE = atan(2*b/L2)
-    LambdaTE = atan(2*b/L3)
+    LambdaLE = atan(2*L2/b)
+    LambdaTE = atan(2*L3/b)
     return [LambdaHalf, LambdaLE, LambdaTE]
 
 def DATCOM(A, M, LambdaQuarter): #estimate of the reduction of lift slope
@@ -15,7 +15,40 @@ def DATCOM(A, M, LambdaQuarter): #estimate of the reduction of lift slope
     CLAlpha = ((2 * pi * A)/(2 + sqrt( 4 + (A*sqrt(1-M)/0.95)**2) * (1 + (atan(LambdaHalf)**2)/(1-M) ))) #equation found in the ADSEE slides, L1
     return CLAlpha
 
-def MAC(LambdaLE, LambdaTEin, LambdaTEout, b, bk, CRoot, CTip, SGiven):
+def MAC(LambdaLE, LambdaTE, b, CRoot, CTip):
+    S = 0.5 * b * (CRoot - (b/4)*tan(LambdaLE) + (b/4)*tan(LambdaTE))
+    TaperRatio = CTip/CRoot
+
+    MAC = 2/3 * CRoot * ((1+TaperRatio + TaperRatio**2)/(1+TaperRatio))
+    YMAC = (b/6) * ((1 + 2*TaperRatio) / (1 + TaperRatio))
+    XLEMAC = YMAC * tan(LambdaLE)
+
+    return [MAC, YMAC, XLEMAC]
+
+
+#print(LambdaHalf * (180/pi))
+def SweepEst(MCruise): #estimate of quarter chord sweep angle based on ADSEE reader
+    SweepEst = acos((1.16)/(MCruise + 0.5))
+    return SweepEst
+
+def TaperRatioEst(LambdaQuarter):
+    TaperRatio = -0.0083* (LambdaQuarter * 180 / pi) + 0.4597
+    return TaperRatio
+
+def WingSpan(AspectRatio, S):
+    b = sqrt(AspectRatio*S)
+    return b
+
+def RootAndTipChord(S, Taper, b):
+    Cr = (2*S)/((1+Taper)*b)
+    Ct = Taper*Cr
+    return [Cr, Ct]
+
+def Dihedral(QuarterSweep):
+    dihedral = 3 - 0.1 * (QuarterSweep * 180 / pi) + 2 # plus two for low wing config
+    return (dihedral * pi / 180)
+
+#def MAC(LambdaLE, LambdaTEin, LambdaTEout, b, bk, CRoot, CTip, SGiven):
     bo = b - bk #finds the wing span of the outer wing
     CMid = CRoot + 0.5*bk*(tan(LambdaTEin) - tan(LambdaLE)) #finds the chord length at the kink of the wing
     SIn = 0.5*bk*(CRoot-(bk/4)*tan(LambdaLE) + (bk/4)*tan(LambdaTEin)) #area of the inner part of the wing
@@ -36,27 +69,6 @@ def MAC(LambdaLE, LambdaTEin, LambdaTEout, b, bk, CRoot, CTip, SGiven):
     YMACIn = (bk/6) * ((1 + 2*TaperRatio_in) / (1+ TaperRatio_in)) #finds the length to the inner MAC from the center line
     YMACOut = (bo/6) * ((1+2*TaperRatio_out) / (1 + TaperRatio_out)) #finds the length to the outer MAC from the Middle chord
     YMAC = ((YMACIn * SIn + (0.5*bk + YMACOut)*SOut)/S)
-
     XLEMAC = ((YMACIn * tan(LambdaLE) * SIn + (0.5*bk*tan(LambdaLE) + YMACOut * tan(LambdaLE)) * SOut)/S) #finds the length to the leading edge of the MAC from the LE of the root chord
 
     return [MAC, XLEMAC, YMAC] #returns the three important variables
-
-#print(LambdaHalf * (180/pi))
-def SweepEst(MCruise): #estimate of quarter chord sweep angle based on ADSEE reader
-    SweepEst = acos((1.16)/(MCruise + 0.5))
-    return (SweepEst * (180/pi))
-
-def TaperRatioEst(LambdaQuarter):
-    TaperRatio = -0.0083*LambdaQuarter + 0.4597
-    return TaperRatio
-
-def WingSpan(AspectRatio, S):
-    b = sqrt(AspectRatio*S)
-    return b
-
-def RootAndTipChord(S, Taper, b):
-    Cr = (2*S)/((1+Taper)*b)
-    Ct = Taper*Cr
-    return [Cr, Ct]
-
-
