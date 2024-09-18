@@ -34,8 +34,29 @@ def maxCL(airfoil, LEsweep, clmax2d, mach = 0.0):
         deltaCL = sharpness / 24 * 0.82
 
     maxCLtrue = cl_cl * clmax2d + deltaCL
-    print(":3")
+    return maxCLtrue
 
-def stallAlpha(airfoil):
+def stallAlpha(airfoil, alphaZero, LEsweep, clmax2d, mach = 0.0):
+
+    tc = ( airfoil/100 - int(airfoil/100) )
+    if str(airfoil)[2] == '4':
+        sharpness = 19.3 * tc
+    elif str(airfoil)[2] == '5':
+        sharpness = 21.3 * tc
     
-    print(":3")
+    if sharpness <= 1.6:
+        deltaAlphaCL = (-1*10**-5)*LEsweep**3 + 0.004*LEsweep**2 - 0.0006*LEsweep + 1.781
+    elif sharpness <2.5:
+        deltaAlphaCL = (3*10**-6)*LEsweep**3 + 0.0009*LEsweep**2 + 0.1023*LEsweep - 0.0857
+    elif sharpness < 3.5:
+        deltaAlphaCL = (-6*10**-6)*LEsweep**3 + 0.0014*LEsweep**2 + 0.0303*LEsweep + 1.1905
+    elif sharpness >= 3.5:
+        deltaAlphaCL = (-1*10**-5)*LEsweep**3 + 0.0018*LEsweep**2 -0.0399*LEsweep + 2.2095
+    
+    clmax = maxCL(airfoil, LEsweep, clmax2d, mach)
+
+    clAlpha = 0.08 #TODO change
+
+    alphaStall = clmax/clAlpha + alphaZero + deltaAlphaCL
+
+    return alphaStall
