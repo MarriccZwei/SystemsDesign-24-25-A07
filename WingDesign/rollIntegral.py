@@ -3,7 +3,7 @@ import scipy.integrate as integrate
 
 cRoot = 8
 cTip = 3
-span = 20
+span = 60
 
 # non kink vars
 sweepLE = radians(45)
