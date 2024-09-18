@@ -44,18 +44,16 @@ def Integral1(b1, b2):
 
 def Integral2():
     sweepTE = trailingSweep(sweepLE, cTip, cRoot, span)
-    return integrate.quad(lambda y: f2(y, span, sweepLE, sweepTE, cTip), 0, span)
+    return integrate.quad(lambda y: f2(y, span, sweepLE, sweepTE, cTip), 0, 0.5*span)
 
 def kinkIntegral2():
     sweepTE = trailingSweep(kSweep2LE, cTip, cRoot, span)
-    partialIntN = integrate.quad(lambda y: f2(y, span, kSweep2LE, sweepTE, cTip), yKink, span)
+    partialIntN = integrate.quad(lambda y: f2(y, span, kSweep2LE, sweepTE, cTip), yKink, 0.5*span)
     partialIntK = integrate.quad(lambda y: f2k(y, deltaTE, deltaLE, kSweep1LE, kSweepTE, cRoot), 0, yKink)
     Integral = (partialIntN[0]+partialIntK[0], partialIntN[1]+partialIntK[1])
     return Integral
 
-
-
-if __name__ == "-__main__":
+if __name__ == "__main__":
     print(Integral1(8, 9.5))
     print(Integral2())
     print(kinkIntegral2())
