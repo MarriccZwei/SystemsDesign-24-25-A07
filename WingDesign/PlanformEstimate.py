@@ -1,4 +1,4 @@
-from math import pi, sqrt, atan, tan, acos
+from math import pi, sqrt, atan, tan, acos, e
 
 def LambdaFinder(b, CTip, CRoot, LambdaQuarter): #finds all useful sweep angles based on quarter chord, for a single trapezoid wing
     Ltot = 0.25*(CRoot + 3*CTip) + 0.5*b*tan(LambdaQuarter) #total length of the wing
@@ -47,6 +47,14 @@ def RootAndTipChord(S, Taper, b):
 def Dihedral(QuarterSweep):
     dihedral = 3 - 0.1 * (QuarterSweep * 180 / pi) + 2 # plus two for low wing config
     return (dihedral * pi / 180)
+
+def PitchUp(TaperRatio, QuarterSweep, AR):
+    PitchUp = 17.7 * (2-TaperRatio) * e ** (-0.043 * (QuarterSweep * 180 / pi))
+    if PitchUp <= AR:
+        return True
+    else:
+        return False
+
 
 #def MAC(LambdaLE, LambdaTEin, LambdaTEout, b, bk, CRoot, CTip, SGiven):
     bo = b - bk #finds the wing span of the outer wing
