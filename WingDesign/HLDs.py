@@ -1,12 +1,29 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from math import tan, cos
 
-def estimate_cl_max_flapped(S_flap, c, is_landing=True):
+targetDeltaCL = 1.9
 
-    CL_clean = 0.6
-    CL_to = 1.8
-    CL_landing = 2.5
-    cf = 0.3 * c
+deltaFlap = 50
+flapFactor = 0.35
+
+surface = 409
+sweepLE = 0.5487971935252399
+sweepTE = 0.3
+
+cRoot = 8.12
+
+def deltaCl(delta, factor):
+    dcCf = 0.01*delta + 0.4
+    return 1.6 * (1+factor*dcCf)
+
+def flapSurface():
+    return targetDeltaCL*surface/(0.9*deltaCl(deltaFlap, flapFactor)*cos(sweepTE))
+
+a = tan(sweepTE)-0.5*tan(sweepTE)-0.5*tan(sweepLE)
+coeff = np.array([2*a, 2*cRoot, -1*flapSurface()])
+roots = np.polynomial.polynomial.polyroots(coeff)
+print(roots)
+
 
 
 
