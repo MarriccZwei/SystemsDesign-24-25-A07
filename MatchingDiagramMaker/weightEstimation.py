@@ -62,8 +62,8 @@ print(R_ferry)
 ds = 50000 #step size [m]
 M_pl_list = [] #naming of Mass payload list
 
-curve_one_der = (M_pl_max - M_pl_des)/(R_nom - R_harm) #kg / 500 km
-curve_two_der = (M_pl_des)/(R_ferry - R_nom) #kg / 500 km
+#curve_one_der = (M_pl_max - M_pl_des)/(R_nom - R_harm) #kg / 500 km
+#curve_two_der = (M_pl_des)/(R_ferry - R_nom) #kg / 500 km
 M_pl = M_pl_max #placeholder for the payload mass to append to the lists
 R_list = [] #np.arange(0,18000000,ds)
 R = 0 #placeholder for the range to append to the lists
@@ -77,7 +77,7 @@ for i in range(0, int(R_harm), ds):
 
 
 
-
+'''
 #generates the payload mass for the R_1 part of the curve
 for i in range(0, int(R_nom - R_harm), ds):
     M_pl = M_pl - curve_one_der * ds
@@ -92,7 +92,7 @@ for i in range(0, int(R_ferry - R_nom), ds):
     M_pl_list.append(M_pl)
     R += ds
     R_list.append(R/1000)
-
+'''
 print("maximum payload [kg]:")
 print(M_pl_max)
 print()
