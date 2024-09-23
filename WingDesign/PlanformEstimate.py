@@ -10,13 +10,15 @@ def LambdaFinder(b, CTip, CRoot, LambdaQuarter): #finds all useful sweep angles 
     LambdaTE = atan(2*L3/b)
     return [LambdaHalf, LambdaLE, LambdaTE]
 
+def FindArea(b, CRoot, LambdaLE, LambdaTE):
+    return 0.5 * b * (CRoot - (b/4)*tan(LambdaLE) + (b/4)*tan(LambdaTE))
+
 def DATCOM(A, M, LambdaQuarter): #estimate of the reduction of lift slope
     LambdaHalf = LambdaFinder(LambdaQuarter)[0]
     CLAlpha = ((2 * pi * A)/(2 + sqrt( 4 + (A*sqrt(1-M)/0.95)**2) * (1 + (atan(LambdaHalf)**2)/(1-M) ))) #equation found in the ADSEE slides, L1
     return CLAlpha
 
 def MAC(LambdaLE, LambdaTE, b, CRoot, CTip):
-    S = 0.5 * b * (CRoot - (b/4)*tan(LambdaLE) + (b/4)*tan(LambdaTE))
     TaperRatio = CTip/CRoot
 
     MAC = 2/3 * CRoot * ((1+TaperRatio + TaperRatio**2)/(1+TaperRatio))
