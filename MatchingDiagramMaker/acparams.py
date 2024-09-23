@@ -26,7 +26,7 @@ BETA_CRUISE = 0.95
 ROC_CRUISE_ALT = 2 # [m/s]
 
 #Landing constants
-VSTALL = 70 # [m/s]
+VSTALL = 75 # [m/s]
 CLMAX_LAND = 2.5 # estimation
 LAND_LENGTH = 1856 # [m] (Class I weight estimation)
 RHO_LAND = 1.225 # [kg/m^3]

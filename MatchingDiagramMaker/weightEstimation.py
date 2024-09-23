@@ -77,7 +77,7 @@ for i in range(0, int(R_harm), ds):
 
 
 
-
+'''
 #generates the payload mass for the R_1 part of the curve
 for i in range(0, int(R_nom - R_harm), ds):
     #M_pl = M_pl - curve_one_der * ds
@@ -92,7 +92,7 @@ for i in range(0, int(R_ferry - R_nom), ds):
     M_pl_list.append(M_pl)
     R += ds
     R_list.append(R/1000)
-
+'''
 print("maximum payload [kg]:")
 print(M_pl_max)
 print()
