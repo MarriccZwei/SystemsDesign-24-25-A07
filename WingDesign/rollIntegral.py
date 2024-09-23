@@ -1,5 +1,8 @@
 from math import tan, atan, radians
 import scipy.integrate as integrate
+import json
+
+maindata = json.load(open("Protocols/main.json"))
 
 cRoot = 8
 cTip = 3
