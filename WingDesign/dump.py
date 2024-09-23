@@ -13,6 +13,7 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict["YLEMAC"]=planform.MACList[2]
     jsonDict["sweepC/2"] = planform.SweepList[0]
     jsonDict["sweepLE"]=planform.SweepList[1]
+    jsonDict["sweepTE"] = planform.SweepList[2]
     jsonDict["dihedral"] = planform.dihedral
     jsonDict["Cr"] = planform.CList[0]
     jsonDict["Ct"] = planform.CList[1]
