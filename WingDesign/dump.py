@@ -2,6 +2,7 @@ import json
 import os
 import numpy as np
 import planform
+import HLDs
 
 with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict = json.loads(''.join(mainJson.readlines()))
@@ -17,6 +18,7 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict["dihedral"] = planform.dihedral
     jsonDict["Cr"] = planform.CList[0]
     jsonDict["Ct"] = planform.CList[1]
+    jsonDict["bEndHLD"] = HLDs.y
 
 
 with open(os.getcwd()+"/Protocols/main.json", 'w') as mainJson:
