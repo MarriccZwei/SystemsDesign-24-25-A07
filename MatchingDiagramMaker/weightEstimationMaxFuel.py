@@ -1,10 +1,12 @@
+'''!!!The two weight est. files have to be merged in the future!!! 
+this one is for the max fuel config to get max fuel mass'''
 from math import sqrt, pi, exp, log
 import matplotlib.pyplot as plt
 import numpy as np
 
 #weights
 M_pl_max = 49442 #maximum payload
-M_pl_des = 27669
+M_pl_des = 26308
 Mf_oe = 0.473 #operational empty mass fraction (M_oe/M_mtow) avg of the similar aircraft
 
 #variables used for C_d0 calculations, based on equation 6.15 from the adsee reader
@@ -26,8 +28,7 @@ v_cr = 241.9 #cruise speed [m/s]
 F_con = 0.05 #fraction of fuel used for contingency 
 R_div = 370000 #diversion range of aircraft
 t_e = 45 * 60 #loiter time
-R_nom = 13797000 #design mission range
-
+R_nom = 13983000 #design mission range
 eff_eng = v_cr / (TSFC * e_spec)*10**6 #0.379 #engine efficiency based on equation 6.23 in the ADSEE book
 
 Cd_0 = C_f * wet_wing_area #zero lift drag calculation
@@ -43,7 +44,7 @@ R_aux = R_eq - R_nom #auxilary range
 
 Mf_ec = 1 - exp((-R_eq) / (eff_eng * (e_spec / g) * L_D)) #fuel mass fraction
 
-M_mto = (M_pl_max)/(1 - Mf_ec - Mf_oe) #maximum take-off mass
+M_mto = (M_pl_des)/(1 - Mf_ec - Mf_oe) #maximum take-off mass
 M_ec = Mf_ec * M_mto #fuel mass
 M_oe = Mf_oe * M_mto #operating empty mass
 
@@ -52,18 +53,12 @@ M_f = M_mto - M_oe - M_pl_max
 R_ferry = eff_eng * L_D * (e_spec / g) * log((M_oe + M_ec)/(M_oe)) - R_aux  #ferry range
 R_harm = eff_eng * L_D * (e_spec / g) * log((M_oe + M_pl_max + M_f)/(M_oe + M_pl_max)) - R_aux #harmonic range
 
-print(M_mto)
-
-print(R_nom)
-print(R_harm)
-print(R_ferry)
 
 #plot
 ds = 50000 #step size [m]
 M_pl_list = [] #naming of Mass payload list
-
 #curve_one_der = (M_pl_max - M_pl_des)/(R_nom - R_harm) #kg / 500 km
-curve_two_der = (M_pl_des)/(R_ferry - R_nom) #kg / 500 km
+#curve_two_der = (M_pl_des)/(R_ferry - R_nom) #kg / 500 km
 M_pl = M_pl_max #placeholder for the payload mass to append to the lists
 R_list = [] #np.arange(0,18000000,ds)
 R = 0 #placeholder for the range to append to the lists
@@ -77,10 +72,10 @@ for i in range(0, int(R_harm), ds):
 
 
 
-'''
-#generates the payload mass for the R_1 part of the curve
+
+'''#generates the payload mass for the R_1 part of the curve
 for i in range(0, int(R_nom - R_harm), ds):
-    #M_pl = M_pl - curve_one_der * ds
+    M_pl = M_pl - curve_one_der * ds
     M_pl_list.append(M_pl)
     R += ds
     R_list.append(R/1000)
@@ -91,8 +86,8 @@ for i in range(0, int(R_ferry - R_nom), ds):
     M_pl = M_pl - curve_two_der * ds
     M_pl_list.append(M_pl)
     R += ds
-    R_list.append(R/1000)
-'''
+    R_list.append(R/1000)'''
+
 print("maximum payload [kg]:")
 print(M_pl_max)
 print()
@@ -122,7 +117,7 @@ print(M_mto)
 print()
 
 
-plt.plot(R_list, M_pl_list)
+'''plt.plot(R_list, M_pl_list)'''
 plt.yticks(fontsize=15)
 plt.xticks(fontsize=15)
 plt.xlabel("range [km]", fontsize=18)
