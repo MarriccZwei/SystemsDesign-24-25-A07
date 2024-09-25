@@ -23,7 +23,7 @@ def rollRate(b1, b2, chordRatio, speed, deflection = 10, diffRatio = 1):
     mainData = json.load(open("Protocols/main.json"))
     area = mainData["S"]
     cd0 = mainData["Cd0"]
-    moment = speed #speed
+    moment = speed #this is the speed, not actually the moment
     span = math.sqrt( mainData["S"] * mainData["AR"] )
 
     Clda = 2 * clalpha * tau(chordRatio) / (area * span) * rollIntegral.Integral1(b1,b2)[0] #TODO multiply by integral (b1, b2){ c(y) * y}dy
