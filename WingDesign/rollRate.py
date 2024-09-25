@@ -29,5 +29,5 @@ def rollRate(b1, b2, chordRatio, speed, deflection = 10, diffRatio = 1):
     Clda = 2 * clalpha * tau(chordRatio) / (area * span) * rollIntegral.Integral1(b1,b2)[0] #TODO multiply by integral (b1, b2){ c(y) * y}dy
     Clp = -4 * (clalpha + cd0) / (area * span * span) * rollIntegral.Integral2()[0]#TODO multiply by integral (0, b/2){ c(y) * y2}dy
     rate = -1 * Clda/Clp * deflection * 2 * moment / span
-    print(rate)
+    print(rate*57.3)
     return rate
