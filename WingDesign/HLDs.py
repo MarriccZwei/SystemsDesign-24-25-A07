@@ -9,7 +9,10 @@ maindata = json.load(open("Protocols/main.json"))
 
 # Target DeltaCL when landing, with CL-max in clean configuration (1.6)
 # TODO This has to be recalculated when CL-max values are here and thus when airfoil has been chosen
-targetDeltaCL = 0.9
+maxClTO = maindata["CLmaxTO"]
+maxClLA = maindata["CLmaxLand"]
+maxClCL = maindata["CLmaxClean"]
+targetDeltaCL = maxClLA - maxClCL
 
 # Flap deflection suggested in ADSEE II Lecture 3
 deltaFlap = 50  # [deg]
