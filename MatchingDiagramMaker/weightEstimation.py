@@ -43,7 +43,7 @@ R_aux = R_eq - R_nom #auxilary range
 
 Mf_ec = 1 - exp((-R_eq) / (eff_eng * (e_spec / g) * L_D)) #fuel mass fraction
 
-M_mto = (M_pl_des)/(1 - Mf_ec - Mf_oe) #maximum take-off mass
+M_mto = (M_pl_max)/(1 - Mf_ec - Mf_oe) #maximum take-off mass
 M_ec = Mf_ec * M_mto #fuel mass
 M_oe = Mf_oe * M_mto #operating empty mass
 
@@ -52,11 +52,17 @@ M_f = M_mto - M_oe - M_pl_max
 R_ferry = eff_eng * L_D * (e_spec / g) * log((M_oe + M_ec)/(M_oe)) - R_aux  #ferry range
 R_harm = eff_eng * L_D * (e_spec / g) * log((M_oe + M_pl_max + M_f)/(M_oe + M_pl_max)) - R_aux #harmonic range
 
+print(M_mto)
+
+print(R_nom)
+print(R_harm)
+print(R_ferry)
 
 #plot
 ds = 50000 #step size [m]
 M_pl_list = [] #naming of Mass payload list
-curve_one_der = (M_pl_max - M_pl_des)/(R_nom - R_harm) #kg / 500 km
+
+#curve_one_der = (M_pl_max - M_pl_des)/(R_nom - R_harm) #kg / 500 km
 curve_two_der = (M_pl_des)/(R_ferry - R_nom) #kg / 500 km
 M_pl = M_pl_max #placeholder for the payload mass to append to the lists
 R_list = [] #np.arange(0,18000000,ds)
@@ -71,10 +77,10 @@ for i in range(0, int(R_harm), ds):
 
 
 
-
+'''
 #generates the payload mass for the R_1 part of the curve
 for i in range(0, int(R_nom - R_harm), ds):
-    M_pl = M_pl - curve_one_der * ds
+    #M_pl = M_pl - curve_one_der * ds
     M_pl_list.append(M_pl)
     R += ds
     R_list.append(R/1000)
@@ -86,7 +92,7 @@ for i in range(0, int(R_ferry - R_nom), ds):
     M_pl_list.append(M_pl)
     R += ds
     R_list.append(R/1000)
-
+'''
 print("maximum payload [kg]:")
 print(M_pl_max)
 print()
