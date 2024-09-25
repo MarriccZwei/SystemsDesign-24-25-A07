@@ -8,6 +8,7 @@ import pandas as pd
 maindata = json.load(open("Protocols/main.json"))
 
 # Target DeltaCL when landing, with CL-max in clean configuration (1.6)
+# TODO This has to be recalculated when CL-max values are here and thus when airfoil has been chosen
 targetDeltaCL = 0.9
 
 # Flap deflection suggested in ADSEE II Lecture 3
@@ -18,8 +19,8 @@ flapFactor = 0.35
 
 
 surface = maindata["S"]  # Total wing surface
-sweepLE = radians(maindata["sweepLE"])
-sweepTE = radians(maindata["sweepTE"])
+sweepLE = maindata["sweepLE"]
+sweepTE = maindata["sweepTE"]
 
 cRoot = maindata["Cr"]  # [m]
 
