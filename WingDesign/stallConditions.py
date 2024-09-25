@@ -1,11 +1,15 @@
-
-def maxCL(airfoil, LEsweep, clmax2d, mach = 0.0):
+from math import cos, sin, tan, radians, degrees
+import HLDs
+import json
+def maxCL(airfoil, clmax2d, flaps = False, mach = 0.0):
+    mainData = json.load(open("Protocols/main.json"))
     tc = ( airfoil/100 - int(airfoil/100) )
     if str(airfoil)[2] == '4':
         sharpness = 19.3 * tc
     elif str(airfoil)[2] == '5':
         sharpness = 21.3 * tc
-    x = LEsweep
+
+    x = mainData["sweepLE"]
     
     if sharpness <= 1.5: #line 1.4-
         cl_cl = (-3 * 10**(-8) * x**3) + (8 * 10**(-5) * x*x) + 0.0019 * x + 0.9
@@ -34,7 +38,15 @@ def maxCL(airfoil, LEsweep, clmax2d, mach = 0.0):
         deltaCL = sharpness / 24 * 0.82
 
     maxCLtrue = cl_cl * clmax2d + deltaCL
-    return maxCLtrue
+    if flaps == True:
+        sweepTE = mainData["sweepTE"]
+        S = mainData["S"]
+        cPrimeC = 1 + 0.875*HLDs.flapFactor
+        delta = 1.6 * cPrimeC 
+        deltaCLmax = 0.9 * delta * HLDs.flapSurface * cos(sweepTE) / S
+        return (maxCLtrue + deltaCLmax)
+    else:
+        return maxCLtrue
 
 def stallAlpha(airfoil, alphaZero, LEsweep, clmax2d, mach = 0.0):
 
