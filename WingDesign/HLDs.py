@@ -13,7 +13,7 @@ targetDeltaCL = 0.9
 # Flap deflection suggested in ADSEE II Lecture 3
 deltaFlap = 50  # [deg]
 
-# This value can be between 0.35 and 0.40
+# This value can be between 0.35 and 0.40 of the airfoil chord lenght
 flapFactor = 0.35
 
 
