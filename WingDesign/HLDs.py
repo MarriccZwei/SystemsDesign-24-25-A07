@@ -19,8 +19,8 @@ flapFactor = 0.35
 
 
 surface = maindata["S"]  # Total wing surface
-sweepLE = radians(maindata["sweepLE"])
-sweepTE = radians(maindata["sweepTE"])
+sweepLE = maindata["sweepLE"]
+sweepTE = maindata["sweepTE"]
 
 cRoot = maindata["Cr"]  # [m]
 
