@@ -6,6 +6,7 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict = json.loads(''.join(mainJson.readlines()))
     AR = jsonDict["AR"]
     sweepHalfC = jsonDict["sweepC/2"]
+    sweepLE = jsonDict["sweepLE"]
     Mcruise = jsonDict["Mcruise"]
 
 def datcom_cLalpha(AR, mach, sweepHalfC):
@@ -28,3 +29,4 @@ if __name__ == "__main__":
     print()
     print(np.pi*datcom_cLalpha(AR, Mcruise, sweepHalfC)/180)
 
+    print(M_dd(.75, sweepLE))
