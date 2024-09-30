@@ -1,4 +1,4 @@
-from math import cos, sin, tan, radians, degrees
+from math import cos, sin, tan, radians, degrees, pi
 import HLDs
 import json
 def maxCL(clmax2d, airfoil='63215', mach = 0.0):
@@ -65,6 +65,8 @@ def maxCL(clmax2d, airfoil='63215', mach = 0.0):
 def stallAlpha(airfoil, alphaZero, clmax2d, mach = 0.0):
     mainData = json.load(open("Protocols/main.json"))
     LEsweep = mainData["sweepLE"]
+    AR = mainData["AR"]
+    HalfCSweep = mainData["sweepC/2"]
     tc = int(airfoil[-2:-1])/100
     if str(airfoil)[1] == '4':
         sharpness = 19.3 * tc
@@ -82,7 +84,11 @@ def stallAlpha(airfoil, alphaZero, clmax2d, mach = 0.0):
     
     clmax = maxCL(airfoil, LEsweep, clmax2d, mach)
 
-    clAlpha = 0.08 #TODO change
+    #DATCOM formula
+    beta =(1- mach*mach)**0.5
+    sqrtPart = (4+(1+(tan(HalfCSweep)/beta)**2)*(AR*beta/0.95)**2)**0.5
+
+    clAlpha = 2*pi*AR/(2+sqrtPart) #TODO change
 
     alphaStall = clmax/clAlpha + alphaZero + deltaAlphaCL
 
