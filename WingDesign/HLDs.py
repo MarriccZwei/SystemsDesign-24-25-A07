@@ -22,6 +22,8 @@ flapFactor = 0.38
 
 deltaCl_slat = 0.3
 
+SwSlats_to_S = 0.8  # This number can be changed, its the percentage of area the slats cover
+
 
 
 surface = maindata["S"]  # Total wing surface
@@ -34,11 +36,15 @@ cRoot = maindata["Cr"]  # [m]
 def deltaCl(delta, factor):
     dcCf = 0.004*delta + 0.43
 
-    return (1.3 * (1+factor*dcCf) + deltaCl_slat)   # Total DCl for both slats and flaps
+    return (1.3 * (1+factor*dcCf))   # DCl for flaps
+
+def DCL_Slats():
+    return (0.9 * deltaCl_slat * SwSlats_to_S * cos(sweepTE))
+
 
 # Calculates the required flap and slat surface. ATTENTION: Flap surface is not the area of the flaps itself! See ADSEE II Lecture 3 slides
 def flapSurface():
-    return ((targetDeltaCL*surface)/(0.9*deltaCl(deltaFlap, flapFactor)*cos(sweepTE)))
+    return (((targetDeltaCL - DCL_Slats)*surface)/(0.9*deltaCl(deltaFlap, flapFactor)*cos(sweepTE)))
 
 
 def radiusFuselageRef():
@@ -57,7 +63,8 @@ totalSurface = flapSurface() + coveredSurface
 a = tan(sweepTE)-0.5*tan(sweepTE)-0.5*tan(sweepLE)
 b = cRoot
 c = -0.5*totalSurface
-y = (-b+sqrt(b**2 -4*a*c))/(2*a) #This is spanwise location at one side
+
+y = (-b+sqrt(b**2 -4*a*c))/(2*a)   # This is spanwise location at one side
 dAlphaLand = -15 * (flapSurface()/surface)*cos(sweepTE)
 dAlphaTakeoff = -10 * (flapSurface()/surface)*cos(sweepTE)
 
