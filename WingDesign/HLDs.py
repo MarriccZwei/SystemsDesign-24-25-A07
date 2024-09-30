@@ -44,7 +44,7 @@ def DCL_Slats():
 
 # Calculates the required flap and slat surface. ATTENTION: Flap surface is not the area of the flaps itself! See ADSEE II Lecture 3 slides
 def flapSurface():
-    return (((targetDeltaCL - DCL_Slats)*surface)/(0.9*deltaCl(deltaFlap, flapFactor)*cos(sweepTE)))
+    return (((targetDeltaCL - DCL_Slats())*surface)/(0.9*deltaCl(deltaFlap, flapFactor)*cos(sweepTE)))
 
 
 def radiusFuselageRef():
@@ -70,9 +70,11 @@ dAlphaTakeoff = -10 * (flapSurface()/surface)*cos(sweepTE)
 
 
 print('Flap Surface: ', round(flapSurface(), 1), '[m^2]')
+print('Slat Surface: ', round(SwSlats_to_S*surface, 1))
 print('Flap Lenght Spanwise: ', round(y, 1), '[m]')
 print('Delta Alpha Landing ', round(dAlphaLand, 1), '[deg]')
 print('Delta Alpha Takeoff ', round(dAlphaTakeoff, 1), '[deg]')
+print(surface)
 
 
 
