@@ -18,7 +18,7 @@ def datcom_cLalpha(AR, mach, sweepHalfC):
 def M_dd(CLcruise, sweepLE, ka = 0.935, tc = 0.1):
     term1 = ka/np.cos(sweepLE)
     term2 = tc/np.cos(sweepLE)**2
-    term3 = CLcruise/10/(np.cos(sweepLE)**3)
+    term3 = CLcruise/(10*(np.cos(sweepLE)**3))
     return term1 - term2 - term3
 
 if __name__ == "__main__":
