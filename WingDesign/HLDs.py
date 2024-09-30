@@ -15,10 +15,13 @@ maxClCL = maindata["CLmaxClean"]
 targetDeltaCL = maxClLA - maxClCL
 
 # Flap deflection suggested in ADSEE II Lecture 3
-deltaFlap = 50  # [deg]
+deltaFlap = 40  # [deg]
 
 # This value can be between 0.35 and 0.40 of the airfoil chord lenght
-flapFactor = 0.35
+flapFactor = 0.38
+
+deltaCl_slat = 0.3
+
 
 
 surface = maindata["S"]  # Total wing surface
@@ -29,13 +32,14 @@ cRoot = maindata["Cr"]  # [m]
 
 # Calculates the AIRFOIL DeltaCl
 def deltaCl(delta, factor):
-    dcCf = 0.01*delta + 0.4
+    dcCf = 0.004*delta + 0.43
 
-    return 1.6 * (1+factor*dcCf)
+    return (1.3 * (1+factor*dcCf) + deltaCl_slat)   # Total DCl for both slats and flaps
 
-# Calculates the required flap surface. ATTENTION: Flap surface is not the area of the flaps itself! See ADSEE II Lecture 3 slides
+# Calculates the required flap and slat surface. ATTENTION: Flap surface is not the area of the flaps itself! See ADSEE II Lecture 3 slides
 def flapSurface():
     return ((targetDeltaCL*surface)/(0.9*deltaCl(deltaFlap, flapFactor)*cos(sweepTE)))
+
 
 def radiusFuselageRef():
     aircraftDataExcelPath = os.path.join(os.getcwd(), 'aircraftReferenceData.xlsx')
