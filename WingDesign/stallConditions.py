@@ -4,19 +4,19 @@ import json
 def maxCL(clmax2d, airfoil='63215', mach = 0.0):
     mainData = json.load(open("Protocols/main.json"))
     x = mainData["sweepLE"]
-    tc = int(airfoil[-2:-1])
+    tc = int(airfoil[-2:-1])/100
     sharpness = 1.4
     
-    if str(airfoil)[2] == '1':
-        sharpness = 13.3 * tc
-    elif str(airfoil)[2] == '2':
-        sharpness = 15.3 * tc
-    elif str(airfoil)[2] == '3':
-        sharpness = 17.3 * tc
-    elif str(airfoil)[2] == '4':
-        sharpness = 19.3 * tc
-    elif str(airfoil)[2] == '5':
+    if str(airfoil)[1] == '1':
+        sharpness = 27.3 * tc
+    elif str(airfoil)[1] == '2':
+        sharpness = 25.3 * tc
+    elif str(airfoil)[1] == '3':
+        sharpness = 23.3 * tc
+    elif str(airfoil)[1] == '4':
         sharpness = 21.3 * tc
+    elif str(airfoil)[1] == '5':
+        sharpness = 19.3 * tc
 
     if sharpness <= 1.5: #line 1.4-
         cl_cl = (-3 * 10**(-8) * x**3) + (8 * 10**(-5) * x*x) + 0.0019 * x + 0.9
@@ -65,10 +65,10 @@ def maxCL(clmax2d, airfoil='63215', mach = 0.0):
 def stallAlpha(airfoil, alphaZero, clmax2d, mach = 0.0):
     mainData = json.load(open("Protocols/main.json"))
     LEsweep = mainData["sweepLE"]
-    tc = ( airfoil/100 - int(airfoil/100) )
-    if str(airfoil)[2] == '4':
+    tc = int(airfoil[-2:-1])/100
+    if str(airfoil)[1] == '4':
         sharpness = 19.3 * tc
-    elif str(airfoil)[2] == '5':
+    elif str(airfoil)[1] == '5':
         sharpness = 21.3 * tc
     
     if sharpness <= 1.6:
