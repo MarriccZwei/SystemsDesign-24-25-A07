@@ -13,6 +13,7 @@ maxClTO = maindata["CLmaxTO"]
 maxClLA = maindata["CLmaxLand"]
 maxClCL = maindata["CLmaxClean"]
 targetDeltaCL = maxClLA - maxClCL
+span = maindata["b"]
 
 # Flap deflection suggested in ADSEE II Lecture 3
 deltaFlap = 40  # [deg]
@@ -22,7 +23,7 @@ flapFactor = 0.38
 
 deltaCl_slat = 0.3
 
-SwSlats_to_S = 0.8  # This number can be changed, its the percentage of area the slats cover
+aileron_span = 33.0 - 28.067
 
 
 
@@ -38,9 +39,6 @@ def deltaCl(delta, factor):
 
     return (1.3 * (1+factor*dcCf))   # DCl for flaps
 
-def DCL_Slats():
-    return (0.9 * deltaCl_slat * SwSlats_to_S * cos(sweepTE))
-
 
 # Calculates the required flap and slat surface. ATTENTION: Flap surface is not the area of the flaps itself! See ADSEE II Lecture 3 slides
 def flapSurface():
@@ -53,6 +51,28 @@ def radiusFuselageRef():
     dList = aircraftDataFrame['Diameter'].tolist()
     dAverage = sum(dList)/len(dList)
     return dAverage/2
+
+def Slat_surface(sweepTE, totalSurface, deltaCl(deltaFlap, flapFactor), surface):
+
+    # Used trigonometry and whatnot to find the chord where the aileron starts in order to calculate the TE Flap surface area
+    m = (b/2) - r - aileron_span  
+    a = tan(sweepTE) * span / 2
+    b = tan(sweepLE) * m
+    c = tan(sweepTE) * aileron_span
+
+    c_aileron_begin = cRoot + a - b - c
+
+    # Calculate the TE surface area
+    SW_flap = (cRoot + c_aileron_begin) * m / 2
+
+    slat_surface = (((deltaCl+deltaCl_slat) * surface) / (0.9 * cos(sweepTE)) - SW_flap * deltaCl) / (deltaCl_slat)
+
+    return slat_surface
+
+def slat_span(slat_surface):
+    
+
+
 
 
 # calculates covered area by fuselage and thus not useable
@@ -74,9 +94,3 @@ print('Slat Surface: ', round(SwSlats_to_S*surface, 1))
 print('Flap Lenght Spanwise: ', round(y, 1), '[m]')
 print('Delta Alpha Landing ', round(dAlphaLand, 1), '[deg]')
 print('Delta Alpha Takeoff ', round(dAlphaTakeoff, 1), '[deg]')
-print(surface)
-
-
-
-
-
