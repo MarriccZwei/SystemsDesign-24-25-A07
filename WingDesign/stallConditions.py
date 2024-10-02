@@ -1,12 +1,23 @@
-
-def maxCL(airfoil, LEsweep, clmax2d, mach = 0.0):
-    tc = ( airfoil/100 - int(airfoil/100) )
-    if str(airfoil)[2] == '4':
-        sharpness = 19.3 * tc
-    elif str(airfoil)[2] == '5':
-        sharpness = 21.3 * tc
-    x = LEsweep
+from math import cos, sin, tan, radians, degrees, pi
+#import HLDs
+import json
+def maxCL(clmax2d, airfoil='63215', mach = 0.0):
+    mainData = json.load(open("Protocols/main.json"))
+    x = mainData["sweepLE"]
+    tc = int(airfoil[-2:-1])/100
+    sharpness = 1.4
     
+    if str(airfoil)[1] == '1':
+        sharpness = 27.3 * tc
+    elif str(airfoil)[1] == '2':
+        sharpness = 25.3 * tc
+    elif str(airfoil)[1] == '3':
+        sharpness = 23.3 * tc
+    elif str(airfoil)[1] == '4':
+        sharpness = 21.3 * tc
+    elif str(airfoil)[1] == '5':
+        sharpness = 19.3 * tc
+
     if sharpness <= 1.5: #line 1.4-
         cl_cl = (-3 * 10**(-8) * x**3) + (8 * 10**(-5) * x*x) + 0.0019 * x + 0.9
     
@@ -34,14 +45,32 @@ def maxCL(airfoil, LEsweep, clmax2d, mach = 0.0):
         deltaCL = sharpness / 24 * 0.82
 
     maxCLtrue = cl_cl * clmax2d + deltaCL
-    return maxCLtrue
 
-def stallAlpha(airfoil, alphaZero, LEsweep, clmax2d, mach = 0.0):
+    # sweepTE = mainData["sweepTE"]
+    # S = mainData["S"]
+    # flapFactor = HLDs.flapFactor
+    # flapSurface = HLDs.flapSurface()
+    # cPrimeC = 1 + 0.875*flapFactor
+    # delta = 1.6 * cPrimeC 
+    # deltaCLmax = 0.9 * delta * flapSurface* cos(sweepTE) / S
+    # CLmaxLand = (maxCLtrue + deltaCLmax)
+    
+    # cPrimeC = 1 + 0.58*flapFactor
+    # delta = 1.6 * cPrimeC 
+    # deltaCLmax = 0.9 * delta * flapSurface * cos(sweepTE) / S
+    # CLmaxTO = (maxCLtrue + deltaCLmax)
 
-    tc = ( airfoil/100 - int(airfoil/100) )
-    if str(airfoil)[2] == '4':
+    return maxCLtrue#, CLmaxTO, CLmaxLand
+
+def stallAlpha(airfoil, alphaZero, clmax2d, mach = 0.0):
+    mainData = json.load(open("Protocols/main.json"))
+    LEsweep = mainData["sweepLE"]
+    AR = mainData["AR"]
+    HalfCSweep = mainData["sweepC/2"]
+    tc = int(airfoil[-2:-1])/100
+    if str(airfoil)[1] == '4':
         sharpness = 19.3 * tc
-    elif str(airfoil)[2] == '5':
+    elif str(airfoil)[1] == '5':
         sharpness = 21.3 * tc
     
     if sharpness <= 1.6:
@@ -55,7 +84,11 @@ def stallAlpha(airfoil, alphaZero, LEsweep, clmax2d, mach = 0.0):
     
     clmax = maxCL(airfoil, LEsweep, clmax2d, mach)
 
-    clAlpha = 0.08 #TODO change
+    #DATCOM formula
+    beta =(1- mach*mach)**0.5
+    sqrtPart = (4+(1+(tan(HalfCSweep)/beta)**2)*(AR*beta/0.95)**2)**0.5
+
+    clAlpha = 2*pi*AR/(2+sqrtPart) #TODO change
 
     alphaStall = clmax/clAlpha + alphaZero + deltaAlphaCL
 

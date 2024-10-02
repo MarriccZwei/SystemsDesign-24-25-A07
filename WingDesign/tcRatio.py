@@ -21,6 +21,8 @@ def cd0_constraint(Cf, Sw, cr, wFus):
 def shock_wave_constraint(M_CR, sweepHalfC, WS):
     gamma = 1.4
     p_CR = ISA.pressure(int(round(H_CR)))
+    print(p_CR)
+    print(M_CR)
     CL_CR = 2*WS/gamma/p_CR/M_CR/M_CR
     print(CL_CR)
     return (np.cos(sweepHalfC)**3*(0.935-(M_CR+0.03)*np.cos(sweepHalfC))-0.115*CL_CR**1.5)/np.cos(sweepHalfC)**2
