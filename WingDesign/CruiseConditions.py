@@ -45,18 +45,19 @@ def crM():
     cpList = df[column].tolist()
     cpList.sort()
     cpMin = cpList[0]
+    print(f"Cp: {cpMin}")
     m = 1/(math.sqrt(1-cpMin)*math.cos(sweepLE))
     return m
 
 
 if __name__ == "__main__":
     #print(AR)
-    print(Mcruise)
+    print(f'Mach cruise: {Mcruise}')
     #print(sweepHalfC)
     #print()
     #print(np.pi*datcom_cLalpha(AR, Mcruise, sweepHalfC)/180)
     
-    print(alphaTrim(zeroLiftAlpha))
-    print(crM())
-    print(M_dd(.75, sweepLE))
+    print(f'Trim angle: {alphaTrim(zeroLiftAlpha)}')
+    print(f'Critical Mach {crM()}')
+    print(f'Drag divegence {M_dd(.75, sweepLE)}')
 
