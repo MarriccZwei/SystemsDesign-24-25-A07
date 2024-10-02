@@ -32,6 +32,7 @@ sweepLE = maindata["sweepLE"]
 sweepTE = maindata["sweepTE"]
 
 cRoot = maindata["Cr"]  # [m]
+cTip = maindata["Ct"]
 
 # Calculates the AIRFOIL DeltaCl
 def deltaCl(delta, factor):
@@ -70,7 +71,8 @@ def Slat_surface(sweepTE, totalSurface, deltaCl(deltaFlap, flapFactor), surface)
     return slat_surface
 
 def slat_span(slat_surface):
-    
+    c = cRoot - (span/2)*tan(sweepLE) - 
+    span_slat = 
 
 
 
