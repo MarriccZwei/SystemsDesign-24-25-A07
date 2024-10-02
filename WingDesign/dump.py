@@ -24,6 +24,7 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict["CLmaxTO"] = stallConditions.maxCL(1.5, '64a210')[1]
     jsonDict["CLmaxLand"] = stallConditions.maxCL(1.5, '64a210')[2]
     jsonDict["rollRate"] = rollRate.rollRate(7, 15, 0.25, 80, 10, 0.75)
+    jsonDict["CLDesign"] = 0.73
 
 
 with open(os.getcwd()+"/Protocols/main.json", 'w') as mainJson:
