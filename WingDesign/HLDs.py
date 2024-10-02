@@ -14,6 +14,7 @@ maxClLA = maindata["CLmaxLand"]
 maxClCL = maindata["CLmaxClean"]
 targetDeltaCL = maxClLA - maxClCL
 span = maindata["b"]
+taper = maindata['tr']
 
 # Flap deflection suggested in ADSEE II Lecture 3
 deltaFlap = 40  # [deg]
@@ -23,7 +24,7 @@ flapFactor = 0.38
 
 deltaCl_slat = 0.3
 
-aileron_span = 33.0 - 28.067
+aileron_span = 33.0 - 26.9
 
 
 
@@ -71,8 +72,10 @@ def Slat_surface(sweepTE, totalSurface, deltaCl(deltaFlap, flapFactor), surface)
     return slat_surface
 
 def slat_span(slat_surface):
-    c = cRoot - (span/2)*tan(sweepLE) - 
-    span_slat = 
+    a = (cRoot*(1-taper)) / (span/2)
+    b = - (cRoot + a * (span/2) + cTip)
+    c = cRoot*(span/2) + cTip*(span/2) - 2*slat_surface
+    start_slat = (-b + sqrt(b**2 - 4*a*c)) / (2*a)
 
 
 
