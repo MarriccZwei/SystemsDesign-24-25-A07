@@ -75,6 +75,7 @@ def slat_span(slat_surface):
     b = - (cRoot + a * (span/2) + cTip)
     c = cRoot*(span/2) + cTip*(span/2) - 2*slat_surface
     start_slat = (-b + sqrt(b**2 - 4*a*c)) / (2*a)
+    return start_slat
 
 
 
@@ -100,3 +101,4 @@ print('Slat Surface: ', round(Slat_surface(sweepTE, totalSurface, deltaCl_flap, 
 print('Flap Lenght Spanwise: ', round(y, 1), '[m]')
 print('Delta Alpha Landing ', round(dAlphaLand, 1), '[deg]')
 print('Delta Alpha Takeoff ', round(dAlphaTakeoff, 1), '[deg]')
+print(slat_span(Slat_surface(sweepTE, totalSurface, deltaCl_flap, surface, SW_flap)))
