@@ -11,7 +11,7 @@ maindata = json.load(open("Protocols/main.json"))
 # TODO This has to be recalculated when CL-max values are here and thus when airfoil has been chosen
 
 maxClCL = maindata["CLmaxClean"]
-targetDeltaCL = maindata['Cl']
+targetDeltaCL = maindata["UltimateCL"] - maxClCL
 span = maindata["b"]
 taper = maindata['tr']
 
@@ -65,7 +65,7 @@ def flapSurface():
 
 def Slat_surface(sweepTE, totalSurface, deltaCl_flap, surface, SW_flap):
 
-    slat_surface = (((deltaCl+deltaCl_slat) * surface) / (0.9 * cos(sweepTE)) - SW_flap * deltaCl) / (deltaCl_slat)
+    slat_surface = (((deltaCl(deltaFlap, flapFactor)+deltaCl_slat) * surface) / (0.9 * cos(sweepTE)) - SW_flap * deltaCl(deltaFlap, flapFactor)) / (deltaCl_slat)
 
     return slat_surface
 
