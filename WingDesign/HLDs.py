@@ -9,12 +9,12 @@ maindata = json.load(open("Protocols/main.json"))
 
 # Target DeltaCL when landing, with CL-max in clean configuration (1.6)
 # TODO This has to be recalculated when CL-max values are here and thus when airfoil has been chosen
-maxClTO = maindata["CLmaxTO"]
-maxClLA = maindata["CLmaxLand"]
+
 maxClCL = maindata["CLmaxClean"]
-targetDeltaCL = maxClLA - maxClCL
+targetDeltaCL = maindata["UltimateCL"] - maxClCL
 span = maindata["b"]
 taper = maindata['tr']
+S_wing = maindata["S"]
 
 # Flap deflection suggested in ADSEE II Lecture 3
 deltaFlap = 40  # [deg]
@@ -38,13 +38,8 @@ cTip = maindata["Ct"]
 # Calculates the AIRFOIL DeltaCl
 def deltaCl(delta, factor):
     dcCf = 0.004*delta + 0.43
-
-    return (1.3 * (1+factor*dcCf))   # DCl for flaps
-
-
-# Calculates the required flap and slat surface. ATTENTION: Flap surface is not the area of the flaps itself! See ADSEE II Lecture 3 slides
-def flapSurface():
-    return (((targetDeltaCL - DCL_Slats())*surface)/(0.9*deltaCl(deltaFlap, flapFactor)*cos(sweepTE)))
+    deltaCl_flap = 1.3 * (1+factor*dcCf)
+    return (deltaCl_flap)   # DCl for flaps
 
 
 def radiusFuselageRef():
@@ -54,48 +49,55 @@ def radiusFuselageRef():
     dAverage = sum(dList)/len(dList)
     return dAverage/2
 
-def Slat_surface(sweepTE, totalSurface, deltaCl(deltaFlap, flapFactor), surface):
 
+def flapSurface(coveredSurface):
     # Used trigonometry and whatnot to find the chord where the aileron starts in order to calculate the TE Flap surface area
-    m = (b/2) - r - aileron_span  
+    m = (span/2) - r - aileron_span  
     a = tan(sweepTE) * span / 2
     b = tan(sweepLE) * m
     c = tan(sweepTE) * aileron_span
 
     c_aileron_begin = cRoot + a - b - c
 
-    # Calculate the TE surface area
-    SW_flap = (cRoot + c_aileron_begin) * m / 2
+    SW_flap = S_wing - coveredSurface - (cTip + cRoot - (cRoot*(1-taper)* (span/2 - aileron_span))/(span/2))*(aileron_span/2)
 
-    slat_surface = (((deltaCl+deltaCl_slat) * surface) / (0.9 * cos(sweepTE)) - SW_flap * deltaCl) / (deltaCl_slat)
+    return (SW_flap)
+
+
+def Slat_surface(sweepTE, totalSurface, deltaCl_flap, surface, SW_flap):
+
+    slat_surface = (((deltaCl(deltaFlap, flapFactor)+deltaCl_slat) * surface) / (0.9 * cos(sweepTE)) - SW_flap * deltaCl(deltaFlap, flapFactor)) / (deltaCl_slat)
 
     return slat_surface
+
 
 def slat_span(slat_surface):
     a = (cRoot*(1-taper)) / (span/2)
     b = - (cRoot + a * (span/2) + cTip)
     c = cRoot*(span/2) + cTip*(span/2) - 2*slat_surface
     start_slat = (-b + sqrt(b**2 - 4*a*c)) / (2*a)
-
-
+    return start_slat
 
 
 # calculates covered area by fuselage and thus not useable
 r = radiusFuselageRef()
 coveredSurface = 2*(((cRoot-r*tan(sweepLE))*r)-0.5*r**2 * (tan(sweepTE)+tan(sweepLE)))
-totalSurface = flapSurface() + coveredSurface
+totalSurface = flapSurface(coveredSurface) + coveredSurface
 # ABC formula for calculation of spanwise position of flaps (they start at the root)
 a = tan(sweepTE)-0.5*tan(sweepTE)-0.5*tan(sweepLE)
 b = cRoot
 c = -0.5*totalSurface
 
 y = (-b+sqrt(b**2 -4*a*c))/(2*a)   # This is spanwise location at one side
-dAlphaLand = -15 * (flapSurface()/surface)*cos(sweepTE)
-dAlphaTakeoff = -10 * (flapSurface()/surface)*cos(sweepTE)
+dAlphaLand = -15 * (flapSurface(coveredSurface)/surface)*cos(sweepTE)
+dAlphaTakeoff = -10 * (flapSurface(coveredSurface)/surface)*cos(sweepTE)
 
+deltaCl_flap = deltaCl(deltaFlap, flapFactor)
+SW_flap = flapSurface(coveredSurface)
 
-print('Flap Surface: ', round(flapSurface(), 1), '[m^2]')
-print('Slat Surface: ', round(SwSlats_to_S*surface, 1))
+print('Flap Surface: ', round(flapSurface(coveredSurface), 1), '[m^2]')
+print('Slat Surface: ', round(Slat_surface(sweepTE, totalSurface, deltaCl_flap, surface, SW_flap), 1))
 print('Flap Lenght Spanwise: ', round(y, 1), '[m]')
 print('Delta Alpha Landing ', round(dAlphaLand, 1), '[deg]')
 print('Delta Alpha Takeoff ', round(dAlphaTakeoff, 1), '[deg]')
+print(slat_span(Slat_surface(sweepTE, totalSurface, deltaCl_flap, surface, SW_flap)))
