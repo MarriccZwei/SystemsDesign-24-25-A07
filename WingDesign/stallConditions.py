@@ -1,5 +1,5 @@
 from math import cos, sin, tan, radians, degrees, pi
-import HLDs
+#import HLDs
 import json
 def maxCL(clmax2d, airfoil='63215', mach = 0.0):
     mainData = json.load(open("Protocols/main.json"))
@@ -46,21 +46,21 @@ def maxCL(clmax2d, airfoil='63215', mach = 0.0):
 
     maxCLtrue = cl_cl * clmax2d + deltaCL
 
-    sweepTE = mainData["sweepTE"]
-    S = mainData["S"]
-    flapFactor = HLDs.flapFactor
-    flapSurface = HLDs.flapSurface()
-    cPrimeC = 1 + 0.875*flapFactor
-    delta = 1.6 * cPrimeC 
-    deltaCLmax = 0.9 * delta * flapSurface* cos(sweepTE) / S
-    CLmaxLand = (maxCLtrue + deltaCLmax)
+    # sweepTE = mainData["sweepTE"]
+    # S = mainData["S"]
+    # flapFactor = HLDs.flapFactor
+    # flapSurface = HLDs.flapSurface()
+    # cPrimeC = 1 + 0.875*flapFactor
+    # delta = 1.6 * cPrimeC 
+    # deltaCLmax = 0.9 * delta * flapSurface* cos(sweepTE) / S
+    # CLmaxLand = (maxCLtrue + deltaCLmax)
     
-    cPrimeC = 1 + 0.58*flapFactor
-    delta = 1.6 * cPrimeC 
-    deltaCLmax = 0.9 * delta * flapSurface * cos(sweepTE) / S
-    CLmaxTO = (maxCLtrue + deltaCLmax)
+    # cPrimeC = 1 + 0.58*flapFactor
+    # delta = 1.6 * cPrimeC 
+    # deltaCLmax = 0.9 * delta * flapSurface * cos(sweepTE) / S
+    # CLmaxTO = (maxCLtrue + deltaCLmax)
 
-    return maxCLtrue, CLmaxTO, CLmaxLand
+    return maxCLtrue#, CLmaxTO, CLmaxLand
 
 def stallAlpha(airfoil, alphaZero, clmax2d, mach = 0.0):
     mainData = json.load(open("Protocols/main.json"))
