@@ -13,6 +13,7 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     sweepLE = jsonDict["sweepLE"]
     Mcruise = jsonDict["Mcruise"]
     clDesign = jsonDict["CLDesign"]
+    sweepQuarterC = jsonDict["sweep"]
 
 def readExcelFile():
     cpDataExcelPath = os.path.join(os.getcwd(), 'cpAirfoil.xlsx')
@@ -26,9 +27,9 @@ def datcom_cLalpha(AR, mach, sweepHalfC):
     clAlpha = 2*np.pi*AR/(2+sqrtPart)
     return clAlpha
 
-def M_dd(CLcruise, sweepLE, ka = 0.935, tc = 0.1):
+def M_dd(CLcruise, sweepLE, sweep, ka = 0.935, tc = 0.1):
     term1 = ka/np.cos(sweepLE)
-    term2 = tc/np.cos(sweepLE)**2
+    term2 = tc*np.cos(sweep)/np.cos(sweepLE)**2
     term3 = CLcruise/(10*(np.cos(sweepLE)**3))
     return term1 - term2 - term3
 
@@ -59,5 +60,5 @@ if __name__ == "__main__":
     
     print(f'Trim angle: {alphaTrim(zeroLiftAlpha)}')
     print(f'Critical Mach {crM()}')
-    print(f'Drag divegence {M_dd(.75, sweepLE)}')
+    print(f'Drag divegence {M_dd(.75, sweepLE, sweepQuarterC)}')
 
