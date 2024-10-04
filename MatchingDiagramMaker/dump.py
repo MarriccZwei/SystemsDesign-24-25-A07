@@ -32,6 +32,7 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict["Cf"] = weightEstimation.C_f
     jsonDict["Cd0"] = weightEstimation.Cd_0
 
+
     print(jsonDict)
 
 with open(os.getcwd()+"/Protocols/main.json", 'w') as mainJson:
