@@ -16,7 +16,6 @@ span = maindata["b"]
 taper = maindata['tr']
 S_wing = maindata["S"]
 
-
 # Flap deflection suggested in ADSEE II Lecture 3
 deltaFlap = 40  # [deg]
 
@@ -65,7 +64,6 @@ def flapSurface(coveredSurface):
     return (SW_flap)
 
 
-
 def Slat_surface(sweepTE, totalSurface, deltaCl_flap, surface, SW_flap):
 
     slat_surface = (((deltaCl(deltaFlap, flapFactor)+deltaCl_slat) * surface) / (0.9 * cos(sweepTE)) - SW_flap * deltaCl(deltaFlap, flapFactor)) / (deltaCl_slat)
@@ -103,5 +101,3 @@ print('Flap Lenght Spanwise: ', round(y, 1), '[m]')
 print('Delta Alpha Landing ', round(dAlphaLand, 1), '[deg]')
 print('Delta Alpha Takeoff ', round(dAlphaTakeoff, 1), '[deg]')
 print(slat_span(Slat_surface(sweepTE, totalSurface, deltaCl_flap, surface, SW_flap)))
-
-print(flapSurface(coveredSurface))
