@@ -26,9 +26,10 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
 
     #engine parameters
     jsonDict["THRUST"] = weightEstimation.M_mto*acparams.g*main.TWselected
+    jsonDict["TSFC"] = weightEstimation.TSFC
 
     #aerodynamic parameters (Class I)
-    jsonDict["OSwald"] = weightEstimation.e
+    jsonDict["Oswald"] = weightEstimation.e
     jsonDict["Cf"] = weightEstimation.C_f
     jsonDict["Cd0"] = weightEstimation.Cd_0
 
