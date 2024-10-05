@@ -38,7 +38,7 @@ CLDesign = maindata["CLDesign"]
 # Flap deflection suggested in ADSEE II Lecture 3
 # This value can be between 0.35 and 0.40 of the airfoil chord lenght
 #deltaCl_slat = 0.3
-#aileron_span = 33.0 - 26.9
+#aileron_span = 33.0 - 26.5
 
 deltaFlapLand = 40
 deltaFlapTakeoff = 15   # [deg]
