@@ -18,7 +18,7 @@ SweepList = PE.LambdaFinder(b, CList[1], CList[0], QuarterSweep)
 MACList = PE.MAC(SweepList[1], SweepList[2], b, CList[0], CList[1])
 dihedral = PE.Dihedral(QuarterSweep)
 
-test = PE.PitchUp(TaperRatio, QuarterSweep, AR)
+test = not PE.PitchUp(TaperRatio, QuarterSweep, AR)
 if test:
     print("your aircraft matches stability conditions")
 else:

@@ -59,5 +59,5 @@ if __name__ == "__main__":
     
     print(f'Trim angle: {alphaTrim(zeroLiftAlpha)}')
     print(f'Critical Mach {crM()}')
-    print(f'Drag divegence {M_dd(.75, sweepLE)}')
+    print(f'Drag divegence {M_dd(.73, sweepLE)}')
 
