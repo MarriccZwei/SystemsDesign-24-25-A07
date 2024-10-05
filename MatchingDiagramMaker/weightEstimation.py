@@ -42,6 +42,7 @@ R_eq = (R_nom + R_lost) * (1 + F_con) + 1.2 * R_div + v_cr * t_e #equivalent ran
 R_aux = R_eq - R_nom #auxilary range
 
 Mf_ec = 1 - exp((-R_eq) / (eff_eng * (e_spec / g) * L_D)) #fuel mass fraction
+print(f"thsi si: {Mf_ec}")
 
 M_mto = (M_pl_max)/(1 - Mf_ec - Mf_oe) #maximum take-off mass
 M_ec = Mf_ec * M_mto #fuel mass

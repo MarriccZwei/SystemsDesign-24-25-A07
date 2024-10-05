@@ -15,7 +15,17 @@ maindata = json.load(open("Protocols/main.json"))
 machLand = 0.2
 machCruise = 0.82
 
-maxClCL = maxCL(2.0, '64a210', machLand)
+clMAX = 1.6
+
+kruger = True
+single = True
+
+yMaxTE = 26.6
+yMaxLE = 33
+
+takeoffFactor = 0.6
+
+maxClCL = maxCL(clMAX, '64a210', machLand)
 targetDeltaCL = maindata["UltimateCL"] - maxClCL
 span = maindata["b"]
 taper = maindata['tr']
@@ -32,7 +42,7 @@ CLDesign = maindata["CLDesign"]
 
 deltaFlapLand = 40
 deltaFlapTakeoff = 15   # [deg]
-cfC = 0.25 #flapcord to main cord
+cfC = 0.35 #flapcord to main cord
 
 
 sparLoc = 1-0.05-cfC
@@ -46,14 +56,29 @@ cRoot = maindata["Cr"]  # [m]
 cTip = maindata["Ct"]
 
 # Calculates the AIRFOIL DeltaCl
-def deltaCl(delta):
-    if delta == 40: dcCf = 0.6
-    else: dcCf = 0.48
+def deltaCl(single, land, kruger):
+    if single:
+        dcFactor = 1.3
+        if land: dcCf = 0.6
+        else: dcCf = 0.48
+    else:
+        dcFactor = 1.6
+        if land: dcCf = 0.85
+        else: dcCf = 0.58
+    #if delta == 40: dcCf = 0.6 #0.6 single 0.85 double
+    #else: dcCf = 0.48 #0.48 single 0.58 double
     #dcCf = 0.6 #0.004*delta + 0.43
     #cprimeCf = 1/cfC + dcCf
     cprimeC = 1+dcCf*cfC
-    deltaCl_flap = 1.3 * cprimeC
-    return deltaCl_flap, cprimeC   # DCl for flaps
+    deltaCl_flap_land = dcFactor * cprimeC #1.3 single 1.6 double
+    if kruger: deltaCl_kruger_land = 0.3
+    else: deltaCl_kruger_land = 0
+    deltaCl_flap = deltaCl_flap_land
+    deltaCl_kruger = deltaCl_kruger_land
+    if not land: 
+        deltaCl_flap = deltaCl_flap*takeoffFactor
+        deltaCl_kruger = deltaCl_kruger*takeoffFactor
+    return deltaCl_flap, cprimeC, deltaCl_kruger   # DCl for flaps
 
 
 def radiusFuselageRef():
@@ -88,40 +113,55 @@ r = radiusFuselageRef()
 #areaFus = areaCalc(cRoot, chordSpanwise(r), r*2)
 areaFus = 2*partialSurface(r)
 
-def calcflapdCL(y):
-    #area = areaCalc(cRoot, chordSpanwise(y), y*2)
-    area = 2*partialSurface(y)
-    flappedArea = area-areaFus
-    d = deltaCL(flappedArea, deltaCl(deltaFlapLand)[0], sweepHinge)
-    return d
+# def calcflapdCL(y):
+#     #area = areaCalc(cRoot, chordSpanwise(y), y*2)
+#     area = 2*partialSurface(y)
+#     flappedArea = area-areaFus
+#     d = deltaCL(flappedArea, deltaCl(single, True, kruger)[0], sweepHinge)
+#     return d
 
-def calcY(ystart, yend, steps):
-    ycur = ystart
-    mindif = 100000
-    while ycur < yend:
-        d = calcflapdCL(ycur)
-        dif = abs(targetDeltaCL-d)
-        if dif < mindif:
-            mindif = dif
-            y = ycur
-        ycur = ycur + steps
-    return y
+# def calcY(ystart, yend, steps):
+#     ycur = ystart
+#     mindif = 100000
+#     while ycur < yend:
+#         d = calcflapdCL(ycur)
+#         dif = abs(targetDeltaCL-d)
+#         if dif < mindif:
+#             mindif = dif
+#             y = ycur
+#         ycur = ycur + steps
+#     return y
 
-ymin = calcY(10, 30, 0.01)
-yAileron = ymin #aileron_span = 33.0 - 26.9
+# ymin = calcY(r, 33, 0.01)
+
+
+yAileron = yMaxTE #aileron_span = 33.0 - 26.9
 
 #areaBeginAileron = areaCalc(cRoot, chordSpanwise(yAileron), yAileron*2)
 #yAileron = 18.15
 areaBeginAileron = 2*partialSurface(yAileron)
 areaTEFlaps = areaBeginAileron-areaFus
 
-
-DCLTEflaps = deltaCL(areaTEFlaps, deltaCl(deltaFlapLand)[0], sweepHinge)
-DCLTEtakeoff = deltaCL(areaTEFlaps, deltaCl(deltaFlapTakeoff)[0], sweepHinge)
+DCLTEflaps = deltaCL(areaTEFlaps, deltaCl(single, True, kruger)[0], sweepHinge)
+DCLTEtakeoff = deltaCL(areaTEFlaps, deltaCl(single, False, kruger)[0], sweepHinge)
 
 #print(DCLTEflaps/DCLTEtakeoff)
 
+remainderdCL = targetDeltaCL - DCLTEflaps
 
+yLE = yMaxLE
+
+if kruger:
+    deltaLE = 0
+    while deltaLE < remainderdCL:
+        yLE = yLE-0.1
+        area = S_wing - 2*partialSurface(yLE)
+        deltaLE = deltaCL(area, deltaCl(single, True, kruger)[2], sweepHinge)
+
+areaLEFlaps = S_wing-2*partialSurface(yLE)
+
+DCLLEflaps = deltaCL(areaLEFlaps, deltaCl(single, True, kruger)[2], sweepHinge)
+DCLLEtakeoff = deltaCL(areaLEFlaps, deltaCl(single, False, kruger)[2], sweepHinge)
 
 alphaZeroLift = 1.66
 
@@ -139,31 +179,44 @@ def deltaAlpha(deltaAirfoil, angle):
 def CLofCLEAN(alpha, mach):
     dCLdALPHA = np.pi*datcom_cLalpha(ar, mach, sweepHalf)/180
     cL = dCLdALPHA*(alpha+alphaZeroLift)
-    maxCLCLEAN = maxCL(2.0, '64a210', mach)
+    maxCLCLEAN = maxCL(clMAX, '64a210', mach)
     return cL, maxCLCLEAN
 
 def CLofLAND(alpha):
     dCLdALPHACLEAN = np.pi*datcom_cLalpha(ar, machLand, sweepHalf)/180
-    sPrimeS = 1+(areaTEFlaps/S_wing)*(deltaCl(deltaFlapLand)[1]-1)
+    sPrimeS = 1+(areaTEFlaps/S_wing)*(deltaCl(single, True, kruger)[1]-1)
     dCLdALPHAFLAPPED = dCLdALPHACLEAN*sPrimeS
     deltaAlphaLand = deltaAlpha(15, sweepHinge)
     cL = dCLdALPHAFLAPPED*(alpha+(alphaZeroLift+deltaAlphaLand))
-    maxCLFLAPPED = maxCL(2.0, '64a210', machLand)+DCLTEflaps
+    maxCLFLAPPED = maxCL(clMAX, '64a210', machLand)+DCLTEflaps+DCLLEflaps
     return cL, maxCLFLAPPED
 
 def CLofTAKEOFF(alpha):
     dCLdALPHACLEAN = np.pi*datcom_cLalpha(ar, machLand, sweepHalf)/180
-    sPrimeS = 1+(areaTEFlaps/S_wing)*(deltaCl(deltaFlapTakeoff)[1]-1)
+    sPrimeS = 1+(areaTEFlaps/S_wing)*(deltaCl(single, False, kruger)[1]-1)
     dCLdALPHAFLAPPED = dCLdALPHACLEAN*sPrimeS
     deltaAlphaTakeoff = deltaAlpha(10, sweepHinge)
     cL = dCLdALPHAFLAPPED*(alpha+(alphaZeroLift+deltaAlphaTakeoff))
-    maxCLTAKEOFF = maxCL(2.0, '64a210', machLand)+DCLTEtakeoff
+    maxCLTAKEOFF = maxCL(clMAX, '64a210', machLand)+DCLTEtakeoff+DCLLEtakeoff
     return cL, maxCLTAKEOFF
 
-#print(f"The area for TE flaps is: {areaTEFlaps}")
+
+
+print(f"The area for TE flaps is: {areaTEFlaps}")
+print(f"The spanwise location is from {r} to {yAileron}")
+print("")
+print(f"The area for LE flaps is: {areaLEFlaps}")
+print(f"The spanwise location is from {yLE} to {yMaxLE}")
+print("")
+print("")
 print(f"Max CL in landing config is: {CLofLAND(0)[1]}")
 print(f"Max CL in takeoff config is: {CLofTAKEOFF(0)[1]}")
 print(f"Max CL in clean config is: {CLofCLEAN(0, machCruise)[1]}")
+print("")
+print("")
+
+
+
 
 cl = CLofCLEAN(0, machCruise)[0]
 a = 0
@@ -173,9 +226,8 @@ while cl < CLDesign:
 alpha_trim = a
 print(f"CL design at alpha {a} = {cl}")
 print(f"alpha design of plane = {a-alpha_trim}")
-
-
-
+print("")
+print("")
 
 cl = CLofLAND(0)[0]
 a = 0
@@ -184,6 +236,8 @@ while cl < 2.5:
     cl = CLofLAND(a)[0]
 print(f"CL land at alpha {a} = {cl}")
 print(f"alpha land/stall/CLMAX of plane = {a-alpha_trim}")
+print("")
+print("")
 
 cl = CLofTAKEOFF(0)[0]
 a = 0
@@ -192,6 +246,22 @@ while cl < 1.8:
     cl = CLofTAKEOFF(a)[0]
 print(f"CL takeoff at alpha {a} = {cl}")
 print(f"alpha takeoff/stall/CLMAX of plane = {a-alpha_trim}")
+print("")
+print("")
+
+mtow = 9.81*maindata["MTOM"]
+cLLANDING = (1.5*mtow)/(0.5*1.225*92.25**2*S_wing)
+print(f"The CL required acording to CS-25 is: {cLLANDING}")
+
+cl = CLofLAND(0)[0]
+a = 0
+while cl < cLLANDING:
+    a = a + 0.1
+    cl = CLofLAND(a)[0]
+print(f"CL CS-25 requirement at alpha {a} = {cl}")
+print(f"alpha CS-25 requirement of plane = {a-alpha_trim}")
+print("")
+print("")
 
 # for i in range(-3, 25):
 #     print(f"CL at alpha: {i} = {CLofLAND(i)[0]}")
