@@ -2,19 +2,18 @@ from math import tan, atan, radians
 import scipy.integrate as integrate
 import json
 
-maindata = json.load(open("Protocols/main.json"))
-
-cRoot = 8
-cTip = 3
-span = 60
+mainData = json.load(open("Protocols/main.json"))
+cRoot = mainData["Cr"]
+cTip = mainData["Ct"]
+span = mainData["b"]
 
 # non kink vars
-sweepLE = radians(45)
+sweepLE = mainData["sweepLE"]
 
 # kink vars
-kSweep1LE = radians(45)
-kSweep2LE = radians(30)
-kSweepTE = radians(10)
+kSweep1LE = mainData["sweepLE"]
+kSweep2LE = mainData["sweepLE"]
+kSweepTE = mainData["sweepLE"]
 yKink = 6
 deltaLE = 1
 deltaTE = 2
