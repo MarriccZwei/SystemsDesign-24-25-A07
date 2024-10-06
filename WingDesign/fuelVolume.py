@@ -12,7 +12,7 @@ if __name__ == "__main__":
         tr = jsonDict["tr"]
         b = jsonDict["b"]
     
-    volumeCoeffs = np.array([0.0649, 0.0448, 0.0392])
+    volumeCoeffs = np.array([0.038])
     Volumes = fuel_volume(volumeCoeffs, b, cr, tr)
 
     print(Volumes)
