@@ -3,8 +3,9 @@ from math import cos, sin, tan, radians, degrees, pi
 import json
 def maxCL(clmax2d, airfoil='63215', mach = 0.0):
     mainData = json.load(open("Protocols/main.json"))
-    x = mainData["sweepLE"]
-    tc = int(airfoil[-2:-1])/100
+    x = mainData["sweepLE"]*(180/pi)
+    tc = int(airfoil[-2:-1])/10
+    #print(tc)
     sharpness = 1.4
     
     if str(airfoil)[1] == '1':
@@ -17,6 +18,8 @@ def maxCL(clmax2d, airfoil='63215', mach = 0.0):
         sharpness = 21.3 * tc
     elif str(airfoil)[1] == '5':
         sharpness = 19.3 * tc
+
+    #print(sharpness)
 
     if sharpness <= 1.5: #line 1.4-
         cl_cl = (-3 * 10**(-8) * x**3) + (8 * 10**(-5) * x*x) + 0.0019 * x + 0.9

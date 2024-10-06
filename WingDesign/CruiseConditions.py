@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import math
 
-zeroLiftAlpha = -2
+zeroLiftAlpha = -1.66
 
 with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict = json.loads(''.join(mainJson.readlines()))
@@ -59,5 +59,5 @@ if __name__ == "__main__":
     
     print(f'Trim angle: {alphaTrim(zeroLiftAlpha)}')
     print(f'Critical Mach {crM()}')
-    print(f'Drag divegence {M_dd(.75, sweepLE)}')
+    print(f'Drag divegence {M_dd(.73, sweepLE)}')
 
