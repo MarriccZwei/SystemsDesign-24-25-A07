@@ -211,7 +211,7 @@ print("")
 print("")
 print(f"Max CL in landing config is: {CLofLAND(0)[1]}")
 print(f"Max CL in takeoff config is: {CLofTAKEOFF(0)[1]}")
-print(f"Max CL in clean config is: {CLofCLEAN(0, machCruise)[1]}")
+print(f"Max CL in clean config is: {CLofCLEAN(0, machLand)[1]}")
 print("")
 print("")
 
@@ -228,6 +228,18 @@ print(f"CL design at alpha {a} = {cl}")
 print(f"alpha design of plane = {a-alpha_trim}")
 print("")
 print("")
+
+cl = CLofCLEAN(0, machLand)[0]
+a = 0
+while cl < CLofCLEAN(0, machLand)[1]:
+    a = a + 0.1
+    cl = CLofCLEAN(a, machLand)[0]
+print(f"CL clean M=0.2 at alpha {a} = {cl}")
+print(f"alpha design of plane = {a-alpha_trim}")
+print("")
+print("")
+
+
 
 cl = CLofLAND(0)[0]
 a = 0
