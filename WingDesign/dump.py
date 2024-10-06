@@ -5,6 +5,7 @@ import planform
 #import HLDs
 import stallConditions
 import rollRate
+import CruiseConditions
 
 with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict = json.loads(''.join(mainJson.readlines()))
@@ -22,12 +23,14 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict["Ct"] = planform.CList[1]
     #jsonDict["bEndHLD"] = HLDs.y
     jsonDict["CLmaxClean"] = stallConditions.maxCL(2.0, '64a210')
+    jsonDict["alphaStall"] = stallConditions.stallAlpha('64a210',-1.66,1.75)
     #jsonDict["CLmaxTO"] = stallConditions.maxCL(1.5, '64a210')[1]
     #jsonDict["CLmaxLand"] = stallConditions.maxCL(1.5, '64a210')[2]
-    jsonDict["rollRate"] = rollRate.rollRate(7, 15, 0.25, 80, 10, 0.75)
+    jsonDict["rollRate"] = rollRate.rollRate(26.5, 30.9, 0.3, 80, 10, 0.75)
     jsonDict["CLDesign"] = 0.73
     jsonDict["UltimateCL"] = 2.5
-
+    jsonDict["Mdd"] = CruiseConditions.M_dd(1,planform.SweepList[1])
 
 with open(os.getcwd()+"/Protocols/main.json", 'w') as mainJson:
     mainJson.write(json.dumps(jsonDict))
+print(CruiseConditions.M_dd(1,planform.SweepList[1]))

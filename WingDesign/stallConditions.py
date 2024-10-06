@@ -85,7 +85,7 @@ def stallAlpha(airfoil, alphaZero, clmax2d, mach = 0.0):
     elif sharpness >= 3.5:
         deltaAlphaCL = (-1*10**-5)*LEsweep**3 + 0.0018*LEsweep**2 -0.0399*LEsweep + 2.2095
     
-    clmax = maxCL(airfoil, LEsweep, clmax2d, mach)
+    clmax = maxCL(clmax2d,"64a210")
 
     #DATCOM formula
     beta =(1- mach*mach)**0.5

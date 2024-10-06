@@ -31,10 +31,12 @@ def MAC(LambdaLE, LambdaTE, b, CRoot, CTip):
 #print(LambdaHalf * (180/pi))
 def SweepEst(MCruise): #estimate of quarter chord sweep angle based on ADSEE reader
     SweepEst = acos((1.16)/(MCruise + 0.5))
+    SweepEst = 0.64748009991856273#0.49748009991856273
     return SweepEst
 
 def TaperRatioEst(LambdaQuarter):
-    TaperRatio = -0.0083* (LambdaQuarter * 180 / pi) + 0.4597
+    #TaperRatio = -0.0083* (LambdaQuarter * 180 / pi) + 0.4597
+    TaperRatio = 0.4072#0.457221
     return TaperRatio
 
 def WingSpan(AspectRatio, S):
