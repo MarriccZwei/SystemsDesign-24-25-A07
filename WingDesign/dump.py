@@ -2,7 +2,7 @@ import json
 import os
 import numpy as np
 import planform
-#import HLDs
+import HLDs
 import stallConditions
 import rollRate
 
