@@ -27,6 +27,7 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict["rollRate"] = rollRate.rollRate(7, 15, 0.25, 80, 10, 0.75)
     jsonDict["CLDesign"] = 0.73
     jsonDict["UltimateCL"] = 2.5
+    jsonDict["AlphaStall"] = stallConditions.stallAlpha('64a210', -1.66, 1.75)
 
 
 with open(os.getcwd()+"/Protocols/main.json", 'w') as mainJson:
