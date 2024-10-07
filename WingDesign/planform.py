@@ -1,14 +1,15 @@
 import PlanformEstimate as PE
 import json
 import os
-from math import pi
+from math import pi, exp
 with open(os.getcwd()+"/Protocols/main.json") as jsonMain:
     dataDict = json.loads(jsonMain.readline())
 S = dataDict["S"]
 M = 0.82
-AR = dataDict["AR"]
+#AR = dataDict["AR"]
 QuarterSweep = PE.SweepEst(M)
-TaperRatio = PE.TaperRatioEst(QuarterSweep)
+TaperRatio = dataDict["tr"]
+AR = 17.7*(2-TaperRatio)*exp(-0.043*180/pi*QuarterSweep)
 b = PE.WingSpan(AR, S)
 
 CList = PE.RootAndTipChord(S, TaperRatio, b)

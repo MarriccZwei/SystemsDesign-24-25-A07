@@ -31,4 +31,4 @@ def rollRate(b1, b2, chordRatio, speed, deflection = 10, diffRatio = 0.75):
     rate = -1 * Clda/Clp * deflection * 2 * moment / span
     print("Roll rate:", rate*57.3)
     return rate
-rollRate(26.493285,33,0.3,75, deflection=25)
+rollRate(26,34,0.3,75, deflection=25)

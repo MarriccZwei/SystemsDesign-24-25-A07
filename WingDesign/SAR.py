@@ -22,9 +22,9 @@ V_cruise = M_CR*(ISA.temperature(np.round(H_CR))*287*1.4)**0.5
 '''Drag estimate'''
 #0.73 to be changed later to design cl!!!
 Cdmisc = 0.002/(1+2.5*(cc.M_dd(CLdes, sweepLE, tc=0.1)-M_CR)/0.05)
-betterOswald = 4.61*(1-0.045*AR**0.68)*(np.cos(sweepLE)**0.15)-3.1
-C_D = Cd_0 + CLdes*CLdes/np.pi/AR/oswald + Cdmisc
-D = C_D/CLdes*1.1*MTOM
+betterOswald = 1/(0.0075*AR*np.pi+1/.97)
+C_D = Cd_0 + CLdes*CLdes/np.pi/AR/betterOswald + Cdmisc
+D = C_D/CLdes*MTOM*9.81
 
 SAR = V_cruise/D/TSFC
 

@@ -20,7 +20,7 @@ clMAX = 1.6
 kruger = True
 single = True
 
-yMaxTE = 26.2
+yMaxTE = 25.7
 yMaxLE = 33
 
 takeoffFactor = 0.6

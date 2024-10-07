@@ -30,6 +30,7 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict["CLDesign"] = CLdesign.cL
     jsonDict["UltimateCL"] = 2.5
     jsonDict["Incidence"] = CruiseConditions.alphaTrim(-1.25)
+    jsonDict["AR"] = planform.AR
 
 
 with open(os.getcwd()+"/Protocols/main.json", 'w') as mainJson:
