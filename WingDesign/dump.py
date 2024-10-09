@@ -2,9 +2,11 @@ import json
 import os
 import numpy as np
 import planform
-#import HLDs
+import HLDs
 import stallConditions
 import rollRate
+import CLdesign
+import CruiseConditions
 
 with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict = json.loads(''.join(mainJson.readlines()))
@@ -21,13 +23,14 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict["Cr"] = planform.CList[0]
     jsonDict["Ct"] = planform.CList[1]
     #jsonDict["bEndHLD"] = HLDs.y
-    jsonDict["CLmaxClean"] = stallConditions.maxCL(2.0, '64a210')
-    jsonDict["alphaStall"] = stallConditions.stallAlpha('64a210',-1.66,1.75)
+    jsonDict["CLmaxClean"] = stallConditions.maxCL(1.69, '64a210')
     #jsonDict["CLmaxTO"] = stallConditions.maxCL(1.5, '64a210')[1]
     #jsonDict["CLmaxLand"] = stallConditions.maxCL(1.5, '64a210')[2]
     jsonDict["rollRate"] = rollRate.rollRate(7, 15, 0.25, 80, 10, 0.75)
-    jsonDict["CLDesign"] = 0.73
+    jsonDict["CLDesign"] = CLdesign.cL
     jsonDict["UltimateCL"] = 2.5
+    jsonDict["Incidence"] = CruiseConditions.alphaTrim(-1.25)
+    jsonDict["AR"] = planform.AR
 
 
 with open(os.getcwd()+"/Protocols/main.json", 'w') as mainJson:
