@@ -1,5 +1,6 @@
-from General import Constants as c
 from math import sqrt
+import General.Constants as c
+
 
 def clDesign(wingLoading, weightFuel, wingArea):
     rho = c.CRUISEDENSITY

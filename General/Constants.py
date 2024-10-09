@@ -1,3 +1,7 @@
+# import sys
+# import os
+# sys.path.insert(1, os.getcwd())
+
 import ISA
 
 CRUISEALTITUDE = 11887.2

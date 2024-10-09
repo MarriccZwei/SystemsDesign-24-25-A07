@@ -65,7 +65,7 @@ def pressure_meso2(height):
     return gradient_pressure(pP, gradientCoeff, tP, T), T
 
 def main_calc(height):
-    inp = height
+    inp = round(height)
     match inp:
         case inp if inp in range(0,11000): out = pressure_tropoS(inp)
         case inp if inp in range(11001, 20000): out = pressure_tropoP(inp)
