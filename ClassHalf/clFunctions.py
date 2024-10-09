@@ -1,8 +1,9 @@
-# ONLY FOR TESTING
-# import sys
-# import os
-# sys.path.insert(1, os.getcwd())
-# ONLY FOR TESTING
+if __name__ == "__main__":
+    # ONLY FOR TESTING
+    import sys
+    import os
+    sys.path.insert(1, os.getcwd())
+    # ONLY FOR TESTING
 
 from math import sqrt
 from General import Constants as c
