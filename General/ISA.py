@@ -65,7 +65,7 @@ def pressure_meso2(height):
     return gradient_pressure(pP, gradientCoeff, tP, T), T
 
 def main_calc(height):
-    inp = height
+    inp = round(height)
     match inp:
         case inp if inp in range(0,11000): out = pressure_tropoS(inp)
         case inp if inp in range(11001, 20000): out = pressure_tropoP(inp)
@@ -87,6 +87,11 @@ def temperature(altitude):
 def density(altitude):
     data = main_calc(altitude)
     return (data[0])/(R_0*data[1])
+
+def speedOfSound(altitude):
+    temp = temperature(altitude)
+    speed = math.sqrt(1.4*R_0*temp)
+    return speed
 
 if __name__ == '__main__':
     print(pressure(1000))
