@@ -1,2 +1,2 @@
-from Constants import *
-from ISA import *
+from General.Constants import *
+from General.ISA import *
