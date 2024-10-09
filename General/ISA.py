@@ -88,6 +88,11 @@ def density(altitude):
     data = main_calc(altitude)
     return (data[0])/(R_0*data[1])
 
+def speedOfSound(altitude):
+    temp = temperature(altitude)
+    speed = math.sqrt(1.4*R_0*temp)
+    return speed
+
 if __name__ == '__main__':
     print(pressure(1000))
     print(temperature(1000))
