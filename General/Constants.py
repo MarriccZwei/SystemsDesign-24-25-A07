@@ -2,7 +2,7 @@
 # import os
 # sys.path.insert(1, os.getcwd())
 
-import ISA
+import General.ISA as ISA
 
 CRUISEALTITUDE = 11887.2
 CRUISEMACH = 0.82
