@@ -46,7 +46,7 @@ def maxCL(clmax2d, airfoil='63215', mach = 0.0):
         deltaCL = 0
     else:
         deltaCL = sharpness / 24 * 0.82
-
+    print(cl_cl, ":3")
     maxCLtrue = cl_cl * clmax2d + deltaCL
 
     # sweepTE = mainData["sweepTE"]

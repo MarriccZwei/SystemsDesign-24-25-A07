@@ -21,7 +21,7 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     jsonDict["Cr"] = planform.CList[0]
     jsonDict["Ct"] = planform.CList[1]
     #jsonDict["bEndHLD"] = HLDs.y
-    jsonDict["CLmaxClean"] = stallConditions.maxCL(2.0, '64a210')
+    jsonDict["CLmaxClean"] = stallConditions.maxCL(1.69, '64a210')
     jsonDict["alphaStall"] = stallConditions.stallAlpha('64a210',-1.66,1.75)
     #jsonDict["CLmaxTO"] = stallConditions.maxCL(1.5, '64a210')[1]
     #jsonDict["CLmaxLand"] = stallConditions.maxCL(1.5, '64a210')[2]
