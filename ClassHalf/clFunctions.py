@@ -1,5 +1,11 @@
+# ONLY FOR TESTING
+# import sys
+# import os
+# sys.path.insert(1, os.getcwd())
+# ONLY FOR TESTING
+
 from math import sqrt
-import General.Constants as c
+from General import Constants as c
 
 
 def clDesign(wingLoading, weightFuel, wingArea):

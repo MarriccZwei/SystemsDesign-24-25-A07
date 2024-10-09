@@ -1,2 +1,1 @@
-import General
-import CLassHalf
+import ClassHalf.clFunctions
