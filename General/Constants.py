@@ -1,6 +1,10 @@
-import General.ISA as ISA
+# import sys
+# import os
+# sys.path.insert(1, os.getcwd())
 
-CRUISEALTITUDE = 11887
+import ISA
+
+CRUISEALTITUDE = 11887.2
 CRUISEMACH = 0.82
 CRUISEVELOCITY = CRUISEMACH*ISA.speedOfSound(CRUISEALTITUDE)
 CRUISEDENSITY = ISA.density(CRUISEALTITUDE)
