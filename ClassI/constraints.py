@@ -1,5 +1,5 @@
+
 import numpy as np
-import acparams
 import thrustLapse
 import ISA
 import math
