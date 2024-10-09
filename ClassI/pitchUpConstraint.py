@@ -1,12 +1,16 @@
 from math import acos, degrees, radians, exp
 
-cruiseMach = 0.82 #TODO 
+testMach = 0.82 #TODO delete
 
-def sweep (mach):
+def sweep(mach):
     return degrees(acos(1.16/(mach+0.5)))
 
-def taper():
-    return 0.2*(2-radians(sweep(cruiseMach)))
+def taper(mach):
+    return 0.2*(2-radians(sweep(mach)))
 
-print(sweep(cruiseMach))
-print(taper())
+def aspect(mach):
+    return 17.7 * (2 - taper(mach)) * exp(-0.043 * sweep(mach))
+
+print(sweep(testMach))
+print(taper(testMach))
+print(aspect(testMach))
