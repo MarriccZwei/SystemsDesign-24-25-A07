@@ -1,5 +1,5 @@
 import numpy as np
-import acparams
+
 def Cd0_Oswald_flaps(flap_defl, normal_e, Cd0, lg_deflected):
     
      
@@ -18,7 +18,8 @@ def Cd0_Oswald_flaps(flap_defl, normal_e, Cd0, lg_deflected):
 
     return total_Cd0, total_e
 
-if __name__ == "__main__": #calculate V2
+
+def V2(): #calculate V2
     Cd0TO, eTO = Cd0_Oswald_flaps(5, acparams.OSWALD, acparams.CD_0, True)
     CLopt = np.sqrt(np.pi*acparams.ASPECT*eTO*Cd0TO)
     V2 = np.sqrt(8650*2/1.225/CLopt)

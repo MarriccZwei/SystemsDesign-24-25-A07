@@ -1,9 +1,8 @@
 
-
 import numpy as np
-import acparams
 import ISA
 import thrustLapse
+
 def ClimbRate(W_S):
     beta = acparams.BETA_CRUISE
     altitude = acparams.CRUISE_ALTITUDE
