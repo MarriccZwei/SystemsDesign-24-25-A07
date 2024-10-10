@@ -3,7 +3,7 @@ import json
 import os
 from math import pi, exp
 with open(os.getcwd()+"/Protocols/main.json") as jsonMain:
-    dataDict = json.loads(jsonMain.readline())
+    dataDict = json.loads(''.join(jsonMain.readlines()))
 S = dataDict["S"]
 M = 0.82
 #AR = dataDict["AR"]
