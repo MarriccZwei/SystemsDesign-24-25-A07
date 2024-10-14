@@ -7,6 +7,10 @@ if __name__ == "__main__":
 
 import unittest
 import numpy as np
+import scipy.integrate as integrate
+from General import Constants as c
+from General import generalFunctions as fun
+from ClassIV.clFunctions import maxCL
 
 import Planform
 
@@ -39,6 +43,7 @@ class HLDs():
         self.krugerStart = lambda span:self.krugerStartyPerbHalf*span/2
         self.krugerEnd = lambda span:self.krugerEndyPerbHalf*span/2
 
+
     '''Wing Surface Flapped by ailerons'''
     def aileronSflapped(self, planform:Planform.Planform):
         """!!!SYMMETRICAL PLANFORMS ONLY!!!"""
@@ -68,16 +73,70 @@ class HLDs():
     
     '''Sizing Movable Surfaces for an existing planform, given deflections and design constraints'''
     @classmethod
-    def autosize(cls, planform:Planform, aileronCfC = 0.3, flapCfC = 0.35, krugerCfC=0.15, aileronDefl=25, aileronDiff = 0.75, flapMaxDdefl=40):
+    def autosize(cls, planform:Planform.Planform, radiusFuselage, aileronCfC = 0.3, flapCfC = 0.35, krugerCfC=0.15, aileronDefl=25, aileronDiff = 0.75, flapMaxDdefl=40):
         '''working out the y/(b/2) fractions'''
-        #<!TOD!>
-        aileronStartyPerbHalf = 0
-        aileronEndyPerbHalf = 0
-        flapStartyPerbHalf = 0
-        flapEndyPerbHalf = 0
-        krugerStartyPerbHalf = 0
-        krugerEndyPerbHalf = 0
+        aileronFlapMargin = 0.3 #metres between
+        wingtipMargin = 0.1 #fraction
 
+        frontSparLoc = krugerCfC+0.05
+        backSparLoc = 1-0.05-flapCfC
+
+        #<!TOD!>
+        deltaAlpha = 0.5 * (1 + aileronDiff)*aileronDefl
+        
+        x = aileronCfC
+        if x<0.05:
+            tau = x*4
+        elif x<0.4:
+            tau = (x*4/3) + (2 * 0.2 / 3)
+        elif x<0.4:
+            tau = x - 0.2
+        elif x<0.7:
+            tau = (2 * x / 3) + (10 / 3)
+        
+        halfSpan = planform.b/2
+
+        integral2 = integrate.quad(lambda y: y**2*planform.chord_spanwise(y/halfSpan), 0, halfSpan)
+        pCL = -(4*(c.DCLALPHA+c.CD0))/(planform.S*planform.b**2)*integral2
+        
+        aileronStartyPerbHalf = 1-wingtipMargin
+
+        dAlphaDeltaCLC = (2*c.DCLALPHA*tau)/(planform.S*planform.b)
+
+        requiredIntegral1 = -(20*pCL)/(dAlphaDeltaCLC*deltaAlpha*((2*c.VMANUEVER)/planform.b))
+        
+        integral1 = 0
+        b1 = aileronStartyPerbHalf*halfSpan
+        b2 = aileronStartyPerbHalf*halfSpan
+        while integral1 < requiredIntegral1:
+            b1 = b1-0.1
+            integral1 = integrate.quad(lambda y: y*planform.chord_spanwise(y/halfSpan), b1, b2)
+
+        aileronEndyPerbHalf = b1/halfSpan
+
+        krugerEndyPerbHalf = 1-wingtipMargin
+        flapEndyPerbHalf = (b1-aileronFlapMargin)/halfSpan
+        deltaClKruger = 0.3
+        areaKruger = (fun.partialSurface(krugerEndyPerbHalf*halfSpan)-fun.partialSurface(radiusFuselage))*2
+        deltaCLKruger = 0.9*deltaClKruger*areaKruger/planform.S*np.cos(planform.sweep_at_c_fraction(frontSparLoc))
+        cleanCLMax = maxCL(c.CLMAXAIRFOIL, planform, c.LANDMACH)
+        deltaCLFlaps = c.ULTIMATECL-cleanCLMax-deltaCLKruger
+        
+        deltaCCf = 0.6
+        cPrimeC = 1 + deltaCCf*flapCfC
+        deltaClFlaps = 1.3*cPrimeC
+
+        areaFlaps = (deltaCLFlaps*planform.S)/(0.9*deltaClFlaps*np.cos(planform.sweep_at_c_fraction(backSparLoc)))
+        areaBegin = fun.partialSurface(flapEndyPerbHalf*halfSpan, planform)-0.5*areaFlaps
+        flapsBegin = flapEndyPerbHalf*halfSpan
+        area = 0
+        while area < areaBegin:
+            flapsBegin = flapsBegin-0.1
+            area = fun.partialSurface(flapsBegin, planform)
+
+        krugerStartyPerbHalf = radiusFuselage/halfSpan
+        flapStartyPerbHalf = flapsBegin/halfSpan
+        
         '''Returning the sized Movable Surfaces'''
         return cls(aileronStartyPerbHalf, aileronEndyPerbHalf, flapStartyPerbHalf, flapEndyPerbHalf, krugerStartyPerbHalf, krugerEndyPerbHalf, 
                    aileronCfC, flapCfC, krugerCfC, aileronDefl, aileronDiff, flapMaxDdefl)
@@ -91,11 +150,4 @@ if __name__ == "__main__":
             self.assertLess(359, testHLDs.flapSflapped(testPlanform))
             self.assertGreater(360, testHLDs.flapSflapped(testPlanform))
 
-        def test_autosize(self):
-            testPlanform = Planform.Planform(478.4, 9.873, 0.1, 28.5, 2.15, False)
-            testHLDsOrg = HLDs(26/(68.7/2), 34/(68.7/2), 2.95/(68.7/2), 25.7/(68.7/2), 5/(68.7/2), 34/(68.7/2))
-            testHLDs = HLDs.autosize(testPlanform)
-            print(f"Ailerons range: [{testHLDs.aileronStartyPerbHalf}, {testHLDs.aileronEndyPerbHalf}]")
-            print(f"Ailerons range: [{testHLDsOrg.aileronStartyPerbHalf}, {testHLDsOrg.aileronEndyPerbHalf}]")
-    
     unittest.main()

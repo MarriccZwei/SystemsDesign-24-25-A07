@@ -7,25 +7,29 @@ if __name__ == "__main__":
 
 from math import sqrt, pi, tan
 from General import Constants as c
+from OOP.Planform import Planform
 
 
-def clDesign(wingLoading, weightFuel, wingArea):
+def clDesign(wingLoading, weightFuel, planform: Planform):
     rho = c.CRUISEDENSITY
     vCruise = c.CRUISEVELOCITY
     q = 0.5*rho*vCruise**2
-    w = (wingLoading*wingArea)-weightFuel
-    averageLoading = 0.5*(2*(w/wingArea)+1.05*(weightFuel/wingArea))
+    w = (wingLoading*planform.S)-weightFuel
+    averageLoading = 0.5*(2*(w/planform.S)+1.05*(weightFuel/planform.S))
     cl = 1.1*averageLoading*(1/q)
     return cl
 
-def dCLdAlpha(AR, mach, sweepC4):
+def dCLdAlpha(mach, planform: Planform):
     beta = sqrt(1-mach**2)
+    AR = planform.AR
+    sweepC4 = planform.sweepC4
     sqrtPart = sqrt(4+(1+(tan(sweepC4)/beta)**2)*(AR*beta/0.95)**2)
     clAlpha = 2*pi*AR/(2+sqrtPart)
     return clAlpha
 
-def maxCL(clmax2d, airfoil='63215', mach = 0.0):
-    x = mainData["sweepLE"]*(180/pi)
+def maxCL(clmax2d, planform: Planform, mach = 0.0):
+    
+    x = planform.sweepLE
     tc = c.THICKNESSTOCHORD
     sharpness = 21.3*tc
 
@@ -54,7 +58,7 @@ def maxCL(clmax2d, airfoil='63215', mach = 0.0):
         deltaCL = 0
     else:
         deltaCL = sharpness / 24 * 0.82
-    print(cl_cl, ":3")
+
     maxCLtrue = cl_cl * clmax2d + deltaCL
 
     return maxCLtrue
