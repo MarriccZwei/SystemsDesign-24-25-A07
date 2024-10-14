@@ -42,3 +42,9 @@ DESIGNPAYLOAD = 27669#kg
 G = 9.81
 KT = 0.85#used for TO length matching diagram, assumed from reader
 CLFL = 0.45#constant given by CS25
+
+"""CG CONSTANTS"""
+# (x/c)oewcg
+oew_cg_wrt_mac = 0.25
+# (x/c)wcg
+w_cg_wrt_mac = 0.4
