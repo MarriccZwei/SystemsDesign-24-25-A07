@@ -91,4 +91,11 @@ if __name__ == "__main__":
             self.assertLess(359, testHLDs.flapSflapped(testPlanform))
             self.assertGreater(360, testHLDs.flapSflapped(testPlanform))
 
+        def test_autosize(self):
+            testPlanform = Planform.Planform(478.4, 9.873, 0.1, 28.5, 2.15, False)
+            testHLDsOrg = HLDs(26/(68.7/2), 34/(68.7/2), 2.95/(68.7/2), 25.7/(68.7/2), 5/(68.7/2), 34/(68.7/2))
+            testHLDs = HLDs.autosize(testPlanform)
+            print(f"Ailerons range: [{testHLDs.aileronStartyPerbHalf}, {testHLDs.aileronEndyPerbHalf}]")
+            print(f"Ailerons range: [{testHLDsOrg.aileronStartyPerbHalf}, {testHLDsOrg.aileronEndyPerbHalf}]")
+    
     unittest.main()
