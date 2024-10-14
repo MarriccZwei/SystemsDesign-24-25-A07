@@ -39,7 +39,6 @@ class HLDs():
         self.krugerStart = lambda span:self.krugerStartyPerbHalf*span/2
         self.krugerEnd = lambda span:self.krugerEndyPerbHalf*span/2
 
-
     '''Wing Surface Flapped by ailerons'''
     def aileronSflapped(self, planform:Planform.Planform):
         """!!!SYMMETRICAL PLANFORMS ONLY!!!"""

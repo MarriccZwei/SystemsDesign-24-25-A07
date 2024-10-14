@@ -1,11 +1,21 @@
+if __name__ == "__main__":
+    # ONLY FOR TESTING
+    import sys
+    import os
+    sys.path.insert(1, os.getcwd())
 from math import sqrt, pi, exp, log
 import matplotlib.pyplot as plt
 import numpy as np
+from General import Constants
+import pitchUpConstraint
+import json
+
+inputData = json.load(open("input.json"))
 
 #weights
-M_pl_max = 49442 #maximum payload
-M_pl_des = 27669
-Mf_oe = 0.473 #operational empty mass fraction (M_oe/M_mtow) avg of the similar aircraft
+M_pl_max = Constants.MAXPAYLOAD#maximum payload
+M_pl_des = Constants.DESIGNPAYLOAD
+Mf_oe = 0.473 #operational empty mass fraction (M_oe/M_mtow) avg of the similar aircraft TODO
 
 #variables used for C_d0 calculations, based on equation 6.15 from the adsee reader
 wet_wing_area = 6.2 #wetted area to wing area ratio found in the ADSEE book
@@ -15,18 +25,18 @@ C_f = 0.0026 #skin friction coeff found in the ADSEE book
 eff_span = 0.97 #span efficiency found in the ADSEE book
 D_par = 0.0075 #lift dependent parasite drag found in the ADSEE book
  
-AR = 9.28375 #aspect ratio using the average of the reference aircraft
+AR = pitchUpConstraint.aspect(Constants.CRUISEMACH) #aspect ratio using the average of the reference aircraft
 
-B = 9
+B = inputData["BYPASS"]
 TSFC = 22*B**-0.19
 e_spec = 43.5 *10**6 #specific energy for kerosene, value found in the ADSEE book
-g = 9.81 #gravitational acceleration constant
-h_cr = 11887.2 #cruise altitude [m]
-v_cr = 241.9 #cruise speed [m/s]
+g = Constants.G #gravitational acceleration constant
+h_cr = Constants.CRUISEALTITUDE #cruise altitude [m]
+v_cr = Constants.CRUISEVELOCITY #cruise speed [m/s]
 F_con = 0.05 #fraction of fuel used for contingency 
 R_div = 370000 #diversion range of aircraft
 t_e = 45 * 60 #loiter time
-R_nom = 13797000 #design mission range
+R_nom = Constants.DESIGNRANGE * 1000 #design mission range
 
 eff_eng = v_cr / (TSFC * e_spec)*10**6 #0.379 #engine efficiency based on equation 6.23 in the ADSEE book
 
