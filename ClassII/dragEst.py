@@ -1,3 +1,10 @@
+if __name__ == "__main__":
+    # ONLY FOR TESTING
+    import sys
+    import os
+    sys.path.insert(1, os.getcwd())
+    # ONLY FOR TESTING
+
 import numpy as np
 
 def Reynolds(rho, l, M, paint):

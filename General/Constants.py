@@ -22,6 +22,7 @@ CRUISEDENSITY = ISA.density(CRUISEALTITUDE)
 
 """LAND"""
 LANDMACH = VAPPROACH/ISA.speedOfSound(0)
+SLDENSITY = ISA.density(0)
 
 """DIVERT"""
 DIVERSIONRANGE = 370#km
@@ -40,6 +41,11 @@ TAKEOFFHLDDEPLOYMENT = 0.6
 KRUGERFLAPS = True
 SINGLESLOTFLAPS = True
 
+"""WEIGHT ESTIMATION"""
+NMAXNOMINAL = 2.5 #because we definitely are the big aircraft
+CRUISEUHAT = 37.5 #value read for the graph, subject to scrutiny
+LANDINUHAT = 65 #value read for the graph, subject to scrutiny
 
+G = 9.81 #to uniformize the assumed value
 
 

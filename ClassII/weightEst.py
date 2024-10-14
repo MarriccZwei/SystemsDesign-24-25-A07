@@ -1,3 +1,10 @@
+if __name__ == "__main__":
+    # ONLY FOR TESTING
+    import sys
+    import os
+    sys.path.insert(1, os.getcwd())
+    # ONLY FOR TESTING
+
 def wing_mass(): #the weight of the wing for a given ZFW formula from adsee formula sheet
     pass
 

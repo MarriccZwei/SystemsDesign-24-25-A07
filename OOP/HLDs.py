@@ -150,4 +150,16 @@ if __name__ == "__main__":
             self.assertLess(359, testHLDs.flapSflapped(testPlanform))
             self.assertGreater(360, testHLDs.flapSflapped(testPlanform))
 
+        def test_autosize(self):
+            testPlanform = Planform.Planform(478.4, 9.873, 0.1, 28.5, 2.15, False)
+            testHLDsOld = HLDs(26/(68.7/2), 34/(68.7/2), 2.95/(68.7/2), 25.7/(68.7/2), 5/(68.7/2), 34/(68.7/2))
+            testHLDsNew = HLDs.autosize(testPlanform, 2.95)
+            print(f"Old Aileron Spanwise loc: [{testHLDsOld.aileronStart(testPlanform.b)}, {testHLDsOld.aileronEnd(testPlanform.b)}]")
+            print(f"Old Flap Spanwise loc: [{testHLDsOld.flapStart(testPlanform.b)}, {testHLDsOld.flapEnd(testPlanform.b)}]")
+            print(f"Old Kruger Spanwise loc: [{testHLDsOld.krugerStart(testPlanform.b)}, {testHLDsOld.krugerEnd(testPlanform.b)}]")
+            print()
+            print(f"New Aileron Spanwise loc: [{testHLDsNew.aileronStart(testPlanform.b)}, {testHLDsNew.aileronEnd(testPlanform.b)}]")
+            print(f"New Flap Spanwise loc: [{testHLDsNew.flapStart(testPlanform.b)}, {testHLDsNew.flapEnd(testPlanform.b)}]")
+            print(f"New Kruger Spanwise loc: [{testHLDsNew.krugerStart(testPlanform.b)}, {testHLDsNew.krugerEnd(testPlanform.b)}]")
+
     unittest.main()
