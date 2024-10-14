@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 # Wing Group
 # Distances measured from LEMAC
+# all mass fractions
 def X_wcg(m_wing, m_prop, MAC, x_prop):
     sum_XM = m_wing*0.4*MAC + m_prop*x_prop
     sum_M = m_wing + m_prop
@@ -11,6 +12,7 @@ def X_wcg(m_wing, m_prop, MAC, x_prop):
 
 # Fuselage Group
 # Distances measured from nose tip
+# all mass fractions
 def X_fcg(m_fus,m_emp, m_fe, l_fus):
     sum_XM = m_fus*0.4*l_fus + m_emp*0.9*l_fus + m_fe*0.4*l_fus
     sum_M = m_fus + m_emp + m_fe
@@ -18,15 +20,15 @@ def X_fcg(m_fus,m_emp, m_fe, l_fus):
     return X_fcg
 
 
-def x_lemac(X_fcg, MAC, m_wing, m_prop, m_fus, m_emp, m_fe):
+def x_lemac(X_fcg, MAC, m_wing, m_prop, m_fus, m_emp, m_fe,oew_cg_wrt_mac,w_cg_wrt_mac):
     M_W = m_wing + m_prop 
-    x_lemac = X_fcg + MAC*( 0.4*((m_wing+m_prop)/(m_fus+m_emp+m_fe)) - 0.25*MAC*(1+((m_wing+m_prop)/(m_fus+m_emp+m_fe))))
+    x_lemac = X_fcg + MAC*( w_cg_wrt_mac*((m_wing+m_prop)/(m_fus+m_emp+m_fe)) - oew_cg_wrt_mac*MAC*(1+((m_wing+m_prop)/(m_fus+m_emp+m_fe))))
     return x_lemac
 
 # OE, P, F x_distances
-def xcg_fuel(lemac,MAC):
-    xcg_fuel = (2*lemac + MAC)/2
-    return xcg_fuel
+def xcg_f(lemac,MAC):
+    xcg_f = (2*lemac + MAC)/2
+    return xcg_f
 
 def xcg_oe(lemac,MAC):
     xcg_oe = lemac +0.2*MAC
