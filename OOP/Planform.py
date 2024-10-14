@@ -50,6 +50,13 @@ class Planform():
         else:
             return np.degrees(radianSweep)
 
+    '''Use this to check pitchup stability of the planform'''
+    def pitchup_stable(self) -> bool:
+        return self.AR < 17.7 * (2-self.TR) * np.exp(-0.043 * (self.sweepC4 * 180 / np.pi)) #imported code
+    
+    '''Use this to obtain chord at any spanwise location given as y/(b/2)'''
+    def chord_spanwise(self, yPerbHalf):
+        return self.cr-self.cr*(1-self.TR)*yPerbHalf
 
     def _MAC(self, LambdaLE, b, CRoot, CTip): #imported code
         TaperRatio = CTip/CRoot
@@ -78,5 +85,9 @@ if __name__ == "__main__":
             self.assertGreater(24.8, self.testPlanform.sweep_at_c_fraction(0.5, False))
             self.assertLess(24.7, self.testPlanform.sweep_at_c_fraction(0.5, False))
     
+        def test_pitchup(self):
+            unstablePf = Planform(1, 9.28, 0.233, 28.5, 0, False)
+            self.assertFalse(unstablePf.pitchup_stable())
+            self.assertTrue(self.testPlanform.pitchup_stable())
 
     unittest.main()
