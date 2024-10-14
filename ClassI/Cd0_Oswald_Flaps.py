@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 def Cd0_Oswald_flaps(flap_defl, normal_e, Cd0, lg_deflected):
     
