@@ -1,14 +1,29 @@
-import main
+if __name__ == "__main__":
+    # ONLY FOR TESTING
+    import sys
+    import os
+    sys.path.insert(1, os.getcwd())
 import json
-import acparams
-import weightEstimation
 import os
+
+from General import Constants
+import pitchUpConstraint
 
 #We will have to disconnect class I estimations later on
 
-with open(os.getcwd()+"/Protocols/main.json") as mainJson:
+with open(os.getcwd()+"/ClassI/output.json") as mainJson:
     jsonDict = json.loads(''.join(mainJson.readlines()))
 
+    star = pitchUpConstraint.sweepTaperAspect(Constants.CRUISEMACH)
+    jsonDict["sweep"] = star[0]
+    jsonDict["TR"] = star[1]
+    jsonDict["AR"] = star[2]
+
+    
+
+    print(jsonDict)
+
+"""
     #design point
     jsonDict["W/S"] = main.WSselected
     jsonDict["T/W"] = main.TWselected
@@ -31,10 +46,7 @@ with open(os.getcwd()+"/Protocols/main.json") as mainJson:
     #aerodynamic parameters (Class I)
     jsonDict["Oswald"] = weightEstimation.e
     jsonDict["Cf"] = weightEstimation.C_f
-    jsonDict["Cd0"] = weightEstimation.Cd_0
+    jsonDict["Cd0"] = weightEstimation.Cd_0"""
 
-
-    print(jsonDict)
-
-with open(os.getcwd()+"/Protocols/main.json", 'w') as mainJson:
+with open(os.getcwd()+"/ClassI/output.json", "w") as mainJson:
     mainJson.write(json.dumps(jsonDict))
