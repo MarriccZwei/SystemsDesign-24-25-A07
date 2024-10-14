@@ -38,5 +38,24 @@ def CabinLen(N_pax, N_sa):
     return l_cabin
 
 cross = CrossSection(M_pl)
-print(CrossSection(M_pl))
-print(CabinLen(cross[3], cross[4]))
+# print(CrossSection(M_pl))
+# print(CabinLen(cross[3], cross[4]))
+
+r_1inner = 2.387
+r_2inner = 2.314
+df_inner = r_1inner + r_2inner
+df_outer = 1.045* df_inner + 0.084
+t_wall = (df_outer - df_inner)/2
+
+w_fus = 2.387*2+2*t_wall
+h_fus = 5.2475 +2*t_wall
+d_fus = (w_fus+h_fus)/2
+
+l_n = 4
+l_t = 0.8 * d_fus #0.7 as value
+l_nc = 1.8 * d_fus #1.8 as value
+l_tc = 3.0 * d_fus #3.0 as value
+
+l_fus = CabinLen(cross[3], cross[4]) + l_n + l_t
+
+print(l_fus)
