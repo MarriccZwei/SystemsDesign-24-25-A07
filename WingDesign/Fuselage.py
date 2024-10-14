@@ -62,4 +62,7 @@ l_fus = l_cabin + l_n + l_t
 xcg_p = l_n + 0.5*l_cabin
 
 
-print(xcg_p)
+print(l_n)
+print(l_nc)
+print(l_t)
+print(l_tc)
