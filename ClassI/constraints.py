@@ -85,4 +85,4 @@ constraints.append(ClimbRate.ClimbRate)
 constraintNames.append("Rate of climb requirement")
 
 if __name__ == "__main__":
-    print(climb_gradient_general(np.linspace(0, 10000, 100), 2, 0, 1, 0.032, 3, True))
+    print(climb_gradient_general(np.linspace(0, 10000, 100), 2, 0, 1, 0.032, 3, True)) 
