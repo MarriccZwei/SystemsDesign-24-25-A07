@@ -22,6 +22,10 @@ class HLDs():
         self.aileronDiff = aileronDiff #aileron Deflection - Differential defl. down as a pfraction of defl. up
         self.flapMaxDdefl = flapMaxDdefl #flap Deflection [deg]
         
+        """spar locations"""
+        self.frontSparLoc = krugerCfC+0.05
+        self.backSparLoc = 1-0.05-flapCfC
+
         '''flapped chord ratios'''
         self.aileronCfC = aileronCfC
         self.flapcfC = flapCfC
