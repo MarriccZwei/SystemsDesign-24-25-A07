@@ -77,7 +77,7 @@ class HLDs():
         '''working out the y/(b/2) fractions'''
         aileronFlapMargin = 0.3 #metres between
         ailerongWingTipMargin = 0.1 #fraction
-        krugerWingTipMargin = 0.5
+        krugerWingTipMargin = 0.1 #fraction
 
         frontSparLoc = krugerCfC+0.05
         backSparLoc = 1-0.05-flapCfC
@@ -104,7 +104,7 @@ class HLDs():
 
         dAlphaDeltaCLC = (2*c.DCLALPHA*tau)/(planform.S*planform.b)
 
-        requiredIntegral1 = -(20*pCL)/(dAlphaDeltaCLC*deltaAlpha*((2*c.VMANUEVER)/planform.b))
+        requiredIntegral1 = -(20*pCL)/(dAlphaDeltaCLC*deltaAlpha*((2*c.VAPPROACH)/planform.b))
         
         integral1 = 0
         b1 = aileronEndyPerbHalf*halfSpan

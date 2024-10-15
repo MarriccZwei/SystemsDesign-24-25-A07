@@ -15,7 +15,7 @@ from OOP.Planform import Planform
 def alphaTrim(planform: Planform, wingloading, weightFuel):
     Cl0Alpha = c.ALPHAZEROLIFT
     designCL = clDesign(wingloading, weightFuel, planform)
-    alpha = designCL/(np.pi*dCLdAlpha(c.CRUISEMACH, planform) + Cl0Alpha)
+    alpha = designCL/(dCLdAlpha(c.CRUISEMACH, planform) + Cl0Alpha)
     return alpha
 
 
