@@ -12,9 +12,8 @@ CRUISEUHAT = 37.5 #value read for the graph, subject to scrutiny
 LANDINUHAT = 65 #value read for the graph, subject to scrutiny
 
 """GENERAL"""
-VSTALL = 75 #This is maybe a bit high for the stall speed
+VSTALL = 75 #This is maybe a bit high for the stall landing speed 
 VAPPROACH = 1.23*VSTALL
-VMANUEVER = VSTALL*NMAXNOMINAL**0.5
 ULTIMATECL = 2.5
 
 
