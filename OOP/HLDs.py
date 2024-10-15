@@ -76,7 +76,8 @@ class HLDs():
     def autosize(cls, planform:Planform.Planform, radiusFuselage, aileronCfC = 0.3, flapCfC = 0.35, krugerCfC=0.15, aileronDefl=25, aileronDiff = 0.75, flapMaxDdefl=40):
         '''working out the y/(b/2) fractions'''
         aileronFlapMargin = 0.3 #metres between
-        wingtipMargin = 0.1 #fraction
+        ailerongWingTipMargin = 0.1 #fraction
+        krugerWingTipMargin = 0.1
 
         frontSparLoc = krugerCfC+0.05
         backSparLoc = 1-0.05-flapCfC
@@ -99,7 +100,7 @@ class HLDs():
         integral2 = integrate.quad(lambda y: y**2*planform.chord_spanwise(y/halfSpan), 0, halfSpan)[0]
         pCL = -(4*(c.DCLALPHA+c.CD0))/(planform.S*planform.b**2)*integral2
         
-        aileronEndyPerbHalf = 1-wingtipMargin
+        aileronEndyPerbHalf = 1-ailerongWingTipMargin
 
         dAlphaDeltaCLC = (2*c.DCLALPHA*tau)/(planform.S*planform.b)
 
@@ -114,7 +115,7 @@ class HLDs():
 
         aileronStartyPerbHalf = b1/halfSpan
 
-        krugerEndyPerbHalf = 1-wingtipMargin
+        krugerEndyPerbHalf = 1-krugerWingTipMargin
         flapEndyPerbHalf = (b1-aileronFlapMargin)/halfSpan
         flapStartyPerbHalf = radiusFuselage/halfSpan
 
