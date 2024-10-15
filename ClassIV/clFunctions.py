@@ -65,5 +65,3 @@ def maxCL(clmax2d, planform: Planform, mach = 0.0):
 
     return maxCLtrue
 
-#def CLClean(planform: Planform, hld: HLDs, alpha, mach, max=False):
-    #dCda = dCLdAlpha(mach, planform)

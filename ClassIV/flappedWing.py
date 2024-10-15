@@ -19,5 +19,6 @@ def CLClean(planform: Planform, alpha, mach, onlymax=False):
         return cL
 
 
-def CLLand(planform: Planform, hld: HLDs, alpha, mach, onlymax=False):
-    dCLdALPHACLEAN = dCLdAlpha()
+def CLLand(planform: Planform, hld: HLDs, alpha, onlymax=False):
+    dCLdALPHACLEAN = dCLdAlpha(c.LANDMACH, planform)
+    sPrimeS = 1+(hld.flapSflapped(planform)/planform.S)
