@@ -77,7 +77,7 @@ class HLDs():
         '''working out the y/(b/2) fractions'''
         aileronFlapMargin = 0.3 #metres between
         ailerongWingTipMargin = 0.1 #fraction
-        krugerWingTipMargin = 0.1
+        krugerWingTipMargin = 0.5
 
         frontSparLoc = krugerCfC+0.05
         backSparLoc = 1-0.05-flapCfC
