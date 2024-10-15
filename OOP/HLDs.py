@@ -96,7 +96,7 @@ class HLDs():
         
         halfSpan = planform.b/2
 
-        integral2 = integrate.quad(lambda y: y**2*planform.chord_spanwise(y/halfSpan), 0, halfSpan)
+        integral2 = integrate.quad(lambda y: y**2*planform.chord_spanwise(y/halfSpan), 0, halfSpan)[0]
         pCL = -(4*(c.DCLALPHA+c.CD0))/(planform.S*planform.b**2)*integral2
         
         aileronStartyPerbHalf = 1-wingtipMargin
@@ -110,14 +110,14 @@ class HLDs():
         b2 = aileronStartyPerbHalf*halfSpan
         while integral1 < requiredIntegral1:
             b1 = b1-0.1
-            integral1 = integrate.quad(lambda y: y*planform.chord_spanwise(y/halfSpan), b1, b2)
+            integral1 = integrate.quad(lambda y: y*planform.chord_spanwise(y/halfSpan), b1, b2)[0]
 
         aileronEndyPerbHalf = b1/halfSpan
 
         krugerEndyPerbHalf = 1-wingtipMargin
         flapEndyPerbHalf = (b1-aileronFlapMargin)/halfSpan
         deltaClKruger = 0.3
-        areaKruger = (fun.partialSurface(krugerEndyPerbHalf*halfSpan)-fun.partialSurface(radiusFuselage))*2
+        areaKruger = (fun.partialSurface(krugerEndyPerbHalf*halfSpan, planform)-fun.partialSurface(radiusFuselage, planform))*2
         deltaCLKruger = 0.9*deltaClKruger*areaKruger/planform.S*np.cos(planform.sweep_at_c_fraction(frontSparLoc))
         cleanCLMax = maxCL(c.CLMAXAIRFOIL, planform, c.LANDMACH)
         deltaCLFlaps = c.ULTIMATECL-cleanCLMax-deltaCLKruger
@@ -128,10 +128,10 @@ class HLDs():
 
         areaFlaps = (deltaCLFlaps*planform.S)/(0.9*deltaClFlaps*np.cos(planform.sweep_at_c_fraction(backSparLoc)))
         areaBegin = fun.partialSurface(flapEndyPerbHalf*halfSpan, planform)-0.5*areaFlaps
-        flapsBegin = flapEndyPerbHalf*halfSpan
+        flapsBegin = 0
         area = 0
         while area < areaBegin:
-            flapsBegin = flapsBegin-0.1
+            flapsBegin = flapsBegin+0.1
             area = fun.partialSurface(flapsBegin, planform)
 
         krugerStartyPerbHalf = radiusFuselage/halfSpan
