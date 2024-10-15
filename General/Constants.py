@@ -3,11 +3,18 @@
 # sys.path.insert(1, os.getcwd())
 from General import ISA
 
+"""NATURAL CONSTANTS"""
+G = 9.81 #to uniformize the assumed value
+
+"""WEIGHT ESTIMATION"""
+NMAXNOMINAL = 2.5 #because we definitely are the big aircraft
+CRUISEUHAT = 37.5 #value read for the graph, subject to scrutiny
+LANDINUHAT = 65 #value read for the graph, subject to scrutiny
+
 """GENERAL"""
-VSTALL = 75
+VSTALL = 75 #This is maybe a bit high for the stall speed
 VAPPROACH = 1.23*VSTALL
-NLIMIT = 2.5
-VMANUEVER = VSTALL*NLIMIT**0.5
+VMANUEVER = VSTALL*NMAXNOMINAL**0.5
 ULTIMATECL = 2.5
 
 
@@ -31,21 +38,14 @@ CONTINGENCYFUELFRACTION = 0.05
 
 """AIRFOIL"""
 CLMAXAIRFOIL = 1.6
-ALPHAZEROLIFT = -1.66
+ALPHAZEROLIFT = -1.66 #DEGREE
 THICKNESSTOCHORD = 0.1
 CD0 = 0.009
 DCLALPHA = 0.111 #PER DEGREE
 
 """HIGH LIFT DEVICES"""
 TAKEOFFHLDDEPLOYMENT = 0.6
-KRUGERFLAPS = True
-SINGLESLOTFLAPS = True
 
-"""WEIGHT ESTIMATION"""
-NMAXNOMINAL = 2.5 #because we definitely are the big aircraft
-CRUISEUHAT = 37.5 #value read for the graph, subject to scrutiny
-LANDINUHAT = 65 #value read for the graph, subject to scrutiny
 
-G = 9.81 #to uniformize the assumed value
 
 

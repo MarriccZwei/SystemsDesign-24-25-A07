@@ -99,43 +99,47 @@ class HLDs():
         integral2 = integrate.quad(lambda y: y**2*planform.chord_spanwise(y/halfSpan), 0, halfSpan)[0]
         pCL = -(4*(c.DCLALPHA+c.CD0))/(planform.S*planform.b**2)*integral2
         
-        aileronStartyPerbHalf = 1-wingtipMargin
+        aileronEndyPerbHalf = 1-wingtipMargin
 
         dAlphaDeltaCLC = (2*c.DCLALPHA*tau)/(planform.S*planform.b)
 
         requiredIntegral1 = -(20*pCL)/(dAlphaDeltaCLC*deltaAlpha*((2*c.VMANUEVER)/planform.b))
         
         integral1 = 0
-        b1 = aileronStartyPerbHalf*halfSpan
-        b2 = aileronStartyPerbHalf*halfSpan
+        b1 = aileronEndyPerbHalf*halfSpan
+        b2 = aileronEndyPerbHalf*halfSpan
         while integral1 < requiredIntegral1:
             b1 = b1-0.1
             integral1 = integrate.quad(lambda y: y*planform.chord_spanwise(y/halfSpan), b1, b2)[0]
 
-        aileronEndyPerbHalf = b1/halfSpan
+        aileronStartyPerbHalf = b1/halfSpan
 
         krugerEndyPerbHalf = 1-wingtipMargin
         flapEndyPerbHalf = (b1-aileronFlapMargin)/halfSpan
-        deltaClKruger = 0.3
-        areaKruger = (fun.partialSurface(krugerEndyPerbHalf*halfSpan, planform)-fun.partialSurface(radiusFuselage, planform))*2
-        deltaCLKruger = 0.9*deltaClKruger*areaKruger/planform.S*np.cos(planform.sweep_at_c_fraction(frontSparLoc))
-        cleanCLMax = maxCL(c.CLMAXAIRFOIL, planform, c.LANDMACH)
-        deltaCLFlaps = c.ULTIMATECL-cleanCLMax-deltaCLKruger
-        
+        flapStartyPerbHalf = radiusFuselage/halfSpan
+
         deltaCCf = 0.6
         cPrimeC = 1 + deltaCCf*flapCfC
         deltaClFlaps = 1.3*cPrimeC
 
-        areaFlaps = (deltaCLFlaps*planform.S)/(0.9*deltaClFlaps*np.cos(planform.sweep_at_c_fraction(backSparLoc)))
-        areaBegin = fun.partialSurface(flapEndyPerbHalf*halfSpan, planform)-0.5*areaFlaps
-        flapsBegin = 0
+        areaFlaps = (fun.partialSurface(flapEndyPerbHalf*halfSpan, planform)-fun.partialSurface(radiusFuselage, planform))*2
+        deltaCLFlaps = 0.9*deltaClFlaps*areaFlaps/planform.S*np.cos(planform.sweep_at_c_fraction(backSparLoc))
+
+        deltaClKruger = 0.3
+        cleanCLMax = maxCL(c.CLMAXAIRFOIL, planform, c.LANDMACH)
+        print(cleanCLMax)
+        deltaCLKruger = c.ULTIMATECL-cleanCLMax-deltaCLFlaps
+
+        areaKruger = (deltaCLKruger*planform.S)/(0.9*deltaClKruger*np.cos(planform.sweep_at_c_fraction(frontSparLoc)))
+        areaBegin = fun.partialSurface(krugerEndyPerbHalf*halfSpan, planform)-0.5*areaKruger
+        krugerBegin = 0
         area = 0
         while area < areaBegin:
-            flapsBegin = flapsBegin+0.1
-            area = fun.partialSurface(flapsBegin, planform)
+            krugerBegin = krugerBegin+0.1
+            area = fun.partialSurface(krugerBegin, planform)
 
-        krugerStartyPerbHalf = radiusFuselage/halfSpan
-        flapStartyPerbHalf = flapsBegin/halfSpan
+        flapStartyPerbHalf = radiusFuselage/halfSpan
+        krugerStartyPerbHalf = krugerBegin/halfSpan
         
         '''Returning the sized Movable Surfaces'''
         return cls(aileronStartyPerbHalf, aileronEndyPerbHalf, flapStartyPerbHalf, flapEndyPerbHalf, krugerStartyPerbHalf, krugerEndyPerbHalf, 
