@@ -24,6 +24,7 @@ def wing_mass(planform:pf.Planform, Mdes, nult, tc, movableArea): #from Raymer
     returnlb = 0.0051*weightTerm*wingSurfaceTerm*wingChordTerm*sweepTerm 
     return 0.4536*returnlb #the returned value in kg
 
+
 def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mdes, nult): #the fuselage mass
     # Convertions
     Mdeslb = Mdes/0.4536 #to pounds-mass
@@ -37,9 +38,11 @@ def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mdes, nult): #the fuse
 
     # Calculate some terms in order to simplify the big equation
     weightTerm = (Mdeslb*nult)**0.5
-    k_w_s = 0.75 * (1+2*planform.TR)/(1+planform.TR) * (planform.b * np.tan(planform.sweepC4/L_fuselage))
-
-    pass
+    k_w_s = 0.75 * (1+2*planform.TR)/(1+planform.TR) * (planform.b * np.tan(planform.sweepC4/L_ft))
+    K = 0.3280 * K_door * K_lg  # This is the constant in the big equation
+    
+    returnlb = K * weightTerm * L_ft**0.25 * S_f**0.302 * (1+k_w_s)**0.04 * (L_ft/D_ft)**0.10  # Formula rom Raymer
+    return 0.4536*returnlb # Returns fuselage mass in kg
 
 def tail_mass():
     pass
