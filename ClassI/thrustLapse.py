@@ -1,10 +1,8 @@
-BYPASS = 8
-
 import ISA
 import math
 import numpy as np
 
-def thrustLapse(altitude, mach):
+def thrustLapse(altitude, mach, BYPASS):
     GAMMA = 1.4
     SLpressure = 101325
     SLtemp = 288.15
