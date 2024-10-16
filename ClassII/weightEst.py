@@ -44,8 +44,28 @@ def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mdes, nult): #the fuse
     returnlb = K * weightTerm * L_ft**0.25 * S_f**0.302 * (1+k_w_s)**0.04 * (L_ft/D_ft)**0.10  # Formula rom Raymer
     return 0.4536*returnlb # Returns fuselage mass in kg
 
-def tail_mass():
-    pass
+# TODO do the vertical tail mass and add both as the output, dont forget to change units
+def tail_mass(Mdes, nult, planform:pf.Planform):
+    Mdeslb = Mdes/0.4536 #to pounds-mass
+    K_uht = const.KUHT
+    F_w_ft = const.FW /0.3048
+    S_ht_ft = const.SVTAIL / (0.3048)**2
+    L_t_ft = const.LT / 0.3048
+    K_y = 0.3 * L_t_ft
+    sweep_ht = const.SWEEPHT
+    S_e_ft = const.SE / (0.3048)**2
+    S_ht_ft = const.SHTAIL / (0.3048)**2
+    b_h = const.BH
+    A_h = const.ARHTAIL
+    t_to_c_root = const.THICKNESSTOCHORD
+
+    factor1 = (1+F_w_ft/b_h)**(-0.25)
+    factor2 = K_y**0.704 * np.cos(sweep_ht)**(-1.)
+    factor3 = (1+S_e_ft/S_ht_ft)**0.1
+
+    mass_horizontal_lb = 0.0379 * K_uht * factor1 * Mdeslb**0.639 * nult * S_ht_ft**0.75 * L_t_ft**(-1.) * factor2 * A_h**0.166 * factor3 
+    mass_horizontal_kg = 0.4536*mass_horizontal_lb
+    return mass_horizontal_kg 
 
 '''Landing Gear mass Estimation'''
 def lg_mass(MTOM):

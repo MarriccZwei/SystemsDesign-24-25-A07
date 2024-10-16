@@ -1,9 +1,6 @@
 import numpy as np
-import os
 
 def Cd0_Oswald_flaps(flap_defl, normal_e, Cd0, lg_deflected):
-    
-     
     change_e = 0.0026 * flap_defl # Formula for change in efficiency with flaps
     change_Cd0_flaps = 0.0013 * flap_defl # Formula for change in Cd0 with flaps
     change_Cd0_lg = 0.025  # Worst case scenario
@@ -25,5 +22,3 @@ def V2(oswald, CD_0, AR): #calculate V2
     CLopt = np.sqrt(np.pi*AR*eTO*Cd0TO)
     V2 = np.sqrt(8650*2/1.225/CLopt)
     print(V2)
-
-
