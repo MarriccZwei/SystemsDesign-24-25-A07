@@ -47,5 +47,6 @@ def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mdes, nult): #the fuse
 def tail_mass():
     pass
 
-def lg_mass():
-    pass
+'''Landing Gear mass Estimation'''
+def lg_mass(MTOM):
+    MTOMlb = MTOM/0.4536
