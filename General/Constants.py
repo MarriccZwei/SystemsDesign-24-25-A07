@@ -12,10 +12,10 @@ CRUISEUHAT = 37.5*0.3048 #value read for the graph, subject to scrutiny #convert
 LANDINUHAT = 65*0.3048 #value read for the graph, subject to scrutiny #converted from ft
 
 """GENERAL"""
-VSTALL = 75 #This is maybe a bit high for the stall speed
+VSTALL = 75 #This is maybe a bit high for the stall landing speed 
 VAPPROACH = 1.23*VSTALL
-VMANUEVER = VSTALL*NMAXNOMINAL**0.5
 ULTIMATECL = 2.5
+
 
 
 """TAKEOFF"""
@@ -45,6 +45,12 @@ DCLALPHA = 0.111 #PER DEGREE
 
 """HIGH LIFT DEVICES"""
 TAKEOFFHLDDEPLOYMENT = 0.6
+DELTACCFLAND = 0.6
+DELTACCFTAKEOFF = 0.48
+FLAPFACTOR = 1.3
+KRUGERDELTACL = 0.3
+DELTAALPHA0LLANDING = -15
+DELTAALPHA0LTAKEOFF = -10
 
 
 
