@@ -17,6 +17,8 @@ FERRYRANGE = 15811
 NMAXNOMINAL = 2.5 #because we definitely are the big aircraft
 CRUISEUHAT = 37.5*0.3048 #value read for the graph, subject to scrutiny #converted from ft
 LANDINUHAT = 65*0.3048 #value read for the graph, subject to scrutiny #converted from ft
+KDOOR = 1.12  # Constant for amount of cargo doors, check Raymer weight estimation
+KLG = 1.  # Constant depending on Landing gear attachement, if it i fuselage mounted the constant equals 1.12, otherwise = 1.0
 
 """GENERAL"""
 VSTALL = 75 #This is maybe a bit high for the stall landing speed 
