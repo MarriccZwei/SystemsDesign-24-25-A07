@@ -8,8 +8,8 @@ G = 9.81 #to uniformize the assumed value
 
 """WEIGHT ESTIMATION"""
 NMAXNOMINAL = 2.5 #because we definitely are the big aircraft
-CRUISEUHAT = 37.5 #value read for the graph, subject to scrutiny
-LANDINUHAT = 65 #value read for the graph, subject to scrutiny
+CRUISEUHAT = 37.5*0.3048 #value read for the graph, subject to scrutiny #converted from ft
+LANDINUHAT = 65*0.3048 #value read for the graph, subject to scrutiny #converted from ft
 
 """GENERAL"""
 VSTALL = 75 #This is maybe a bit high for the stall speed
