@@ -40,6 +40,9 @@ class Planform():
         '''MAC PROPERTIES'''
         self.MAC, self.YMAC, self.XLEMAC = self._MAC(self.sweepLE, self.b, self.cr, self.ct)
 
+        '''OTHER'''
+        self.Sw = 2*1.07*S #wetted area of the planform
+
 
     """Use this to get sweep angles other than LE and C/4"""
     #xc is the x/c fraction at which you want the sweep, set radians to False if you want a degree output
