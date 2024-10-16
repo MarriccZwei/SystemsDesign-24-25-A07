@@ -6,7 +6,9 @@ if __name__ == "__main__":
     # ONLY FOR TESTING
 
 import OOP.Planform as pf
+import OOP.Fuselage as fus
 import numpy as np
+import General.Constants as const
 
 def wing_mass(planform:pf.Planform, Mdes, nult, tc, movableArea): #from Raymer
     Mdeslb = Mdes/0.4536 #to pounds-mass because the formula is in freedom units
@@ -22,7 +24,21 @@ def wing_mass(planform:pf.Planform, Mdes, nult, tc, movableArea): #from Raymer
     returnlb = 0.0051*weightTerm*wingSurfaceTerm*wingChordTerm*sweepTerm 
     return 0.4536*returnlb #the returned value in kg
 
-def fus_mass(): #the fuselage mass
+def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mdes, nult): #the fuselage mass
+    # Convertions
+    Mdeslb = Mdes/0.4536 #to pounds-mass
+    L_ft = fuselage.L / 0.3048  # meters to feet
+    D_ft = fuselage.D / 0.3048  # meters to feet
+
+    # Import constants from constants.py file
+    K_door = const.KDOOR
+    K_lg = const.KLG
+    S_f = planform.
+
+    # Calculate some terms in order to simplify the big equation
+    weightTerm = (Mdeslb*nult)**0.5
+    k_w_s = 0.75 * (1+2*planform.TR)/(1+planform.TR) * (planform.b * np.tan(planform.sweepC4/L_fuselage))
+
     pass
 
 def tail_mass():
