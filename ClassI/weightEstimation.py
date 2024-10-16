@@ -40,7 +40,7 @@ t_e = Constants.LOITERTIME * 60 #loiter time
 R_nom = Constants.DESIGNRANGE * 1000 #design mission range
 
 eff_eng = v_cr / (TSFC* e_spec) #0.379 #engine efficiency based on equation 6.23 in the ADSEE book
-print("FRAC:",TSFC* e_spec)
+#print("FRAC:",TSFC* e_spec)
 Cd_0 = inputData["CD0"] #zero lift drag calculation
 
 e = 1/(pi * AR * D_par + (1/eff_span)) #oswald factor
@@ -52,23 +52,32 @@ R_lost = (1/0.7) * L_D * (h_cr + (v_cr**2)/(2*g)) #lost range
 R_eq = ((R_nom + R_lost) * (1 + F_con) + 1.2 * R_div + v_cr * t_e)#equivalent range
 R_aux = R_eq - R_nom #auxilary range
 
-print("EffEng", eff_eng)
-print(e_spec)
-print("REQ:", R_eq)
-print((-R_eq / (eff_eng * (e_spec / g) * L_D)))
+a1 = R_eq
+a2 = eff_eng * e_spec * L_D / g
+print(a1, "   ", a2)
+
+print("Fraction: ", (-R_eq / (eff_eng * (e_spec / g) * L_D)))
+
+print("Req: ", R_eq)
+print("Eff-eng: ", eff_eng)
+print("Espec: ", e_spec)
+print("L/D: ", L_D)
+print("G: ", g)
 
 Mf_ec = 1 - exp(-R_eq / (eff_eng * (e_spec / g) * L_D)) #fuel mass fraction
-print(f"thsi si: {Mf_ec}")
-print(R_eq)
+
 
 M_mto = (M_pl_max)/(1 - Mf_ec - Mf_oe) #maximum take-off mass
 M_ec = Mf_ec * M_mto #fuel mass
+
+print("fuel and oew fractions:", Mf_ec, Mf_oe)
+
 M_oe = Mf_oe * M_mto #operating empty mass
 
 M_f = M_mto - M_oe - M_pl_max 
 
 
-print(Mf_oe, M_mto)
+print(M_oe, M_pl_max)
 
 R_ferry = eff_eng * L_D * (e_spec / g) * log((M_oe + M_ec)/(M_oe)) - R_aux  #ferry range
 R_harm = eff_eng * L_D * (e_spec / g) * log((M_oe + M_pl_max + M_f)/(M_oe + M_pl_max)) - R_aux #harmonic range
