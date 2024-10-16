@@ -16,5 +16,8 @@ def taper(mach):#from ADSEE I reader
 def aspect(mach):
     return 17.7 * (2 - taper(mach)) * exp(-0.043 * sweep(mach))
 
+def enforceAspectRatio(taper, sweep):
+    return 17.7 * (2 - taper) * exp(-0.043 * sweep)
+
 def sweepTaperAspect(mack):
     return sweep(mack),taper(mack),aspect(mack)
