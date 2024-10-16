@@ -43,5 +43,5 @@ def Rferry(MFoe, L_D, TSFC):
 def Rharm(MFoe, L_D, TSFC):
     return (engineEfficiency(TSFC) * L_D * (Constants.SPECIFICENERGY/ Constants.G) * log(Constants.MAXPAYLOAD + (Moe(MFoe, L_D, TSFC) + Mfuel(MFoe, L_D, TSFC))/(Moe(MFoe, L_D, TSFC))) - Raux(L_D))
 
-def oswald(AR, D_par, eff_span):
+def oswald(AR, D_par = 0.0075, eff_span = 0.97):
     return (1/(pi * AR * D_par + (1/eff_span)))
