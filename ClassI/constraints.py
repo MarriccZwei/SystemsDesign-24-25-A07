@@ -91,7 +91,7 @@ def prepare_Constraint_List(AR, oswald, CD_0, CLmaxLand):
     constraints.append(ClimbRate.ClimbRate)
     constraintNames.append("Rate of climb requirement")
 
-    return constraints
+    return constraints, constraintNames
 
 # if __name__ == "__main__":
 #     print(climb_gradient_general(np.linspace(0, 10000, 100), 2, 0, 1, 0.032, 3, True)) 
