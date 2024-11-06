@@ -80,7 +80,7 @@ class HLDs():
     def autosize(cls, planform:Planform.Planform, radiusFuselage, aileronCfC = 0.3, flapCfC = 0.35, krugerCfC=0.15, aileronDefl=25, aileronDiff = 0.75, flapMaxDdefl=40):
         '''working out the y/(b/2) fractions'''
         aileronFlapMargin = 0.3 #metres between
-        ailerongWingTipMargin = 0.1 #fraction
+        ailerongWingTipMargin = 0.1 #fraction 0.5 metres source ALBERT
         krugerWingTipMargin = 0.1 #fraction
 
         frontSparLoc = krugerCfC+0.05
