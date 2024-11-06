@@ -6,29 +6,21 @@ if __name__ == "__main__":
     # ONLY FOR TESTING
 
 import numpy as np
+import General.Constants as consts
 
-def Reynolds(rho, l, M, paint):
-    pass
+def Reynolds(rho, l, M):
+    k = 0.634*10**(-5) #smooth paint assumption
+    return min(rho*l*M*consts.CRUISESOUNDSPEED/consts.CRUISEVISCOSITY, 44.62*(l/k)**1.053*M)
 
-def Cf(M, Reynolds, laminarFraction):
-    pass
+def Cf(Reynolds, laminarFraction, M):
+    return laminarFraction*1.328/np.sqrt(Reynolds)+(1-laminarFraction)*.455/(np.log10(Reynolds))**2.58/(1+0.144*M**2)**0.65
 
 def FFfus(L, D): #add other parameters
-    pass
+    f = L/D
+    return 1+60/f**3+f/400
 
-def FFwing(tcmaxpos, tc, M): #use the sweep formula to calculate sweep_m
-    pass
-
-def SwFus(D, L1, L2, L3): #Wetted Surface Fuselage
-    term1 = (1 / (3 * L1**2))
-    term2 = ((4 * L1**2 + D**2 / 4)**1.5) - (D**3 / 8)
-    term3 = -D
-    term4 = 4 * L2
-    term5 = 2 * np.sqrt(L3**2 + D**2 / 4)
-    term6 = np.pi/4*D
-    return term6*(term1*term2+term3+term4+term5)
-
-SwWing = lambda S:2*1.07*S #Wetted Surface of any Wing Planform (can be a tail or pylon or wing)
+def FFwing(tcmaxpos, tc, M, sweepAtmaxT): #use the sweep formula to calculate sweep_m
+    return (1+.6/tcmaxpos*tc+100*tc**4)*(1.34*M**.18*np.cos(sweepAtmaxT)**.28)
 
 ARe = lambda AR: AR+0.04 #effective aspect ratio for square wing tips
 

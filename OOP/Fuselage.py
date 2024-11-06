@@ -21,6 +21,14 @@ class Fuselage():
     def L(self):
         return self.L1+self.L2+self.L3
     
+    def SwFus(self): #Wetted Surface Fuselage
+        term1 = (1 / (3 * self.L1**2))
+        term2 = ((4 * self.L1**2 + self.D**2 / 4)**1.5) - (self.D**3 / 8)
+        term3 = -self.D
+        term4 = 4 * self.L2
+        term5 = 2 * np.sqrt(self.L3**2 + self.D**2 / 4)
+        term6 = np.pi/4*self.D
+        return term6*(term1*term2+term3+term4+term5)
 
 if __name__ == "__main__":
     class TestFuselage(unittest.TestCase):
