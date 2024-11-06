@@ -45,19 +45,17 @@ def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mdes, nult): #the fuse
     return 0.4536*returnlb # Returns fuselage mass in kg
 
 # TODO do the vertical tail mass and add both as the output, dont forget to change units
-def tail_mass(Mdes, nult, planform:pf.Planform):
+def tail_mass(Mdes, nult, planform:pf.Planform, tailLength, elevatorArea):
     Mdeslb = Mdes/0.4536 #to pounds-mass
     K_uht = const.KUHT
     F_w_ft = const.FW /0.3048
-    S_ht_ft = const.SVTAIL / (0.3048)**2
-    L_t_ft = const.LT / 0.3048
+    S_ht_ft = planform.S / (0.3048)**2
+    L_t_ft = tailLength / 0.3048
     K_y = 0.3 * L_t_ft
-    sweep_ht = const.SWEEPHT
-    S_e_ft = const.SE / (0.3048)**2
-    S_ht_ft = const.SHTAIL / (0.3048)**2
-    b_h = const.BH
-    A_h = const.ARHTAIL
-    t_to_c_root = const.THICKNESSTOCHORD
+    sweep_ht = planform.sweepC4
+    S_e_ft = elevatorArea / (0.3048)**2
+    b_h = planform.b
+    A_h = planform.AR
 
     factor1 = (1+F_w_ft/b_h)**(-0.25)
     factor2 = K_y**0.704 * np.cos(sweep_ht)**(-1.)
@@ -67,6 +65,26 @@ def tail_mass(Mdes, nult, planform:pf.Planform):
     mass_horizontal_kg = 0.4536*mass_horizontal_lb
     return mass_horizontal_kg 
 
+def rudder_mass(Mdes, nult, planform:pf.Planform, tailLength, tcRudder): #make sure to use the asymmetric planform
+    Mdeslb = Mdes/0.4536 #to pounds-mass
+    S_vt_ft = planform.S / (0.3048)**2
+    L_t_ft = tailLength / 0.3048
+    K_z = L_t_ft
+    sweep_vt = planform.sweepC4
+    A_v = planform.AR
+
+    mass_vertical_lb = 0.0026*Mdeslb**0.556*nult**0.536*L_t_ft**(-.5)*S_vt_ft**0.5*K_z**0.875/np.cos(sweep_vt)*A_v**0.35*tcRudder**(-.5)
+    mass_vertical_kg = 0.4536*mass_vertical_lb
+    return mass_vertical_kg 
+
 '''Landing Gear mass Estimation'''
-def lg_mass(MTOM):
+#verify it's 2.5!
+def lg_mass(MTOM, landingMassFraction, mlgLength, nlgLength, mlgNwheels, nlgNwheels, 
+mlgStrokeStrutsN, Vstall, loadFactorTouchdown = 2.5): 
     MTOMlb = MTOM/0.4536
+    MLlb = MTOMlb*landingMassFraction
+    Nl = 1.5 * loadFactorTouchdown
+
+    WMLGlb = 0.0106*MLlb^0.888*Nl**(.25)*mlgLength**0.4*mlgNwheels**0.321*mlgStrokeStrutsN**(-.5)*Vstall**0.1
+    WNLGlb = 0.032*MLlb**0.646*Nl**(0.2)*nlgLength**0.5*nlgNwheels*0.45
+    return 0.4536*(WMLGlb+WNLGlb)
