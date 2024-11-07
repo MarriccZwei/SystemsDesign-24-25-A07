@@ -61,7 +61,8 @@ l_fus = l_cabin + l_n + l_t
 #value for emre <3
 xcg_p = l_n + 0.5*l_cabin
 
-
+print(l_cabin/ceil(cross[3] / cross[4]))
+print(ceil(cross[3] / cross[4]))
 print(l_n)
 print(l_nc)
 print(l_t)
