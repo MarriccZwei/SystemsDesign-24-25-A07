@@ -11,6 +11,9 @@ import OOP.Fuselage as fus
 import ClassI.pitchUpConstraint as puc
 import ClassI.weightEstimation as wEstI
 import ClassI.constraints as constr
+from ClassI import refAcData
+from ClassI import pointFinder
+from ClassI import maxFunctionFinder
 
 import ClassIV.clFunctions as clFuns
 
@@ -19,7 +22,7 @@ import ClassII.LoadFactor as loadF
 import ClassII.dragEst as dragEst
 
 '''obtaining Initial values from main.json'''
-with open(os.getcwd()+"/ClassI/output.json") as mainJson:
+with open(os.getcwd()+"\\Protocols\\main.json") as mainJson:
     jsonDict = json.loads(''.join(mainJson.readlines()))
 
     oswald = jsonDict["Oswald"]
@@ -46,11 +49,12 @@ for i in range(1): #later change to a while with a counter and convergence condi
     #Class I range and weight calculations
     Requivaleng = wEstI.Req(ld) #equivalent range
     Rauxiliary = wEstI.Raux(ld) #auxiliary range
-    Mfuel = wEstI.Mfuel(tsfc, ld) #fuel mass fraction
     MFoe = mOE/mMTO #operating empty weight mass fraction
+    Mfuel = wEstI.Mfuel(MFoe, ld, tsfc) #fuel mass
     mMTO = wEstI.mtom(MFoe, ld, tsfc) #first overwriting of mtom
     Rferry = wEstI.Rferry(MFoe, ld, tsfc) #ferry range
     Rharm = wEstI.Rferry(MFoe, ld, tsfc) #harmonic range
+    print(f"MTOM:{mMTO}")
 
 
     '''Matching Diagram. Figuring out a design point'''
@@ -69,6 +73,20 @@ for i in range(1): #later change to a while with a counter and convergence condi
         plt.fill_between(constraint(WSaxis)[0], constraint(WSaxis)[1], 0, alpha=shading)
         i=i+1
     plt.legend()
+
+    crossOverEvents = maxFunctionFinder.maxFunctionFinder(constraints)
+    for point in crossOverEvents:
+        print(point)
+        print(point[1], point[2], point[0]-100, point[0]+100)
+    #pointFinder.pointFinder(point[1], point[2], point[0]-100, point[0]+100)
+    WSselected, TWselected = pointFinder.pointFinder(constraints, crossOverEvents[-1][2], 0, crossOverEvents[-1][0]-100)
+
+    loadingPointsList = refAcData.generateLoadingPoints()
+    for i, point in enumerate(loadingPointsList):
+        plt.plot(point[0], point[1], 'r+')
+        plt.text(point[0] + 30, point[1] + 0.005, i+1) #Hard coded numbers are offset of labels.
+    plt.xlabel("Wing Loading, [N/m^2]")
+    plt.ylabel("Thrust-Weight Ratio, [-]")
     plt.show()
 
     '''Wing Planform Design'''

@@ -1,6 +1,6 @@
 import numpy as np
-import ISA
-import thrustLapse
+from General import ISA
+from ClassI import thrustLapse
 import General.Constants as consts
 
 #betaCruise is the cruise mass fraction

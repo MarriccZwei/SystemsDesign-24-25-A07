@@ -1,8 +1,9 @@
-import ISA
+from General import ISA
+from General import Constants as consts
 import math
 import numpy as np
 
-def thrustLapse(altitude, mach, BYPASS):
+def thrustLapse(altitude, mach):
     GAMMA = 1.4
     SLpressure = 101325
     SLtemp = 288.15
@@ -18,10 +19,10 @@ def thrustLapse(altitude, mach, BYPASS):
 
     #these calculations assume a BYPASS value between 5 and 15
     if theta <= thetaBreak:
-        thrustlapse = delta*(1 - (0.43+0.014*BYPASS)*math.sqrt(mach) )
+        thrustlapse = delta*(1 - (0.43+0.014*consts.BYPASS)*math.sqrt(mach) )
 
     if theta > thetaBreak:
-        thrustlapse = delta*(1 - (0.43+0.014*BYPASS)*math.sqrt(mach) - 3*(theta - thetaBreak)/(1.5+mach))
+        thrustlapse = delta*(1 - (0.43+0.014*consts.BYPASS)*math.sqrt(mach) - 3*(theta - thetaBreak)/(1.5+mach))
 
     return(thrustlapse)
 
