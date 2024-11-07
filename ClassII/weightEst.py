@@ -17,7 +17,7 @@ def wing_mass(planform:pf.Planform, Mdes, nult, tc, movableArea): #from Raymer
 
     weightTerm = (Mdeslb*nult)**0.557
     wingSurfaceTerm = Swft2**0.649*planform.AR**0.5
-    wingChordTerm = tc**(-.4)*(1+planform.TR)^0.1
+    wingChordTerm = tc**(-.4)*(1+planform.TR)**0.1
     sweepTerm = movableAreaft2**0.1/np.cos(planform.sweepC4)
 
     #the returned value in lb mass

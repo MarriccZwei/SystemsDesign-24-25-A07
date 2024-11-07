@@ -73,6 +73,31 @@ class HLDs():
         cEnd = planform.chord_spanwise(self.krugerEndyPerbHalf) #the base of the trapezoid - chord at kruger start
         H = self.krugerEnd(planform.b)-self.krugerStart(planform.b) #trapezoid Height - the difference is sapnwise locations
         return H*(cEnd+cStart) #two times the trapezoid area for 2 sides of the wing, that's why the 0.5 is missing
+    
+    '''The area of movable surfaces themselves'''
+    def Smovable(self, planform:Planform.Planform):
+        """!!!SYMMETRICAL PLANFORMS ONLY!!!"""
+        S_movable = 0
+
+        #contribution of Kruger Flaps
+        cStartKruger = planform.chord_spanwise(self.krugerStartyPerbHalf) #the base of the trapezoid - chord at kruger start
+        cEndKruger = planform.chord_spanwise(self.krugerEndyPerbHalf) #the base of the trapezoid - chord at kruger start
+        HKruger = self.krugerEnd(planform.b)-self.krugerStart(planform.b) #trapezoid Height - the difference is sapnwise locations
+        S_movable += HKruger*(cEndKruger+cStartKruger)*self.krugerCfC #two times the trapezoid area for 2 sides of the wing, that's why the 0.5 is missing - mulled by cfc to get just the movable area
+
+        #contribution of TE Flaps
+        cStartFlap = planform.chord_spanwise(self.flapStartyPerbHalf) #the base of the trapezoid - chord at kruger start
+        cEndFlap = planform.chord_spanwise(self.flapEndyPerbHalf) #the base of the trapezoid - chord at kruger start
+        HFlap = self.krugerEnd(planform.b)-self.flapStart(planform.b) #trapezoid Height - the difference is sapnwise locations
+        S_movable += HFlap*(cEndFlap+cStartFlap)*self.flapcfC #two times the trapezoid area for 2 sides of the wing, that's why the 0.5 is missing - mulled by cfc to get just the movable area
+
+        #contribution of TE Flaps
+        cStartAileron = planform.chord_spanwise(self.aileronStartyPerbHalf) #the base of the trapezoid - chord at kruger start
+        cEndAileron = planform.chord_spanwise(self.aileronEndyPerbHalf) #the base of the trapezoid - chord at kruger start
+        HAileron = self.krugerEnd(planform.b)-self.aileronStart(planform.b) #trapezoid Height - the difference is sapnwise locations
+        S_movable += HAileron*(cEndAileron+cStartAileron)*self.aileronCfC #two times the trapezoid area for 2 sides of the wing, that's why the 0.5 is missing - mulled by cfc to get just the movable area
+
+        return S_movable
 
     
     '''Sizing Movable Surfaces for an existing planform, given deflections and design constraints'''

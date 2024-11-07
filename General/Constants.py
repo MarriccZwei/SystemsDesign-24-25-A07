@@ -33,7 +33,7 @@ KLG = 1.  # Constant depending on Landing gear attachement, if it i fuselage mou
 KUHT = 1.143  # unit horizontal tail, check raymer to change
 
 """GENERAL"""
-VSTALL = 75 #This is maybe a bit high for the stall landing speed 
+VSTALL = 60 #This is maybe a bit high for the stall landing speed 
 VAPPROACH = 1.23*VSTALL
 ULTIMATECL = 2.5
 
@@ -42,6 +42,7 @@ ULTIMATECL = 2.5
 TAKEOFFMACH = VAPPROACH/ISA.speedOfSound(0)
 TAKEOFFCL = 1.8
 KT = 0.85 #assumed from reader
+TAKEOFFLENGTH = 2790  # [m]
 
 """CRUISE"""
 CRUISEALTITUDE = 11887.2
@@ -50,10 +51,15 @@ CRUISEVELOCITY = CRUISEMACH*ISA.speedOfSound(CRUISEALTITUDE)
 CRUISEDENSITY = ISA.density(CRUISEALTITUDE)
 BETA_CRUISE = 0.95
 CRUISEROC = 2 # [m/s]
+CRUISESOUNDSPEED = ISA.speedOfSound(CRUISEALTITUDE)
+CRUISEVELOCITY = CRUISEMACH*CRUISESOUNDSPEED
+CRUISEVISCOSITY = 0.00001432
 
 """LAND"""
 LANDMACH = VAPPROACH/ISA.speedOfSound(0)
 BETA_LAND = 0.73
+LANDDENSITY = 1.25
+LANDLENGTH = 1856 # [m] (Class I weight estimation)
 
 """SEALEVEL"""
 SLDENSITY = ISA.density(0)

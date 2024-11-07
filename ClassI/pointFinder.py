@@ -37,12 +37,12 @@ def pointFinder(constraints, line1, line2, lowerBound=0, upperBound=10000):#uppe
     g = constraints[line2](intxInterval)
 
     if l1vert == True:
-        intx = f[0][0]
+        intx = min(f[0][0], 9999)
         intx = int(intx)
         inty = g[1][intx]
     
     elif l2vert == True:
-        intx = g[0][0]
+        intx = min(g[0][0], 9999)
         intx = int(intx)
         inty = f[1][intx]
     

@@ -32,7 +32,7 @@ def prepare_Constraint_List(aspect, oswaldCruise, CD_0, CLmaxLand):
     vertConstraints = []
 
     def StallSpeedconstraint(WSaxis): #here we need to start using the adsee book xd, just to demo a v line now
-        return np.zeros(len(WSaxis))+7407.37, WSaxis
+        return  np.zeros(len(WSaxis))+1/betaLand*Constants.SLDENSITY/2*(Constants.VAPPROACH/1.23)**2*CLmaxLand, WSaxis
         #return np.zeros(len(WSaxis))+1/betaCruise*acparams.VSTALL**2*1.225/2*acparams.CLMAX, WSaxis
 
     constraints.append(StallSpeedconstraint)
@@ -44,7 +44,7 @@ def prepare_Constraint_List(aspect, oswaldCruise, CD_0, CLmaxLand):
         #the expression for T/W is divided into subterms, as it is quite a big one
         #the subterm names are arbitrary
         optCl = (Cd0*np.pi*aspect*oswald)**0.5
-        speed = (WSaxis*2/Constants.LANDDENSITY/optCl)**0.5
+        speed = (WSaxis*2/Constants.SLDENSITY/optCl)**0.5
         mach = speed/340
         situationFraction = nEngines*massFraction/(nEngines-nEnginesInoper)/thrustLapse.thrustLapseNP(0, mach)
         freeTerm = 2*(Cd0/np.pi/aspect/oswald)**0.5

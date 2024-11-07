@@ -99,8 +99,8 @@ for i in range(1): #later change to a while with a counter and convergence condi
     planform = pf.Planform(S, aspect, taper, sweep, dihedral) #current planform
 
     #choose leading edge sweep based on mach drag divergence
-    while crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.87) < consts.CRUISEMACH:
-        planform.change_sweep(planform.sweepC4+0.01)
+    while crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.87) > consts.CRUISEMACH:
+        planform.change_sweep(planform.sweepC4+0.1)
 
     #choose taper ratio that matches the aspect ratio and sweep to avoid pitchup constraint
     while taper>0.1 and planform.AR>17.7 * (2 - taper) * np.exp(-0.043 * planform.sweepC4):
@@ -113,8 +113,16 @@ for i in range(1): #later change to a while with a counter and convergence condi
 
     planform = pf.Planform(S, aspect, taper, sweep, dihedral) #updating planform
 
+    
     '''HLD Design'''
     hlds = hld.HLDs.autosize(planform, fusD/2) #using the autosize mechanic of the high lift devicesw
+
+    '''Class II weight'''
+    mDes = (.95+.7)/2*mMTO #design mass due to fuel burn
+    clAlph = clFuns.dCLdAlpha(consts.CRUISEMACH, planform, True)
+    nult = loadF.n_ult(planform, clAlph, mMTO)
+    mWing = wEstII.wing_mass(planform, mDes, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
+    print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
 
     '''Fuselage & fuel Volume Calculations'''
 
@@ -122,7 +130,6 @@ for i in range(1): #later change to a while with a counter and convergence condi
 
     '''Class II Drag'''
 
-    '''Class II weight'''
 
     '''Repeat the Iteration loop until your class I and class II estimations converge'''
 
