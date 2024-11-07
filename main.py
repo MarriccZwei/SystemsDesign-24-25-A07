@@ -19,7 +19,7 @@ import ClassII.LoadFactor as loadF
 import ClassII.dragEst as dragEst
 
 '''obtaining Initial values from main.json'''
-with open(os.getcwd()+"/ClassI/output.json") as mainJson:
+with open(os.getcwd()+"\\Protocols\\main.json") as mainJson:
     jsonDict = json.loads(''.join(mainJson.readlines()))
 
     oswald = jsonDict["Oswald"]
@@ -46,8 +46,8 @@ for i in range(1): #later change to a while with a counter and convergence condi
     #Class I range and weight calculations
     Requivaleng = wEstI.Req(ld) #equivalent range
     Rauxiliary = wEstI.Raux(ld) #auxiliary range
-    Mfuel = wEstI.Mfuel(tsfc, ld) #fuel mass fraction
     MFoe = mOE/mMTO #operating empty weight mass fraction
+    Mfuel = wEstI.Mfuel(MFoe, ld, tsfc) #fuel mass
     mMTO = wEstI.mtom(MFoe, ld, tsfc) #first overwriting of mtom
     Rferry = wEstI.Rferry(MFoe, ld, tsfc) #ferry range
     Rharm = wEstI.Rferry(MFoe, ld, tsfc) #harmonic range

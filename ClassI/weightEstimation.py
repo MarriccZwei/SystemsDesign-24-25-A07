@@ -10,7 +10,7 @@ def TSFC(bypass):
     return(22 * bypass**(-0.19))
 
 def engineEfficiency(TSFC):
-    Constants.CRUISEVELOCITY / (TSFC* Constants.SPECIFICENERGY)* (10**6)
+    return Constants.CRUISEVELOCITY / (TSFC* Constants.SPECIFICENERGY)* (10**6)
 
 def Rlost(L_D):
     return  (1/0.7) * L_D * (Constants.CRUISEALTITUDE + (Constants.CRUISEVELOCITY**2)/(2*Constants.G))
@@ -19,7 +19,7 @@ def Req(L_D):
      R_nom  = Constants.DESIGNRANGE*1000
      R_lost = Rlost(L_D)
      F_con = Constants.CONTINGENCYFUELFRACTION
-     R_div = Constants
+     R_div = Constants.DIVERSIONRANGE
      return ((R_nom + R_lost) * (1 + F_con) + 1.2 * R_div + Constants.CRUISEVELOCITY * Constants.LOITERTIME)
 
 def Raux(L_D):

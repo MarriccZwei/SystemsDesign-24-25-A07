@@ -12,7 +12,7 @@ from General import Constants as c
 from General import generalFunctions as fun
 from ClassIV.clFunctions import maxCL
 
-import Planform
+from OOP import Planform
 
 "The representation of HLD/Ailerons subsubsystems stored in a normalized y(b/2) form. Contains methods that allow, for an input Planform, to check whether it meets the manouvering requirements"
 class HLDs():
