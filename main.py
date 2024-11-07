@@ -54,6 +54,7 @@ for i in range(1): #later change to a while with a counter and convergence condi
     mMTO = wEstI.mtom(MFoe, ld, tsfc) #first overwriting of mtom
     Rferry = wEstI.Rferry(MFoe, ld, tsfc) #ferry range
     Rharm = wEstI.Rferry(MFoe, ld, tsfc) #harmonic range
+    print(f"MTOM:{mMTO}")
 
 
     '''Matching Diagram. Figuring out a design point'''
