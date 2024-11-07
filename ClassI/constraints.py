@@ -51,7 +51,7 @@ def prepare_Constraint_List(aspect, oswaldCruise, CD_0, CLmaxLand):
 
         return WSaxis, np.zeros(len(WSaxis))+situationFraction*(gradient+freeTerm)
 
-    constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 1, 0.032, 30, True))
+    constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 1, 0.032, 40, True))
     constraintNames.append("Climb gradient requirement CS 25.119")
     constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0, 15, True))
     constraintNames.append("Climb gradient requirement CS 25.121a")
@@ -59,7 +59,7 @@ def prepare_Constraint_List(aspect, oswaldCruise, CD_0, CLmaxLand):
     constraintNames.append("Climb gradient requirement CS 25.121b")
     constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0.012, 0, False))
     constraintNames.append("Climb gradient requirement CS 25.121c")
-    constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 0.92, 0.021, 30, True))
+    constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 0.92, 0.021, 40, True))
     constraintNames.append("Climb gradient requirement CS 25.121d")
 
     def TakeOffFieldLength(WSaxis):

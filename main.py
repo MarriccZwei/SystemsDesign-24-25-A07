@@ -11,6 +11,9 @@ import OOP.Fuselage as fus
 import ClassI.pitchUpConstraint as puc
 import ClassI.weightEstimation as wEstI
 import ClassI.constraints as constr
+from ClassI import refAcData
+from ClassI import pointFinder
+from ClassI import maxFunctionFinder
 
 import ClassIV.clFunctions as clFuns
 
@@ -69,6 +72,20 @@ for i in range(1): #later change to a while with a counter and convergence condi
         plt.fill_between(constraint(WSaxis)[0], constraint(WSaxis)[1], 0, alpha=shading)
         i=i+1
     plt.legend()
+
+    crossOverEvents = maxFunctionFinder.maxFunctionFinder(constraints)
+    for point in crossOverEvents:
+        print(point)
+        print(point[1], point[2], point[0]-100, point[0]+100)
+    #pointFinder.pointFinder(point[1], point[2], point[0]-100, point[0]+100)
+    WSselected, TWselected = pointFinder.pointFinder(constraints, crossOverEvents[-1][2], 0, crossOverEvents[-1][0]-100)
+
+    loadingPointsList = refAcData.generateLoadingPoints()
+    for i, point in enumerate(loadingPointsList):
+        plt.plot(point[0], point[1], 'r+')
+        plt.text(point[0] + 30, point[1] + 0.005, i+1) #Hard coded numbers are offset of labels.
+    plt.xlabel("Wing Loading, [N/m^2]")
+    plt.ylabel("Thrust-Weight Ratio, [-]")
     plt.show()
 
     '''Wing Planform Design'''
