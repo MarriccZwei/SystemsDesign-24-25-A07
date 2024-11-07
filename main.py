@@ -178,6 +178,12 @@ for i in range(1): #later change to a while with a counter and convergence condi
     '''Fuselage & fuel Volume Calculations'''
 
     '''Class II Drag'''
+    #At this point your planform and fuselage variables will be your final planform and fuselage
+    #Use the functions from Class II Drag estimations to do the drag estimation for Planform and the fuselage for cruise conditions
+    #Empenage to be added later, but will be done as two other planforms for the tail and the rudder
+    #Thus, it would be extra nice to make a fuction that estimates drag using the Class II drag est for any planform
+    #It would be just coupling a few functions from ClassII.dragEst.py into a single function - for typical values, us the slides from lift 7 drag estimations
+    #The Planform and Fuselage Classes have built-in wetted Surface Functions/Properties
 
 
     '''Repeat the Iteration loop until your class I and class II estimations converge'''
