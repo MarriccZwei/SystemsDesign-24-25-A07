@@ -19,16 +19,17 @@ def clDesign(wingLoading, weightFuel, planform: Planform):
     cl = 1.1*averageLoading*(1/q)
     return cl
 
-def dCLdAlpha(mach, planform: Planform):
+def dCLdAlpha(mach, planform: Planform, radians=False):
     beta = sqrt(1-mach**2)
     AR = planform.AR
     sweepC4 = planform.sweepC4
     sqrtPart = sqrt(4+(1+(tan(sweepC4)/beta)**2)*(AR*beta/0.95)**2)
     clAlpha = 2*pi*AR/(2+sqrtPart)
-    return clAlpha
+    if radians: return clAlpha
+    else: return pi/180*clAlpha
+
 
 def maxCL(clmax2d, planform: Planform, mach = 0.0):
-    
     x = planform.sweepLE
     tc = c.THICKNESSTOCHORD
     sharpness = 21.3*tc
@@ -62,4 +63,7 @@ def maxCL(clmax2d, planform: Planform, mach = 0.0):
     maxCLtrue = cl_cl * clmax2d + deltaCL
 
     return maxCLtrue
+
+
+
 

@@ -1,6 +1,6 @@
 import numpy as np
-import acparams
-import constraints
+#import acparams
+from ClassI import constraints
 import matplotlib.pyplot as plt
 
 # 0 Stall
@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 # 8 Cruise speed
 # 9 Climb rate
 
-def pointFinder(line1, line2, lowerBound=0, upperBound=10000):#upper and lower bounds are optional and do not *need* to be specified
+def pointFinder(constraints, line1, line2, lowerBound=0, upperBound=10000):#upper and lower bounds are optional and do not *need* to be specified
     if lowerBound<0:
         lowerBound = 0
     if upperBound>10000:
@@ -33,8 +33,8 @@ def pointFinder(line1, line2, lowerBound=0, upperBound=10000):#upper and lower b
     WLres = 10000
     
     intxInterval = np.linspace(1, maxWL, WLres)
-    f = constraints.constraints[line1](intxInterval)
-    g = constraints.constraints[line2](intxInterval)
+    f = constraints[line1](intxInterval)
+    g = constraints[line2](intxInterval)
 
     if l1vert == True:
         intx = f[0][0]

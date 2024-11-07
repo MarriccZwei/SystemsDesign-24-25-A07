@@ -12,7 +12,7 @@ from General import Constants as c
 from General import generalFunctions as fun
 from ClassIV.clFunctions import maxCL
 
-import Planform
+from OOP import Planform
 
 "The representation of HLD/Ailerons subsubsystems stored in a normalized y(b/2) form. Contains methods that allow, for an input Planform, to check whether it meets the manouvering requirements"
 class HLDs():
@@ -22,6 +22,10 @@ class HLDs():
         self.aileronDiff = aileronDiff #aileron Deflection - Differential defl. down as a pfraction of defl. up
         self.flapMaxDdefl = flapMaxDdefl #flap Deflection [deg]
         
+        """spar locations"""
+        self.frontSparLoc = krugerCfC+0.05
+        self.backSparLoc = 1-0.05-flapCfC
+
         '''flapped chord ratios'''
         self.aileronCfC = aileronCfC
         self.flapcfC = flapCfC
@@ -76,7 +80,8 @@ class HLDs():
     def autosize(cls, planform:Planform.Planform, radiusFuselage, aileronCfC = 0.3, flapCfC = 0.35, krugerCfC=0.15, aileronDefl=25, aileronDiff = 0.75, flapMaxDdefl=40):
         '''working out the y/(b/2) fractions'''
         aileronFlapMargin = 0.3 #metres between
-        wingtipMargin = 0.1 #fraction
+        ailerongWingTipMargin = 0.1 #fraction 0.5 metres source ALBERT
+        krugerWingTipMargin = 0.1 #fraction
 
         frontSparLoc = krugerCfC+0.05
         backSparLoc = 1-0.05-flapCfC
@@ -96,46 +101,50 @@ class HLDs():
         
         halfSpan = planform.b/2
 
-        integral2 = integrate.quad(lambda y: y**2*planform.chord_spanwise(y/halfSpan), 0, halfSpan)
+        integral2 = integrate.quad(lambda y: y**2*planform.chord_spanwise(y/halfSpan), 0, halfSpan)[0]
         pCL = -(4*(c.DCLALPHA+c.CD0))/(planform.S*planform.b**2)*integral2
         
-        aileronStartyPerbHalf = 1-wingtipMargin
+        aileronEndyPerbHalf = 1-ailerongWingTipMargin
 
         dAlphaDeltaCLC = (2*c.DCLALPHA*tau)/(planform.S*planform.b)
 
-        requiredIntegral1 = -(20*pCL)/(dAlphaDeltaCLC*deltaAlpha*((2*c.VMANUEVER)/planform.b))
+        requiredIntegral1 = -(20*pCL)/(dAlphaDeltaCLC*deltaAlpha*((2*c.VAPPROACH)/planform.b))
         
         integral1 = 0
-        b1 = aileronStartyPerbHalf*halfSpan
-        b2 = aileronStartyPerbHalf*halfSpan
+        b1 = aileronEndyPerbHalf*halfSpan
+        b2 = aileronEndyPerbHalf*halfSpan
         while integral1 < requiredIntegral1:
             b1 = b1-0.1
-            integral1 = integrate.quad(lambda y: y*planform.chord_spanwise(y/halfSpan), b1, b2)
+            integral1 = integrate.quad(lambda y: y*planform.chord_spanwise(y/halfSpan), b1, b2)[0]
 
-        aileronEndyPerbHalf = b1/halfSpan
+        aileronStartyPerbHalf = b1/halfSpan
 
-        krugerEndyPerbHalf = 1-wingtipMargin
+        krugerEndyPerbHalf = 1-krugerWingTipMargin
         flapEndyPerbHalf = (b1-aileronFlapMargin)/halfSpan
-        deltaClKruger = 0.3
-        areaKruger = (fun.partialSurface(krugerEndyPerbHalf*halfSpan)-fun.partialSurface(radiusFuselage))*2
-        deltaCLKruger = 0.9*deltaClKruger*areaKruger/planform.S*np.cos(planform.sweep_at_c_fraction(frontSparLoc))
-        cleanCLMax = maxCL(c.CLMAXAIRFOIL, planform, c.LANDMACH)
-        deltaCLFlaps = c.ULTIMATECL-cleanCLMax-deltaCLKruger
-        
+        flapStartyPerbHalf = radiusFuselage/halfSpan
+
         deltaCCf = 0.6
         cPrimeC = 1 + deltaCCf*flapCfC
         deltaClFlaps = 1.3*cPrimeC
 
-        areaFlaps = (deltaCLFlaps*planform.S)/(0.9*deltaClFlaps*np.cos(planform.sweep_at_c_fraction(backSparLoc)))
-        areaBegin = fun.partialSurface(flapEndyPerbHalf*halfSpan, planform)-0.5*areaFlaps
-        flapsBegin = flapEndyPerbHalf*halfSpan
+        areaFlaps = (fun.partialSurface(flapEndyPerbHalf*halfSpan, planform)-fun.partialSurface(radiusFuselage, planform))*2
+        deltaCLFlaps = 0.9*deltaClFlaps*areaFlaps/planform.S*np.cos(planform.sweep_at_c_fraction(backSparLoc))
+
+        deltaClKruger = 0.3
+        cleanCLMax = maxCL(c.CLMAXAIRFOIL, planform, c.LANDMACH)
+        print(cleanCLMax)
+        deltaCLKruger = c.ULTIMATECL-cleanCLMax-deltaCLFlaps
+
+        areaKruger = (deltaCLKruger*planform.S)/(0.9*deltaClKruger*np.cos(planform.sweep_at_c_fraction(frontSparLoc)))
+        areaBegin = fun.partialSurface(krugerEndyPerbHalf*halfSpan, planform)-0.5*areaKruger
+        krugerBegin = 0
         area = 0
         while area < areaBegin:
-            flapsBegin = flapsBegin-0.1
-            area = fun.partialSurface(flapsBegin, planform)
+            krugerBegin = krugerBegin+0.1
+            area = fun.partialSurface(krugerBegin, planform)
 
-        krugerStartyPerbHalf = radiusFuselage/halfSpan
-        flapStartyPerbHalf = flapsBegin/halfSpan
+        flapStartyPerbHalf = radiusFuselage/halfSpan
+        krugerStartyPerbHalf = krugerBegin/halfSpan
         
         '''Returning the sized Movable Surfaces'''
         return cls(aileronStartyPerbHalf, aileronEndyPerbHalf, flapStartyPerbHalf, flapEndyPerbHalf, krugerStartyPerbHalf, krugerEndyPerbHalf, 
@@ -149,5 +158,17 @@ if __name__ == "__main__":
             testHLDs = HLDs(26/(68.7/2), 34/(68.7/2), 2.95/(68.7/2), 25.7/(68.7/2), 5/(68.7/2), 34/(68.7/2))
             self.assertLess(359, testHLDs.flapSflapped(testPlanform))
             self.assertGreater(360, testHLDs.flapSflapped(testPlanform))
+
+        def test_autosize(self):
+            testPlanform = Planform.Planform(478.4, 9.873, 0.1, 28.5, 2.15, False)
+            testHLDsOld = HLDs(26/(68.7/2), 34/(68.7/2), 2.95/(68.7/2), 25.7/(68.7/2), 5/(68.7/2), 34/(68.7/2))
+            testHLDsNew = HLDs.autosize(testPlanform, 2.95)
+            print(f"Old Aileron Spanwise loc: [{testHLDsOld.aileronStart(testPlanform.b)}, {testHLDsOld.aileronEnd(testPlanform.b)}]")
+            print(f"Old Flap Spanwise loc: [{testHLDsOld.flapStart(testPlanform.b)}, {testHLDsOld.flapEnd(testPlanform.b)}]")
+            print(f"Old Kruger Spanwise loc: [{testHLDsOld.krugerStart(testPlanform.b)}, {testHLDsOld.krugerEnd(testPlanform.b)}]")
+            print()
+            print(f"New Aileron Spanwise loc: [{testHLDsNew.aileronStart(testPlanform.b)}, {testHLDsNew.aileronEnd(testPlanform.b)}]")
+            print(f"New Flap Spanwise loc: [{testHLDsNew.flapStart(testPlanform.b)}, {testHLDsNew.flapEnd(testPlanform.b)}]")
+            print(f"New Kruger Spanwise loc: [{testHLDsNew.krugerStart(testPlanform.b)}, {testHLDsNew.krugerEnd(testPlanform.b)}]")
 
     unittest.main()
