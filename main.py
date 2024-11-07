@@ -22,6 +22,10 @@ import ClassII.weightEst as wEstII
 import ClassII.LoadFactor as loadF
 import ClassII.dragEst as dragEst
 
+import CG_LG_EMP.CG as cg
+import CG_LG_EMP.EMP as emp
+import CG_LG_EMP.LG as lg
+
 '''obtaining Initial values from main.json'''
 with open(os.getcwd()+"\\Protocols\\main.json") as mainJson:
     jsonDict = json.loads(''.join(mainJson.readlines()))
@@ -38,6 +42,9 @@ with open(os.getcwd()+"\\Protocols\\main.json") as mainJson:
     taper = jsonDict["tr"]
     dihedral = jsonDict["dihedral"]
     fusD = jsonDict["Dfus"]
+    mEmp = jsonDict["mEmpenage"]
+    mLG = jsonDict["mLandingGear"]
+    mNacelle = jsonDict["mNacelle"]
 
 '''Iteration loop'''
 for i in range(1): #later change to a while with a counter and convergence condition
@@ -101,6 +108,7 @@ for i in range(1): #later change to a while with a counter and convergence condi
     #choose leading edge sweep based on mach drag divergence
     while crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.87) > consts.CRUISEMACH:
         planform.change_sweep(planform.sweepC4+0.1)
+        sweep = planform.sweepC4
 
     #choose taper ratio that matches the aspect ratio and sweep to avoid pitchup constraint
     while taper>0.1 and planform.AR>17.7 * (2 - taper) * np.exp(-0.043 * planform.sweepC4):
@@ -125,14 +133,47 @@ for i in range(1): #later change to a while with a counter and convergence condi
     print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
 
     #fuselage weight est.
+    fuselage = fus.Fuselage(consts.DEQUIVALENT, consts.LNC, consts.LFUS-consts.LNC-consts.LTC, consts.LTC)
+    mFus = wEstII.fus_mass(planform, fuselage, mDes, nult)
+    print(f"mFus: {mFus}, mFus/mMTO: {mFus/mMTO}")
 
-    #cg calc
+    #empenage - landing gear - cg nested estimation
+    xCgPrevious = 0 #will be used to compare the cg between iterations
+    for i in range(10): #after 10 empenage lg iterations, we just give up if there is no convergence - TODO throw an error in such a case
+        #masses of tail and landing gear from previous iterations
+        #cg calc I
+        mFe = consts.FXTEQPTMF*mMTO #fixed equipment mass taken from Roskam values
+        cgWingGroup = cg.X_wcg(mWing, mNacelle, planform.MAC, consts.ENGINEXWRTLEMAC)
+        cgFusGroup = cg.X_fcg(mFus, mEmp, mFe, fuselage.L)
 
-    #tail
+        xLemac = cg.x_lemac(cgFusGroup, planform.MAC, mWing, mNacelle, mFus, mEmp, mFe, consts.OEWCGWRTLEMACPERMAC, 0.4) #TODO the 0.4 MAC uncertain - consult the person responsible for CG
+        print(xLemac)
+        #possible cg position - OE, Fuel+OE, OE+Payload, FUEL+OE+Payload
+        xCgPay = consts.LN+(consts.LFUS-consts.LT-consts.LN)/2 #cg payload at half of the cabin -
+        xOe = cg.xcg_oe(xLemac, planform.MAC) #OE
+        xF = cg.xcg_oe_f(mOE/mMTO, Mfuel/mMTO, xOe, xLemac+0.4*planform.MAC) #fuel + OE
+        xP = cg.xcg_oe_p(mOE/mMTO, consts.MAXPAYLOAD/mMTO, xOe, xCgPay) #the Payload+OE case
+        xOePF = cg.xcg_oe_p_f(mOE/mMTO, consts.MAXPAYLOAD/mMTO, Mfuel/mMTO, xOe, xCgPay, xLemac+0.4*planform.MAC) #everything case, again unsure of what the fuel cg is and does it concide with wing cg - TODO
 
-    #lg
+        cgMostConstraining = cg.cg(xOe, xP, xF, xOePF) #the most constraining cg choice
+        print(f"The most constraining cg location is: {cgMostConstraining}")
 
-    #cg calc II
+        #tail
+
+        #lg - dimensions
+        mainWheelPressure = lg.P_MW(mMTO, consts.NWM)
+        lMainStrut = lg.z_t(planform.b, planform.dihedral)
+        noseWheelPressure = lg.P_NW(mMTO, consts.NWN)
+        lNoseStrut= lg.z_n(planform.b, planform.dihedral)
+
+        #lg-weight estimations
+        mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, lMainStrut, lNoseStrut, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
+
+        #comparing cgs to see if iteration necessary and saving the cg values before next iteration
+        if abs(1-xCgPrevious/cgMostConstraining)<.01:
+            break #exits the loop
+        
+        xCgPrevious=cgMostConstraining #if we did not manage to exit the loop
 
     '''Fuselage & fuel Volume Calculations'''
 

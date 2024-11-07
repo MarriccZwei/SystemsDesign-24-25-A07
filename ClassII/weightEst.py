@@ -34,7 +34,7 @@ def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mdes, nult): #the fuse
     # Import constants from constants.py file
     K_door = const.KDOOR
     K_lg = const.KLG
-    S_f = planform.Sw
+    S_f = fuselage.SwFus()
 
     # Calculate some terms in order to simplify the big equation
     weightTerm = (Mdeslb*nult)**0.5
@@ -85,6 +85,6 @@ mlgStrokeStrutsN, Vstall, loadFactorTouchdown = 2.5):
     MLlb = MTOMlb*landingMassFraction
     Nl = 1.5 * loadFactorTouchdown
 
-    WMLGlb = 0.0106*MLlb^0.888*Nl**(.25)*mlgLength**0.4*mlgNwheels**0.321*mlgStrokeStrutsN**(-.5)*Vstall**0.1
+    WMLGlb = 0.0106*MLlb**0.888*Nl**(.25)*mlgLength**0.4*mlgNwheels**0.321*mlgStrokeStrutsN**(-.5)*Vstall**0.1
     WNLGlb = 0.032*MLlb**0.646*Nl**(0.2)*nlgLength**0.5*nlgNwheels*0.45
-    return 0.4536*(WMLGlb+WNLGlb)
+    return 0.4536*(WMLGlb+WNLGlb), 0.4536*WMLGlb, 0.4536*WNLGlb #returns the lgmass as a whole pluss component masses

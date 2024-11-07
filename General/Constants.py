@@ -32,6 +32,9 @@ KDOOR = 1.12  # Constant for amount of cargo doors, check Raymer weight estimati
 KLG = 1.  # Constant depending on Landing gear attachement, if it i fuselage mounted the constant equals 1.12, otherwise = 1.0
 KUHT = 1.143  # unit horizontal tail, check raymer to change
 
+FXTEQPTMF = 0.1 #fixed equipment mass fraction
+OEWCGWRTLEMACPERMAC = 0.25 #OEW xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
+
 """GENERAL"""
 VSTALL = 60 #This is maybe a bit high for the stall landing speed 
 VAPPROACH = 1.23*VSTALL
@@ -98,10 +101,17 @@ CLIMBRATEALTITUDE = CRUISEALTITUDE
 """ENGINE"""
 SPECIFICENERGY = 43500000
 BYPASS = 12 #Probably has to change
+ENGINEXWRTLEMAC = 2 #position of engine CG w.r.t. xLEMAC of the wing - has to be read off the cad drawing
 
 '''FUSELAGE'''
 DEQUIVALENT = 5.306295
+LFUS = 60.69367942857143
 LN = 4
 LNC = 9.551331
 LT = 12.735108
 LTC = 15.918885
+
+'''LG'''
+NWN = 2 #2 wheels for the nose landing gear
+NWM = 4*4 #4 wheels per 4 struts on the main landing gear
+NSTRUTS = 4 #4 struts of the main landing gear
