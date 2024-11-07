@@ -16,8 +16,8 @@ from ClassI import pitchUpConstraint
 def prepare_Constraint_List(aspect, oswaldCruise, CD_0, CLmaxLand):
 
     #TODO change these!!!!
-    betaCruise = 0.75
-    betaLand = 0.73
+    betaCruise = Constants.BETA_CRUISE
+    betaLand = Constants.BETA_LAND
 
     # star = pitchUpConstraint.sweepTaperAspect(Constants.CRUISEMACH)
     # aspect = star[0]

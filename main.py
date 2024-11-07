@@ -124,9 +124,17 @@ for i in range(1): #later change to a while with a counter and convergence condi
     mWing = wEstII.wing_mass(planform, mDes, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
     print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
 
-    '''Fuselage & fuel Volume Calculations'''
+    #fuselage weight est.
 
-    '''Tail and Cg and lg subloop'''
+    #cg calc
+
+    #tail
+
+    #lg
+
+    #cg calc II
+
+    '''Fuselage & fuel Volume Calculations'''
 
     '''Class II Drag'''
 
