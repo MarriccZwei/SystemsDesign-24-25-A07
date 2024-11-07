@@ -19,6 +19,15 @@ NMAXNOMINAL = 2.5 #because we definitely are the big aircraft
 CRUISEUHAT = 37.5*0.3048 #value read for the graph, subject to scrutiny #converted from ft
 LANDINUHAT = 65*0.3048 #value read for the graph, subject to scrutiny #converted from ft
 
+SVTAIL = 100 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail area
+SHTAIL = 100 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail area
+FW = 100 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: fuselage widht at horizontal tail intersection
+LT = 10 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: tail lenght
+SWEEPHT = 0.18 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail sweep RADIANS!!!
+SE = 10 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: Elevator area
+ARHTAIL = 5 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail Aspect Ratio
+BH = 10 # # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail span
+
 KDOOR = 1.12  # Constant for amount of cargo doors, check Raymer weight estimation
 KLG = 1.  # Constant depending on Landing gear attachement, if it i fuselage mounted the constant equals 1.12, otherwise = 1.0
 KUHT = 1.143  # unit horizontal tail, check raymer to change
@@ -28,27 +37,26 @@ VSTALL = 75 #This is maybe a bit high for the stall landing speed
 VAPPROACH = 1.23*VSTALL
 ULTIMATECL = 2.5
 
+
 """TAKEOFF"""
 TAKEOFFMACH = VAPPROACH/ISA.speedOfSound(0)
-TAKEOFFLENGTH = 2790  # [m]
+TAKEOFFCL = 1.8
 
 """CRUISE"""
 CRUISEALTITUDE = 11887.2
 CRUISEMACH = 0.82
-CRUISESOUNDSPEED = ISA.speedOfSound(CRUISEALTITUDE)
-CRUISEVELOCITY = CRUISEMACH*CRUISESOUNDSPEED
+CRUISEVELOCITY = CRUISEMACH*ISA.speedOfSound(CRUISEALTITUDE)
 CRUISEDENSITY = ISA.density(CRUISEALTITUDE)
-CRUISEVISCOSITY = 0.00001432
+BETA_CRUISE = 0.95
 
 """LAND"""
 LANDMACH = VAPPROACH/ISA.speedOfSound(0)
-LANDDENSITY = 1.25
-LANDLENGTH = 1856 # [m] (Class I weight estimation)
+BETA_LAND = 0.73
 
 """SEALEVEL"""
 SLDENSITY = ISA.density(0)
 SLTEMPERATURE = ISA.temperature(0)
-SLPRESSURE = ISA.temperature(0)
+SLPRESSURE = ISA.pressure(0)
 
 """DIVERT"""
 DIVERSIONRANGE = 370#km
@@ -76,7 +84,9 @@ CLFL = 0.45
 LANDINGDISTANCE = 1856
 TAKEOFFDISTANCE = 2790
 THETABREAK = 1.07
+CLIMBRATE = 0.5
+CLIMBRATEALTITUDE = 11500
 
 """ENGINE"""
 SPECIFICENERGY = 43500000
-BYPASS = 9 #Probably has to change
+BYPASS = 12 #Probably has to change
