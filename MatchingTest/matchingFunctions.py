@@ -4,8 +4,8 @@ import math
 
 def thrustLapse(altitude, mach):
     GAMMA = c.GAMMA
-    SLpressure = 101325
-    SLtemp = 273.15
+    SLpressure = c.SLPRESSURE
+    SLtemp = c.SLTEMPERATURE
     thetaBreak = 1.07 #between 1.06 and 1.08, can be changed
 
     pressure = ISA.pressure(altitude)
