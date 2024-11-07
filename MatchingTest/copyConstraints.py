@@ -1,88 +1,146 @@
+if __name__ == "__main__":
+    # ONLY FOR TESTING
+    import sys
+    import os
+    sys.path.insert(1, os.getcwd())
+    # ONLY FOR TESTING
+
+from General import Constants as c
 import numpy as np
-import acparams
-import thrustLapse
-import ISA
-import math
-import Cd0_Oswald_Flaps
-import ClimbRate
+import matchingFunctions
+from General import ISA
+import matplotlib.pyplot as plt
 
-#here be the list of all constraint functions
-constraints = []
-constraintNames = []
-vertConstraints = []
 
-#min T/W constraint - used for UAVS which need a large TWR due to their highly suboptimal aerodynamics
-'''TestConstraint-Do not uncomment for offcial use'''
-'''def TWconstraint(WSaxis):
-    return WSaxis, np.zeros(len(WSaxis))+acparams.TMIN
+def StallSpeedconstraint(betaLand, clMaxLand, vApp):
+    val = 1/betaLand*c.SLDENSITY/2*(vApp/1.23)**2*clMaxLand
+    return val
 
-constraints.append(TWconstraint)'''
+def LandingFieldLengthConstraint(betaLand, landingfield, clMaxLand):
+    val = 1/betaLand*landingfield/c.CLFL*c.SLDENSITY/2*clMaxLand
+    return val
 
-def StallSpeedconstraint(WSaxis): #here we need to start using the adsee book xd, just to demo a v line now
-    return np.zeros(len(WSaxis))+7407.37, WSaxis
-    #return np.zeros(len(WSaxis))+1/acparams.BETA_CRUISE*acparams.VSTALL**2*1.225/2*acparams.CLMAX, WSaxis
+def CruiseSpeedConstraint(WSaxis, cd0, ar, e, cruisalt, cruisemach, betacruise):
+    alphaT = matchingFunctions.thrustLapse(cruisalt, cruisemach)
+    rho = ISA.density(cruisalt)
+    v = cruisemach*ISA.speedOfSound(cruisalt)
+    val = betacruise/alphaT*((cd0*0.5*rho*v**2)/(betacruise*WSaxis)+(betacruise*WSaxis)/(np.pi*ar*e*0.5*rho*v**2))
+    return val
 
-constraints.append(StallSpeedconstraint)
-constraintNames.append("Minimum speed requirement")
+def Climbrate(WSaxis, ar, e, cd0, c, rateAlt, betaCruise):
+    rho = ISA.density(rateAlt)
+    Cl = np.sqrt(cd0*np.pi*ar*e)
+    v = np.sqrt(betaCruise*WSaxis*2/rho*1/Cl)
+    m = v/ISA.speedOfSound(rateAlt)
+    alphaT = matchingFunctions.thrustLapse(rateAlt, m)
+    val = betaCruise/alphaT*(np.sqrt(c**2/(betaCruise*WSaxis)*rho/2*Cl)+2*np.sqrt(cd0/(np.pi*ar*e)))
+    return val
 
-'''TestConstraint-Do not uncomment for offcial use'''
-'''def TestLinFunConstraint(WSaxis):
-    return WSaxis, np.sqrt(WSaxis)/WSaxis
+def Climbgradient(WSaxis, ar, e, cd0, beta, trustFrac, grad):
+    Cl = (cd0*np.pi*ar*e)**0.5
+    v = (beta*WSaxis*2/c.SLDENSITY*1/Cl)**0.5
+    m = v/ISA.speedOfSound(0)   
+    alphaT=matchingFunctions.thrustLapse(0,m)
+    val = 1/trustFrac*beta/alphaT*(grad+2*(cd0/(np.pi*ar*e))**0.5)
+    return val
 
-constraints.append(TestLinFunConstraint)'''
+def TakeOffFieldLengthConstraint(WSaxis, ar, e, trustfrac, takeoffdis, takeoffCL):
+    cl2 = (1/1.13)**2*takeoffCL
+    v2 = np.sqrt(WSaxis*2/c.SLDENSITY*1/cl2)
+    m = v2/ISA.speedOfSound(0)
+    alphaT=matchingFunctions.thrustLapse(0,m)
+    val = 1.15*alphaT*np.sqrt(1/trustfrac*WSaxis/(takeoffdis*0.85*c.SLDENSITY*c.G*np.pi*ar*e))+1/trustfrac*4*11/takeoffdis
+    return val
 
-'''Climb gradient calculations'''
-def climb_gradient_general(WSaxis, nEngines, nEnginesInoper, massFraction, gradient, flapDefl, lgDefl): #do not append this one directly to constraints!!!
-    Cd0, oswald = Cd0_Oswald_Flaps.Cd0_Oswald_flaps(flapDefl, acparams.OSWALD, acparams.CD_0, lgDefl)
-    #the expression for T/W is divided into subterms, as it is quite a big one
-    #the subterm names are arbitrary
-    optCl = (Cd0*np.pi*acparams.ASPECT*oswald)**0.5
-    speed = (WSaxis*2/acparams.RHO_LAND/optCl)**0.5
-    mach = speed/340
-    situationFraction = nEngines*massFraction/(nEngines-nEnginesInoper)/thrustLapse.thrustLapseNP(0, mach)
-    freeTerm = 2*(Cd0/np.pi/acparams.ASPECT/oswald)**0.5
-    '''print(f"sf: {situationFraction}")
-    print(f"ft: {freeTerm}")
-    print(f"cd0: {Cd0}")
-    print(f"pi: {np.pi}")
-    print(f"asp: {acparams.ASPECT}")
-    print(f"os: {oswald}")'''
-    return WSaxis, np.zeros(len(WSaxis))+situationFraction*(gradient+freeTerm)
 
-constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 1, 0.032, 30, True))
-constraintNames.append("Climb gradient requirement CS 25.119")
-constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0, 15, True))
-constraintNames.append("Climb gradient requirement CS 25.121a")
-constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0.024, 15, False))
-constraintNames.append("Climb gradient requirement CS 25.121b")
-constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 1, 1, 0.012, 0, False))
-constraintNames.append("Climb gradient requirement CS 25.121c")
-constraints.append(lambda WSaxis : climb_gradient_general(WSaxis, 2, 0, 0.92, 0.021, 30, True))
-constraintNames.append("Climb gradient requirement CS 25.121d")
+def matchingDiagramconstraints(ar, dragpolar: list, betaLand, clMaxLand, approachSpeed, landLength, cruiseAltitude, cruiseMach, betaCruise, climbrate, climbAltitude, takeoffLength, takeoffCL):
+    """DRAGPOLAR: ls[[cr],[cd],[tr],[td],[lr],[ld]]"""
+    """Form: e(0), cd0(1)"""
+    """cruise retracted(0)"""
+    """cruise deployed(1)"""
+    """takeoff retracted(2)"""
+    """takeoff deployed(3)"""
+    """landing retracted(4)"""
+    """landing deployed(5)"""
+    wingloading = [1, 10000]
+    constraintNames = []
 
-def TakeOffFieldLength(WSaxis):
-    return WSaxis, np.zeros(len(WSaxis))+(1.15*thrustLapse.thrustLapse(0, 0)*np.sqrt(WSaxis/(acparams.TAKEOFF_LENGTH*acparams.K_T*acparams.RHO_LAND*acparams.g*np.pi*acparams.ASPECT*acparams.OSWALD)) + 44/acparams.TAKEOFF_LENGTH)
+    stallspeed = StallSpeedconstraint(betaLand, clMaxLand, approachSpeed)
 
-constraints.append(TakeOffFieldLength)
-constraintNames.append("Take-off distance requirement")
 
-def LandingFieldLengthConstraint(WSaxis):
-    return np.zeros(len(WSaxis))+((acparams.LAND_LENGTH*acparams.RHO_LAND*acparams.CLMAX_LAND)/(acparams.BETA_LAND*acparams.CLFL*2)), WSaxis
+    landingfield = LandingFieldLengthConstraint(betaLand, landLength, clMaxLand)
 
-constraints.append(LandingFieldLengthConstraint)
-constraintNames.append("Landing distance requirement")
 
-def CruiseSpeedConstraint(WSaxis):
-    crmf = acparams.BETA_CRUISE
-    cr_density = ISA.density(acparams.CRUISE_ALTITUDE)
-    Vcr = math.sqrt(287*1.4*ISA.temperature(acparams.CRUISE_ALTITUDE))*acparams.MACH_CRUISE
-    return WSaxis, (crmf/thrustLapse.thrustLapse(acparams.CRUISE_ALTITUDE,acparams.MACH_CRUISE))*( (acparams.CD_0*0.5*cr_density*Vcr*Vcr)/(acparams.BETA_CRUISE*WSaxis) + (acparams.BETA_CRUISE*WSaxis)/(math.pi*acparams.ASPECT*0.5*acparams.OSWALD*cr_density*Vcr*Vcr) )
+    cruiseSpeed = []
+    for i in range(wingloading[0], wingloading[1]):
+        val = CruiseSpeedConstraint(i, dragpolar[0][1], ar, dragpolar[0][0], cruiseAltitude, cruiseMach, betaCruise)
+        cruiseSpeed.append(val)
+    
+    cRate = []
+    for i in range(wingloading[0], wingloading[1]):
+        val = Climbrate(i, ar, dragpolar[0][0], dragpolar[0][1], climbrate, climbAltitude, betaCruise)
+        cRate.append(val)
+    
+    Climbgradient1 = []
+    for i in range(wingloading[0], wingloading[1]):
+        val = Climbgradient(i, ar, dragpolar[5][0], dragpolar[5][1], 1, 1, 0.032)
+        Climbgradient1.append(val)
+    
+    Climbgradient2 = []
+    for i in range(wingloading[0], wingloading[1]):
+        val = Climbgradient(i, ar, dragpolar[3][0], dragpolar[3][1], 1, 0.5, 0)
+        Climbgradient2.append(val)
+    
+    Climbgradient3 = []
+    for i in range(wingloading[0], wingloading[1]):
+        val = Climbgradient(i, ar, dragpolar[2][0], dragpolar[2][1], 1, 0.5, 0.024)
+        Climbgradient3.append(val)
 
-constraints.append(CruiseSpeedConstraint)
-constraintNames.append("Cruise speed requirement")
+    Climbgradient4 = []
+    for i in range(wingloading[0], wingloading[1]):
+        val = Climbgradient(i, ar, dragpolar[0][0], dragpolar[0][1], 1, 0.5, 0.012)
+        Climbgradient4.append(val)
+    
+    Climbgradient5 = []
+    for i in range(wingloading[0], wingloading[1]):
+        val = Climbgradient(i, ar, dragpolar[4][0], dragpolar[4][1], betaLand, 0.5, 0.021)
+        Climbgradient5.append(val)
 
-constraints.append(ClimbRate.ClimbRate)
-constraintNames.append("Rate of climb requirement")
+    takeoff = []
+    for i in range(wingloading[0], wingloading[1]):
+        val = TakeOffFieldLengthConstraint(i, ar, dragpolar[3][0],0.5,takeoffLength, takeoffCL)
+        takeoff.append(val)
+
+
+    constraints = [stallspeed, landingfield, cruiseSpeed, cRate, Climbgradient1, Climbgradient2, Climbgradient3, Climbgradient4, Climbgradient5, takeoff]
+    constraintNames.append("Minimum speed requirement")
+    constraintNames.append("Landing distance requirement")
+    constraintNames.append("Cruise speed requirement")
+    constraintNames.append("Climb rate requirement")
+    constraintNames.append("Climb gradient requirement CS 25.119")
+    constraintNames.append("Climb gradient requirement CS 25.121a")
+    constraintNames.append("Climb gradient requirement CS 25.121b")
+    constraintNames.append("Climb gradient requirement CS 25.121c")
+    constraintNames.append("Climb gradient requirement CS 25.121d")
+    constraintNames.append("Take-off distance requirement")
+    return constraints, constraintNames
+
+
+def plotMatchingDiagram(ar, dragpolar, betaLand, clMaxLand, approachSpeed, landLength, cruiseAltitude, cruiseMach, betaCruise, climbrate, climbAltitude, takeoffLength, takeoffCL):
+    constraints, constraintNames = matchingDiagramconstraints(ar, dragpolar, betaLand, clMaxLand, approachSpeed, landLength, cruiseAltitude, cruiseMach, betaCruise, climbrate, climbAltitude, takeoffLength, takeoffCL)
+
+    
+    plt.axis((0, 10000, 0, 1))
+    for i,constraint in enumerate(constraints): 
+        if i < 2:
+            plt.axvline(constraint, label=constraintNames[i])
+        else:
+            plt.plot(constraint,label=constraintNames[i])
+    plt.legend()
+    plt.show()
 
 if __name__ == "__main__":
-    print(climb_gradient_general(np.linspace(0, 10000, 100), 2, 0, 1, 0.032, 3, True))
+    dragpolar = matchingFunctions.crudeDragpolar(0.8, 0.016,15,40)
+    #print(dragpolar)
+    plotMatchingDiagram(9.3, dragpolar, c.BETA_LAND, c.ULTIMATECL, c.VAPPROACH, c.LANDINGDISTANCE, c.CRUISEALTITUDE, c.CRUISEMACH, c.BETA_CRUISE, c.CLIMBRATE, c.CLIMBRATEALTITUDE, c.TAKEOFFDISTANCE, c.TAKEOFFCL)
+    #print(Climbgradient(7000, 9.4, dragpolar[2][0], dragpolar[2][1], 1, 0.5, 0.024))
