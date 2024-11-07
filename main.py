@@ -16,6 +16,7 @@ from ClassI import pointFinder
 from ClassI import maxFunctionFinder
 
 import ClassIV.clFunctions as clFuns
+from ClassIV import cruiseConditions as crCond
 
 import ClassII.weightEst as wEstII
 import ClassII.LoadFactor as loadF
@@ -33,6 +34,10 @@ with open(os.getcwd()+"\\Protocols\\main.json") as mainJson:
     mOE = jsonDict["OEM"]
     aspect = jsonDict["AR"]
     ClmaxLand = jsonDict["CLmaxLand"]
+    sweep = jsonDict["sweep"]
+    taper = jsonDict["tr"]
+    dihedral = jsonDict["dihedral"]
+    fusD = jsonDict["Dfus"]
 
 '''Iteration loop'''
 for i in range(1): #later change to a while with a counter and convergence condition
@@ -90,10 +95,26 @@ for i in range(1): #later change to a while with a counter and convergence condi
     plt.show()
 
     '''Wing Planform Design'''
+    S = consts.G*mMTO/WSselected #wing surface
+    planform = pf.Planform(S, aspect, taper, sweep, dihedral) #current planform
 
-    '''Aileron design'''
+    #choose leading edge sweep based on mach drag divergence
+    while crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.87) < consts.CRUISEMACH:
+        planform.change_sweep(planform.sweepC4+0.01)
+
+    #choose taper ratio that matches the aspect ratio and sweep to avoid pitchup constraint
+    while taper>0.1 and planform.AR>17.7 * (2 - taper) * np.exp(-0.043 * planform.sweepC4):
+        taper -= 0.05
+    
+    if planform.AR>17.7 * (2 - taper) * np.exp(-0.043 * planform.sweepC4):
+        aspect = 17.7 * (2 - taper) * np.exp(-0.043 * planform.sweepC4)
+        sweep = planform.sweepC4
+        continue #if we cannot satisfy pitchup constraint we enforce another class I estimation with a satisfactory aspect ratio
+
+    planform = pf.Planform(S, aspect, taper, sweep, dihedral) #updating planform
 
     '''HLD Design'''
+    hlds = hld.HLDs.autosize(planform, fusD/2) #using the autosize mechanic of the high lift devicesw
 
     '''Fuselage & fuel Volume Calculations'''
 

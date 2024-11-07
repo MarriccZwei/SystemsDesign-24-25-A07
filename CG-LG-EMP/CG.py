@@ -8,7 +8,7 @@ def X_wcg(m_wing, m_prop, MAC, x_prop):
     sum_XM = m_wing*0.4*MAC + m_prop*x_prop
     sum_M = m_wing + m_prop
     x_wcg = sum_XM/sum_M
-    return X_wcg
+    return x_wcg
 
 # Fuselage Group
 # Distances measured from nose tip
