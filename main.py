@@ -11,9 +11,9 @@ import OOP.Fuselage as fus
 import ClassI.pitchUpConstraint as puc
 import ClassI.weightEstimation as wEstI
 import ClassI.constraints as constr
-from ClassI import refAcData
-from ClassI import pointFinder
-from ClassI import maxFunctionFinder
+#from ClassI import refAcData
+#from ClassI import pointFinder
+#from ClassI import maxFunctionFinder
 
 import ClassIV.clFunctions as clFuns
 from ClassIV import cruiseConditions as crCond
@@ -25,6 +25,8 @@ import ClassII.dragEst as dragEst
 import CG_LG_EMP.CG as cg
 import CG_LG_EMP.EMP as emp
 import CG_LG_EMP.LG as lg
+
+from MATCHINGDIAGRAM.main import MatchingDiagram
 
 '''obtaining Initial values from main.json'''
 with open(os.getcwd()+"\\Protocols\\main.json") as mainJson:
@@ -70,36 +72,40 @@ for i in range(1): #later change to a while with a counter and convergence condi
 
 
     '''Matching Diagram. Figuring out a design point'''
-    constraints, constraintNames = constr.prepare_Constraint_List(aspect, oswald, Cd0, ClmaxLand) #obtaining constraints
+    '''This is the new matching diagram code all it only takes this as argumanets as this should probably be included in the itteration.
+    The last argumeent is if the diagram should actual be plot or not.'''
+    constraints, constraintNames, point = MatchingDiagram(aspect, consts.BETA_LAND, consts.BETA_CRUISE, ClmaxLand, oswald, Cd0, True) 
+    WSselected, TWselected = point
+    
+    #constr.prepare_Constraint_List(aspect, oswald, Cd0, ClmaxLand) #obtaining constraints
+    # #generating constraints
+    # WSmax = 10000
+    # TWmax = 1
+    # WSres = 1000
+    # WSaxis = np.linspace(0, WSmax, WSres+1)
+    # plt.axis((0, WSmax, 0, TWmax))
+    # i=0
+    # shading = 0.5 # change as needed 
+    # for constraint in constraints: 
+    #     plt.plot(*constraint(WSaxis),label=constraintNames[i])
+    #     plt.fill_between(constraint(WSaxis)[0], constraint(WSaxis)[1], 0, alpha=shading)
+    #     i=i+1
+    # plt.legend()
 
-    #generating constraints
-    WSmax = 10000
-    TWmax = 1
-    WSres = 1000
-    WSaxis = np.linspace(0, WSmax, WSres+1)
-    plt.axis((0, WSmax, 0, TWmax))
-    i=0
-    shading = 0.5 # change as needed 
-    for constraint in constraints: 
-        plt.plot(*constraint(WSaxis),label=constraintNames[i])
-        plt.fill_between(constraint(WSaxis)[0], constraint(WSaxis)[1], 0, alpha=shading)
-        i=i+1
-    plt.legend()
+    # crossOverEvents = maxFunctionFinder.maxFunctionFinder(constraints)
+    # for point in crossOverEvents:
+    #     print(point)
+    #     print(point[1], point[2], point[0]-100, point[0]+100)
+    # #pointFinder.pointFinder(point[1], point[2], point[0]-100, point[0]+100)
+    # WSselected, TWselected = pointFinder.pointFinder(constraints, crossOverEvents[-1][2], 0, crossOverEvents[-1][0]-100)
 
-    crossOverEvents = maxFunctionFinder.maxFunctionFinder(constraints)
-    for point in crossOverEvents:
-        print(point)
-        print(point[1], point[2], point[0]-100, point[0]+100)
-    #pointFinder.pointFinder(point[1], point[2], point[0]-100, point[0]+100)
-    WSselected, TWselected = pointFinder.pointFinder(constraints, crossOverEvents[-1][2], 0, crossOverEvents[-1][0]-100)
-
-    loadingPointsList = refAcData.generateLoadingPoints()
-    for i, point in enumerate(loadingPointsList):
-        plt.plot(point[0], point[1], 'r+')
-        plt.text(point[0] + 30, point[1] + 0.005, i+1) #Hard coded numbers are offset of labels.
-    plt.xlabel("Wing Loading, [N/m^2]")
-    plt.ylabel("Thrust-Weight Ratio, [-]")
-    plt.show()
+    # loadingPointsList = refAcData.generateLoadingPoints()
+    # for i, point in enumerate(loadingPointsList):
+    #     plt.plot(point[0], point[1], 'r+')
+    #     plt.text(point[0] + 30, point[1] + 0.005, i+1) #Hard coded numbers are offset of labels.
+    # plt.xlabel("Wing Loading, [N/m^2]")
+    # plt.ylabel("Thrust-Weight Ratio, [-]")
+    # plt.show()
 
     '''Wing Planform Design'''
     S = consts.G*mMTO/WSselected #wing surface
