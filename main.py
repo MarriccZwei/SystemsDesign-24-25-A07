@@ -49,7 +49,7 @@ with open(os.getcwd()+"\\Protocols\\main.json") as mainJson:
     mNacelle = jsonDict["mNacelle"]
 
 '''Iteration loop'''
-for i in range(1): #later change to a while with a counter and convergence condition
+for i in range(4): #later change to a while with a counter and convergence condition
 
     '''Class I weight est. Based on mass fractions and Cd/AR values from class II'''
     #Class I assesment of the engine tsfc TODO; change tsfc to a constant once we have an engine and manage the 10^6 factor
@@ -66,6 +66,7 @@ for i in range(1): #later change to a while with a counter and convergence condi
     MFoe = mOE/mMTO #operating empty weight mass fraction
     Mfuel = wEstI.Mfuel(MFoe, ld, tsfc) #fuel mass
     mMTO = wEstI.mtom(MFoe, ld, tsfc) #first overwriting of mtom
+    mOE = MFoe*mMTO
     Rferry = wEstI.Rferry(MFoe, ld, tsfc) #ferry range
     Rharm = wEstI.Rferry(MFoe, ld, tsfc) #harmonic range
     print(f"MTOM:{mMTO}")
@@ -75,8 +76,8 @@ for i in range(1): #later change to a while with a counter and convergence condi
     '''This is the new matching diagram code all it only takes this as argumanets as this should probably be included in the itteration.
     The last argumeent is if the diagram should actual be plot or not.'''
     constraints, constraintNames, point = MatchingDiagram(aspect, consts.BETA_LAND, consts.BETA_CRUISE, ClmaxLand, oswald, Cd0, True) 
-    WSselected, TWselected = point
-    
+    WSselected  = point[0]
+    TWselected = point[1]
     #constr.prepare_Constraint_List(aspect, oswald, Cd0, ClmaxLand) #obtaining constraints
     # #generating constraints
     # WSmax = 10000
@@ -110,6 +111,13 @@ for i in range(1): #later change to a while with a counter and convergence condi
     '''Wing Planform Design'''
     S = consts.G*mMTO/WSselected #wing surface
     planform = pf.Planform(S, aspect, taper, sweep, dihedral) #current planform
+
+    #updating the design lift coefficient and re-iterating if necessary
+    newCLDes = crCond.clDesign(WSselected, Mfuel, planform)
+    print(newCLDes)
+    if abs(1-newCLDes/CLdes)>0.01:
+        CLdes = newCLDes
+        continue
 
     #choose leading edge sweep based on mach drag divergence
     while crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.87) > consts.CRUISEMACH:
@@ -181,6 +189,11 @@ for i in range(1): #later change to a while with a counter and convergence condi
         
         xCgPrevious=cgMostConstraining #if we did not manage to exit the loop
 
+    print()
+
+    print(f"Design point: {WSselected}, {TWselected}")
+    print(f"Wing Surface and ClDes: {S}, {CLdes}")
+    print(f"Wing Aspect Ration and Taper Ratio: {planform.AR}, {planform.TR}")
     '''Fuselage & fuel Volume Calculations'''
 
     '''Class II Drag'''

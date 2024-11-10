@@ -6,8 +6,8 @@ if __name__ == "__main__":
     # ONLY FOR TESTING
 
 import numpy as np
-import matchingFunctions
-import ISAGEO as ISA
+from MATCHINGDIAGRAM import matchingFunctions
+from MATCHINGDIAGRAM import ISAGEO as ISA
 import matplotlib.pyplot as plt
 from General import Constants as c
 from ClassI import refAcData
