@@ -1,4 +1,4 @@
-import ISAGEO as ISA
+from MATCHINGDIAGRAM import ISAGEO as ISA
 import math
 from General import Constants
 

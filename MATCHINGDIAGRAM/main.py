@@ -6,8 +6,8 @@ if __name__ == "__main__":
     # ONLY FOR TESTING
 
 import numpy as np
-import matchingFunctions
-import ISAGEO as ISA
+from MATCHINGDIAGRAM import matchingFunctions
+from MATCHINGDIAGRAM import ISAGEO as ISA
 import matplotlib.pyplot as plt
 from General import Constants as c
 from ClassI import refAcData
@@ -155,9 +155,9 @@ def MatchingDiagram(ar, betaLand, betaCruise,takeoffCL,oswaldClean, cd0clean, pl
         plt.plot(point[0], point[1], marker='o', markersize=10, color='red')
 
         loadingPointsList = refAcData.generateLoadingPoints()
-        for i, point in enumerate(loadingPointsList):
-            plt.plot(point[0], point[1], 'r+')
-            plt.text(point[0] + 30, point[1] + 0.005, i+1) #Hard coded numbers are offset of labels.
+        for i, pointf in enumerate(loadingPointsList):
+            plt.plot(pointf[0], pointf[1], 'r+')
+            plt.text(pointf[0] + 30, pointf[1] + 0.005, i+1) #Hard coded numbers are offset of labels.
         plt.xlabel("Wing Loading, [N/m^2]")
         plt.ylabel("Thrust-Weight Ratio, [-]")
         plt.legend()
