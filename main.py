@@ -143,9 +143,9 @@ for i in range(4): #later change to a while with a counter and convergence condi
     hlds = hld.HLDs.autosize(planform, fusD/2) #using the autosize mechanic of the high lift devicesw
 
     '''Class II weight'''
-    mDes = (.95+.7)/2*mMTO #design mass due to fuel burn
-    clAlph = clFuns.dCLdAlpha(consts.CRUISEMACH, planform, True)
-    nult = loadF.n_ult(planform, clAlph, mMTO)
+    mDes = (.95+.7)/2*mMTO #design mass due to fuel burn in flight
+    clAlph = clFuns.dCLdAlpha(consts.CRUISEMACH, planform, True) #cL-Alpha of the wing
+    nult = loadF.n_ult(planform, clAlph, mMTO) #ultimate load factor for the wing
     mWing = wEstII.wing_mass(planform, mDes, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
     print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
 

@@ -14,8 +14,9 @@ def clDesign(wingLoading, weightFuel, planform: Planform):
     rho = c.CRUISEDENSITY
     vCruise = c.CRUISEVELOCITY
     q = 0.5*rho*vCruise**2
-    w = (wingLoading*planform.S)-weightFuel
-    averageLoading = 0.5*(2*(w/planform.S)+1.05*(weightFuel/planform.S))
+    #w = (wingLoading*planform.S)-weightFuel
+    #averageLoading = 0.5*(2*(w/planform.S)+1.05*(weightFuel/planform.S))
+    averageLoading = c.BETA_CRUISE*wingLoading
     cl = 1.1*averageLoading*(1/q)
     return cl
 
