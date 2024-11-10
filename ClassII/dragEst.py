@@ -7,6 +7,8 @@ if __name__ == "__main__":
 
 import numpy as np
 import General.Constants as consts
+import OOP.Planform as planform
+import OOP.Fuselage as fuselage
 
 #reynolds number formula, l is length, rho - ambient air density, M- mach number
 def Reynolds(rho, l, M):
@@ -45,4 +47,24 @@ def Cdmisc(M, ka, CL, sweepLE, tc, Mcr = 0.6): #to change the Mcr value to the r
         Cdmisc = 0.002*(1 +2.5((M - Mdd)/0.05))**2.5
     return Cdmisc
 
+def Cdo(rho, mach, tcMax, planForm, fuseLage, Sref, Mcr = 0.6, tcMaxPos=0.38, ka=0.87):
+    sweepMaxTc = planForm.sweep_at_c_fraction(planForm,0.38)
+    sum = 0
+    
+    #wing calculations
+    length = planForm._MAC
+    lamFrac = 0.1
+    FF = FFwing(tcMaxPos, tcMax, mach, sweepMaxTc)
+    CF = Cf(Reynolds(rho, length, mach), lamFrac, mach)
+    IF = 1
+    Swet = planForm.Sw
+    sum = CF*FF*IF*Swet
 
+    length = fuseLage.L()
+    FF = FFfus(fuseLage.L(),fuseLage.D)
+    CF = Cf(Reynolds(rho, length, mach), lamFrac, mach)
+    IF = 1
+    Swet = fuseLage.Sw
+    sum = sum + (CF*FF*IF*Swet)
+
+    return sum/Sref + Cdmisc(mach, ka, planform.Planform.sweep_at_c_fraction(planForm,0), tcMax, Mcr)

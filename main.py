@@ -191,6 +191,8 @@ for i in range(1): #later change to a while with a counter and convergence condi
     #It would be just coupling a few functions from ClassII.dragEst.py into a single function - for typical values, us the slides from lift 7 drag estimations
     #The Planform and Fuselage Classes have built-in wetted Surface Functions/Properties
 
+    Cdo = dragEst.Cdo(consts.CRUISEDENSITY, consts.CRUISEMACH, 0.1, planform, fuselage, S)
+    print(Cdo)
 
     '''Repeat the Iteration loop until your class I and class II estimations converge'''
 
