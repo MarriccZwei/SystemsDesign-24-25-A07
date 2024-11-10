@@ -66,7 +66,7 @@ for i in range(4): #later change to a while with a counter and convergence condi
     MFoe = mOE/mMTO #operating empty weight mass fraction
     Mfuel = wEstI.Mfuel(MFoe, ld, tsfc) #fuel mass
     mMTO = wEstI.mtom(MFoe, ld, tsfc) #first overwriting of mtom
-    mOE = MFoe*mMTO
+    mOE = MFoe*mMTO #updating the OEM
     Rferry = wEstI.Rferry(MFoe, ld, tsfc) #ferry range
     Rharm = wEstI.Rferry(MFoe, ld, tsfc) #harmonic range
     print(f"MTOM:{mMTO}")
@@ -120,7 +120,10 @@ for i in range(4): #later change to a while with a counter and convergence condi
         continue
 
     #choose leading edge sweep based on mach drag divergence
-    while crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.87) > consts.CRUISEMACH:
+    Mdd = crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.87)
+    print(Mdd)
+    while  Mdd< consts.CRUISEMACH:
+        Mdd = crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.87)
         planform.change_sweep(planform.sweepC4+0.1)
         sweep = planform.sweepC4
 
@@ -193,7 +196,8 @@ for i in range(4): #later change to a while with a counter and convergence condi
 
     print(f"Design point: {WSselected}, {TWselected}")
     print(f"Wing Surface and ClDes: {S}, {CLdes}")
-    print(f"Wing Aspect Ration and Taper Ratio: {planform.AR}, {planform.TR}")
+    print(f"Wing Aspect Ration and Taper Ratiom, Sweep: {planform.AR}, {planform.TR}, {planform.sweepC4}")
+    print(f"Mach Drag Divergence: {Mdd}")
     '''Fuselage & fuel Volume Calculations'''
 
     '''Class II Drag'''
