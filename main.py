@@ -120,10 +120,10 @@ for i in range(4): #later change to a while with a counter and convergence condi
         continue
 
     #choose leading edge sweep based on mach drag divergence
-    Mdd = crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.87)
+    Mdd = crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.935)
     print(Mdd)
     while  Mdd< consts.CRUISEMACH:
-        Mdd = crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.87)
+        Mdd = crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.935)
         planform.change_sweep(planform.sweepC4+0.1)
         sweep = planform.sweepC4
 

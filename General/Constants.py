@@ -36,7 +36,7 @@ FXTEQPTMF = 0.1 #fixed equipment mass fraction
 OEWCGWRTLEMACPERMAC = 0.25 #OEW xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
 
 """GENERAL"""
-VSTALL = 60 #This is maybe a bit high for the stall landing speed 
+VSTALL = 57.5 #This is maybe a bit high for the stall landing speed 
 VAPPROACH = 1.23*VSTALL
 ULTIMATECL = 2.5
 
