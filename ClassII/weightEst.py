@@ -34,7 +34,7 @@ def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mdes, nult): #the fuse
     # Import constants from constants.py file
     K_door = const.KDOOR
     K_lg = const.KLG
-    S_f = fuselage.SwFus()
+    S_f = fuselage.Sw
 
     # Calculate some terms in order to simplify the big equation
     weightTerm = (Mdeslb*nult)**0.5
