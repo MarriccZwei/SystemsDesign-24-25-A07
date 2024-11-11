@@ -114,14 +114,14 @@ for i in range(4): #later change to a while with a counter and convergence condi
 
     #updating the design lift coefficient and re-iterating if necessary
     newCLDes = crCond.clDesign(WSselected, Mfuel, planform)
-    print(newCLDes)
+    #print(newCLDes)
     if abs(1-newCLDes/CLdes)>0.01:
         CLdes = newCLDes
         continue
 
     #choose leading edge sweep based on mach drag divergence
     Mdd = crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.935)
-    print(Mdd)
+    #print(Mdd)
     while  Mdd< consts.CRUISEMACH:
         Mdd = crCond.dragDivergenceMach(planform, WSselected, Mfuel, 0.935)
         planform.change_sweep(planform.sweepC4+0.1)
@@ -175,8 +175,25 @@ for i in range(4): #later change to a while with a counter and convergence condi
         cgMostConstraining = cg.cg(xOe, xP, xF, xOePF) #the most constraining cg choice
         print(f"The most constraining cg location is: {cgMostConstraining}")
 
+        #comparing cgs to see if iteration necessary and saving the cg values before next iteration
+        if abs(1-xCgPrevious/cgMostConstraining)<.01:
+            break #exits the loop
+
+        xCgPrevious=cgMostConstraining #if we did not manage to exit the loop
+
         #tail
-        #htailS = emp.S_hor()
+        Sh, Sv = emp.S_tail(consts.VHTAIL, planform.S, planform.MAC, consts.XH, consts.VVTAIL, planform.b, consts.XV)
+        horizontalTail = pf.Planform(Sh, consts.ARHTAIL, consts.TRHTAIL, consts.SWEEPHT, 0)
+        verticalTail = pf.Planform(Sv, consts.ARVTAIL, consts.TRVTAIL, consts.SWEEPVT, 0)
+
+        #tail mass est.
+        clAlphaHtail = clFuns.dCLdAlpha(consts.CRUISEMACH, horizontalTail)
+        massHtail = wEstII.tail_mass(mDes, loadF.n_ult(horizontalTail, clAlphaHtail, mMTO), horizontalTail, consts.XH, 0.25*horizontalTail.S)
+        clAlphaVtail = clFuns.dCLdAlpha(consts.CRUISEMACH, verticalTail)
+        massVtail = wEstII.tail_mass(mDes, loadF.n_ult(verticalTail, clAlphaHtail, mMTO), verticalTail, consts.XH, 0.25*verticalTail.S)
+        print(f"happens, old mEmp: {mEmp}")
+        mEmp = massHtail+massVtail #upditing the empenage mass value
+        print(f"happens, new mEmp: {mEmp}")
 
         #lg - dimensions
         mainWheelPressure = lg.P_MW(mMTO, consts.NWM)
@@ -186,12 +203,9 @@ for i in range(4): #later change to a while with a counter and convergence condi
 
         #lg-weight estimations
         mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, lMainStrut, lNoseStrut, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
-
-        #comparing cgs to see if iteration necessary and saving the cg values before next iteration
-        if abs(1-xCgPrevious/cgMostConstraining)<.01:
-            break #exits the loop
+    
+    mOE = mLG+mWing+mEmp+mFus+mFe #getting the new OEM
         
-        xCgPrevious=cgMostConstraining #if we did not manage to exit the loop
 
     print()
 

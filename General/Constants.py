@@ -21,8 +21,8 @@ LANDINUHAT = 65*0.3048 #value read for the graph, subject to scrutiny #converted
 
 VHTAIL = 0.87
 VVTAIL = 0.065
-XH = 10 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail moment arm
-XV = 10 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail moment arm
+XH = 60 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail moment arm
+XV = 60 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail moment arm
 SHTAIL = 100 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail area
 SVTAIL = 100 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail area
 FW = 100 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: fuselage widht at horizontal tail intersection
@@ -42,6 +42,8 @@ CTHTAIL = 1 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail tip
 CTVTAIL = 1 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail tip chord
 MACHTAIL = 2 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail MAC
 MACVTAIL = 2 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail MAC
+TCH = .09 #thickness to chord for the horizontal tail
+TCR = .09 #thickness to chord for the vertical tail
 
 KDOOR = 1.12  # Constant for amount of cargo doors, check Raymer weight estimation
 KLG = 1.  # Constant depending on Landing gear attachement, if it i fuselage mounted the constant equals 1.12, otherwise = 1.0
