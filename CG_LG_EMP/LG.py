@@ -45,7 +45,7 @@ def l_n(MTOM, P_NW, l_m):
 # l_n nose gear position (from nose), l_m main gear position (from nose)
 # z_cg height of cg relaitve to ground, psi assumed to be <= 55 deg
 def y_MLG_to(l_n, l_m, z_cg, psi):
-    y_MLG_to = (l_n + l_m)/(sqrt(((l_n**2 * tan(np,radians(psi))**2)/(z_cg**2)-1)))
+    y_MLG_to = (l_n + l_m)/(sqrt(((l_n**2 * tan(np.radians(psi))**2)/(z_cg**2)-1)))
     return y_MLG_to
 
 # z_t is the height of the wing tip wrt the ground 
