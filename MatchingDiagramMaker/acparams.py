@@ -10,7 +10,7 @@ BYPASS = weightEstimation.B #pls keep between 5 and 15
 
 #Aerodynamics + wing form constants
 TMIN=0.7
-CLMAX = 2.5 #est. equal to the highrer of the other cls
+CLMAX = 2.5 #est. equal to the higher of the other cls
 CD_0 = weightEstimation.Cd_0# to be changed
 ASPECT = weightEstimation.AR # to be changed
 OSWALD = weightEstimation.e # to be changed
