@@ -52,17 +52,20 @@ h_fus = 5.2475 +2*t_wall
 d_fus = (w_fus+h_fus)/2
 
 l_n = 4
-l_t = 0.8 * d_fus #0.8 as value
 l_nc = 1.8 * d_fus #1.8 as value
 l_tc = 3.0 * d_fus #3.0 as value
+l_t = 0.8 * l_tc #0.8 as value
 
 l_fus = l_cabin + l_n + l_t
 
 #value for emre <3
 xcg_p = l_n + 0.5*l_cabin
 
-
+print(l_cabin/ceil(cross[3] / cross[4]))
+print(ceil(cross[3] / cross[4]))
 print(l_n)
 print(l_nc)
 print(l_t)
 print(l_tc)
+print(d_fus)
+print(l_fus)

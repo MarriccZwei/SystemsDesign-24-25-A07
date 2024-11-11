@@ -14,7 +14,7 @@ def ClimbRate(W_S):
     AR = acparams.ASPECT
     e = acparams.OSWALD
 
-    CLopt = (3*np.pi*AR*e*C_D0)
+    CLopt = (np.pi*AR*e*C_D0)
     mach = np.sqrt((W_S*2/rho/CLopt)/(1.4*287*ISA.temperature(altitude)))
 
     alpha_T = thrustLapse.thrustLapseNP(altitude, mach)

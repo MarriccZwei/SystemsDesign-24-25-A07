@@ -58,6 +58,7 @@ print(M_mto)
 print(R_nom)
 print(R_harm)
 print(R_ferry)
+print(Cd_0, e)
 
 #plot
 ds = 50000 #step size [m]

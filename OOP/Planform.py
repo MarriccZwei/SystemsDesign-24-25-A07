@@ -70,6 +70,17 @@ class Planform():
 
         return [MAC, YMAC, XLEMAC]
     
+    def change_sweep(self, newSweep, C4=True): #changing the sweep function - later on we can make sweep itself a property dependent on sweep LE
+        if C4:
+            self.sweepC4 = newSweep
+            self.sweepLE = np.arctan(np.tan(self.sweepC4)+0.25*self.planforms*self.cr/self.b*(1-self.TR)) #sweep @ LE
+        else:
+            self.sweepLE = newSweep
+            self.sweepC4 = self.sweep_at_c_fraction(.25)
+
+    def fuel_volume(self, A2c2, safetyFactor=1.5):
+        return A2c2*self.b/safetyFactor*self.cr*self.cr/3*(1+self.TR+self.TR*self.TR)
+    
 #=======================================================================================================
 
 '''TESTS'''   

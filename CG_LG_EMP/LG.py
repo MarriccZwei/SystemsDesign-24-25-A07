@@ -1,5 +1,5 @@
 import numpy as np
-from math import log, sqrt, tan
+from math import log, sqrt, tan, sin
 
 #tire pressure in kg/cm^2
 def p_tire(LCN):
@@ -25,17 +25,29 @@ def y_MLG_to(l_n, l_m, z_cg, psi):
     y_MLG_to = (l_n + l_m)/(sqrt(((l_n**2 * tan(psi)**2)/(z_cg**2)-1)))
     return y_MLG_to
 
+def z_t(b, dihedral):
+    z_t = 2.44 + (b/2) * sin(dihedral)
+    return z_t
+
+def z_n(b, dihedral):
+    z_n = 2.44 + (1/3) * (b/2) * sin(dihedral)
+    return z_n
+
 # Minimum MLG dist from centreline to ensure sufficient wing tip clearance
-# b span, z_t height of wing tip wrt ground, psi angle between MLG and wing tip >5 deg
+# b span, z_t height of wing tip wrt ground, phi angle between MLG and wing tip >5 deg
 def y_MLG_tc(b, z_t, phi):
     y_MLG_tc = (b/2) - ((z_t)/tan(phi))
     return y_MLG_tc
 
 # Minimum MLG dist from centreline to ensure sufficient engine tip clearance
-# b span, z_n height of engine wrt ground, psi angle between MLG and engine > 5 deg
+# b span, z_n height of engine wrt ground, psi angle between MLG and engine >5 deg
 def y_MLG_ec(y_e, z_n, psi):
     y_MLG_ec = y_e - ((z_n)/(tan(psi)))
     return y_MLG_ec
+
+def l_n(MTOM, P_NW, l_m):
+    l_n = l_m * ((MTOM/P_NW) -1)
+    return l_n
 
 #if __name__ == "__main__":
 
