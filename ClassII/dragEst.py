@@ -10,6 +10,7 @@ import numpy as np
 import General.Constants as consts
 import OOP.Planform as pf
 import OOP.Fuselage as fus
+import OOP.HLDs as hld
 
 #reynolds number formula, l is length, rho - ambient air density, M- mach number
 def Reynolds(rho, l, M):
@@ -38,17 +39,24 @@ CDi = lambda CL, ARe: CL**2/ARe/np.pi/Oswald(ARe) #induced drag coefficient
 
 #The wave drag coefficient - M is the mach number, ka is technology constant (we use 0.87), CL is lift coefficient,
 #tc is max.thickness-to-chord ratio, Mcr is the critical mach number value
-def Cdmisc(M, ka, CL, sweepLE, tc, Mcr = 0.6): #to change the Mcr value to the real one
+def Cdmisc(M, ka, CL, sweepLE, tc, Sflap, S, Mcr = 0.6): #to change the Mcr value to the real one
     Mdd = ka/np.cos(sweepLE) -tc/np.cos(sweepLE)**2 - CL/10/np.cos(sweepLE)**3
     if M < Mcr:
-        Cdmisc = 0
+        CdmiscWave = 0
     elif Mcr <= M <= Mdd:
-        Cdmisc = 0.002*(1 +2.5*((Mdd - M)/0.05))**-1
+        CdmiscWave = 0.002*(1 +2.5*((Mdd - M)/0.05))**-1
     else:
-        Cdmisc = 0.002*(1 +2.5*((M - Mdd)/0.05))**2.5
+        CdmiscWave = 0.002*(1 +2.5*((M - Mdd)/0.05))**2.5
+    
+    CdmiscUpsweep = 3.83*np.radians(consts.UPSWEEP)**2.5*consts.AMAX
+    CdmiscBase = (0.139+0.419(M-0.161)**2)*consts.ABASE
+    CdmiscLG = 0
+    CdmiscFlap = 0.0074*0.35*Sflap/S*(consts.LADEFELCTION-10)
+
+    Cdmisc = CdmiscWave+CdmiscUpsweep+CdmiscBase+CdmiscLG+CdmiscFlap
     return Cdmisc
 
-def Cdo(rho, mach, CLdes, tcMax, planForm:pf.Planform, fuseLage:fus.Fuselage, Sref, Mcr = 0.6, tcMaxPos=0.38, ka=0.87):
+def Cdo(rho, mach, CLdes, tcMax, planForm:pf.Planform, fuseLage:fus.Fuselage, HLD:hld.HLDs, Sref, Mcr = 0.6, tcMaxPos=0.38, ka=0.87):
     sweepMaxTc = planForm.sweep_at_c_fraction(0.38)
     sum = 0
     
@@ -68,9 +76,11 @@ def Cdo(rho, mach, CLdes, tcMax, planForm:pf.Planform, fuseLage:fus.Fuselage, Sr
     Swet = fuseLage.Sw
     sum += (CF*FF*IF*Swet)
 
-    Cdmiscellaneous = Cdmisc(mach, ka, CLdes, planForm.sweepLE, tcMax, Mcr)
+    Cdmiscellaneous = Cdmisc(mach, ka, CLdes, planForm.sweepLE,HLD.flapSflapped(planForm),Sref, tcMax, Mcr)
 
-    return sum/Sref + Cdmiscellaneous
+    baseCd0 = sum/Sref
+
+    return baseCd0 + Cdmiscellaneous + baseCd0*0.035
 
 # if __name__ == "__main__":
 #     class TestDragEst(unittest.TestCase):
