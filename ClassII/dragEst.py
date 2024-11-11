@@ -48,12 +48,12 @@ def Cdmisc(M, ka, CL, sweepLE, tc, Sflap, S, Mcr = 0.6): #to change the Mcr valu
     else:
         CdmiscWave = 0.002*(1 +2.5*((M - Mdd)/0.05))**2.5
     
-    CdmiscUpsweep = 3.83*np.radians(consts.UPSWEEP)**2.5*consts.AMAX
-    CdmiscBase = (0.139+0.419(M-0.161)**2)*consts.ABASE
+    CdmiscUpsweep = 3.83*np.radians(consts.UPSWEEP)**2.5*consts.AMAX/S
+    CdmiscBase = (0.139+0.419*(M-0.161)**2)*consts.ABASE/S
     CdmiscLG = 0
-    CdmiscFlap = 0.0074*0.35*Sflap/S*(consts.LADEFELCTION-10)
+    #CdmiscFlap = 0.0074*0.35*Sflap/S*(consts.LADEFELCTION-10) #Commented out cuz we are at cruise
 
-    Cdmisc = CdmiscWave+CdmiscUpsweep+CdmiscBase+CdmiscLG+CdmiscFlap
+    Cdmisc = CdmiscWave+CdmiscUpsweep+CdmiscBase+CdmiscLG#+CdmiscFlap
     return Cdmisc
 
 def Cdo(rho, mach, CLdes, tcMax, planForm:pf.Planform, fuseLage:fus.Fuselage, HLD:hld.HLDs, Sref, Mcr = 0.6, tcMaxPos=0.38, ka=0.87):
@@ -76,7 +76,7 @@ def Cdo(rho, mach, CLdes, tcMax, planForm:pf.Planform, fuseLage:fus.Fuselage, HL
     Swet = fuseLage.Sw
     sum += (CF*FF*IF*Swet)
 
-    Cdmiscellaneous = Cdmisc(mach, ka, CLdes, planForm.sweepLE,HLD.flapSflapped(planForm),Sref, tcMax, Mcr)
+    Cdmiscellaneous = Cdmisc(mach, ka, CLdes, planForm.sweepLE, tcMax, HLD.flapSflapped(planForm),Sref, Mcr)
 
     baseCd0 = sum/Sref
 
