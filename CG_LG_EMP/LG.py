@@ -7,16 +7,24 @@ def p_tire(LCN):
     return p_tire
 
 #static load per main landing gear wheel in kg
-#N_MW is the total number of MLG wheels
-def P_MW(MTOM,N_MW):
-    P_MW = 0.92 * (MTOM/N_MW)
+#NWM is the total number of MLG wheels
+def P_MW(MTOM,NWM):
+    P_MW = 0.92 * (MTOM/NWM)
     return P_MW
 
 #static load per nose landing gear wheel in kg 
-#N_NW is the total number of NLG wheels
-def P_NW(MTOM,N_NW):
-    P_NW = 0.08 * (MTOM/N_NW)
+#NWN is the total number of NLG wheels
+def P_NW(MTOM,NWN):
+    P_NW = 0.08 * (MTOM/NWN)
     return P_NW
+
+def l_n(MTOM, P_NW, l_m):
+    l_n = l_m * ((MTOM/P_NW) -1)
+    return l_n
+
+def z_MLG(cg, TC, TailScrape):
+    z_MLG = tan(np.radians(TailScrape)) * (TC - cg)
+    return z_MLG
 
 # Minimum MLG dist from centreline to avoid laterap tip over
 # l_n nose gear position (from nose), l_m main gear position (from nose)
@@ -45,9 +53,6 @@ def y_MLG_ec(y_e, z_n, psi):
     y_MLG_ec = y_e - ((z_n)/(tan(psi)))
     return y_MLG_ec
 
-def l_n(MTOM, P_NW, l_m):
-    l_n = l_m * ((MTOM/P_NW) -1)
-    return l_n
 
 #if __name__ == "__main__":
 

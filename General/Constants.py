@@ -143,3 +143,4 @@ HEIGHTFRONT = 1.0922 #m
 WWHEELMAIN = 42.545*10**-2 #m
 WWHEELFRONT = 31.75*10**-2 #m
 WSTRUT = 20*10^-2 #m
+TailScrape = 10 # degrees 
