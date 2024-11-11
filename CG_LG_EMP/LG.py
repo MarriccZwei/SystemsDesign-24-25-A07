@@ -18,13 +18,18 @@ def P_NW(MTOM,NWN):
     P_NW = 0.08 * (MTOM/NWN)
     return P_NW
 
-def l_n(MTOM, P_NW, l_m):
-    l_n = l_m * ((MTOM/P_NW) -1)
-    return l_n
-
+# z_MLG is the height of the main landing gear wrt the ground
+#TC is the longitudinal position of the tail cone wrt the nose
+# cg is the most aft longitudinal position of the centre of grav wrt the nose
 def z_MLG(cg, TC, TailScrape):
     z_MLG = tan(np.radians(TailScrape)) * (TC - cg)
     return z_MLG
+
+
+# l_n is the longitudinal position of the nose gear wrt the nose
+def l_n(MTOM, P_NW, l_m):
+    l_n = l_m * ((MTOM/P_NW) -1)
+    return l_n
 
 # Minimum MLG dist from centreline to avoid laterap tip over
 # l_n nose gear position (from nose), l_m main gear position (from nose)
@@ -33,12 +38,15 @@ def y_MLG_to(l_n, l_m, z_cg, psi):
     y_MLG_to = (l_n + l_m)/(sqrt(((l_n**2 * tan(psi)**2)/(z_cg**2)-1)))
     return y_MLG_to
 
-def z_t(b, dihedral):
-    z_t = 2.44 + (b/2) * sin(dihedral)
+# z_t is the height of the wing tip wrt the ground 
+def z_t(b, dihedral, z_MLG):
+    z_t = z_MLG + (b/2) * sin(dihedral)
     return z_t
 
-def z_n(b, dihedral):
-    z_n = 2.44 + (1/3) * (b/2) * sin(dihedral)
+# z_n is the height of the engine wrt the ground 
+# d_eng is the diameter of the engine 
+def z_n(b, dihedral, d_eng):
+    z_n = (1/3) * (b/2) * sin(dihedral) - d_eng
     return z_n
 
 # Minimum MLG dist from centreline to ensure sufficient wing tip clearance
@@ -48,9 +56,10 @@ def y_MLG_tc(b, z_t, phi):
     return y_MLG_tc
 
 # Minimum MLG dist from centreline to ensure sufficient engine tip clearance
-# b span, z_n height of engine wrt ground, psi angle between MLG and engine >5 deg
-def y_MLG_ec(y_e, z_n, psi):
-    y_MLG_ec = y_e - ((z_n)/(tan(psi)))
+# b span, z_n height of engine wrt ground, phi angle between MLG and engine >5 deg
+# y_n is the lateral location of the centerline of the engine approx 1/3(b/2)
+def y_MLG_ec(y_n, z_n, phi):
+    y_MLG_ec = y_n - ((z_n)/(tan(phi)))
     return y_MLG_ec
 
 
