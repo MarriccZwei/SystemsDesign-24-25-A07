@@ -40,6 +40,8 @@ TRHTAIL = 0.5 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail t
 TRVTAIL = 0.5 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail taper ratio
 CTHTAIL = 1 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail tip chord
 CTVTAIL = 1 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail tip chord
+MACHTAIL = 2 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail MAC
+MACVTAIL = 2 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail MAC
 
 KDOOR = 1.12  # Constant for amount of cargo doors, check Raymer weight estimation
 KLG = 1.  # Constant depending on Landing gear attachement, if it i fuselage mounted the constant equals 1.12, otherwise = 1.0
