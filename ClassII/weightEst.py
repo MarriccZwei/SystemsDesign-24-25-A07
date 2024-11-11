@@ -78,7 +78,7 @@ def rudder_mass(Mdes, nult, planform:pf.Planform, tailLength, tcRudder): #make s
     return mass_vertical_kg 
 
 '''Landing Gear mass Estimation'''
-#verify it's 2.5!
+#verify it's 2.5!!!
 def lg_mass(MTOM, landingMassFraction, mlgLength, nlgLength, mlgNwheels, nlgNwheels, 
 mlgStrokeStrutsN, Vstall, loadFactorTouchdown = 2.5): 
     MTOMlb = MTOM/0.4536
