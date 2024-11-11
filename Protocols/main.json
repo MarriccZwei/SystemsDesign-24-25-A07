@@ -27,12 +27,16 @@
     "Mcruise": 0.82,
     "sweepTE": 0.2863242855149297,
     "CLmaxTO": 0.3135420203679402,
-    "CLmaxLand": 0.21819105133677286,
+    "CLmaxLand": 2.5,
     "CLmaxClean": 1.413310775654689,
     "bEndHLD": -9.507997085106561,
     "rollRate": 0.3596854277820242,
     "CLDesign": 0.7166836262139477,
     "UltimateCL": 2.5,
     "TSFC": 14.491608875351323,
-    "Incidence": 5.4714791904975355
+    "Incidence": 5.4714791904975355,
+    "Dfus": 2.95,
+    "mEmpenage": 6300,
+    "mLandingGear": 12000,
+    "mNacelle": 5400
 }

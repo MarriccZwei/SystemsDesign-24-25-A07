@@ -40,6 +40,9 @@ class Planform():
         '''MAC PROPERTIES'''
         self.MAC, self.YMAC, self.XLEMAC = self._MAC(self.sweepLE, self.b, self.cr, self.ct)
 
+        '''OTHER'''
+        self.Sw = 2*1.07*S #wetted area of the planform
+
 
     """Use this to get sweep angles other than LE and C/4"""
     #xc is the x/c fraction at which you want the sweep, set radians to False if you want a degree output
@@ -66,6 +69,17 @@ class Planform():
         XLEMAC = YMAC * np.tan(LambdaLE)
 
         return [MAC, YMAC, XLEMAC]
+    
+    def change_sweep(self, newSweep, C4=True): #changing the sweep function - later on we can make sweep itself a property dependent on sweep LE
+        if C4:
+            self.sweepC4 = newSweep
+            self.sweepLE = np.arctan(np.tan(self.sweepC4)+0.25*self.planforms*self.cr/self.b*(1-self.TR)) #sweep @ LE
+        else:
+            self.sweepLE = newSweep
+            self.sweepC4 = self.sweep_at_c_fraction(.25)
+
+    def fuel_volume(self, A2c2, safetyFactor=1.5):
+        return A2c2*self.b/safetyFactor*self.cr*self.cr/3*(1+self.TR+self.TR*self.TR)
     
 #=======================================================================================================
 

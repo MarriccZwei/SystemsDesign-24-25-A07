@@ -37,7 +37,7 @@ def climb_gradient_general(WSaxis, nEngines, nEnginesInoper, massFraction, gradi
     #the expression for T/W is divided into subterms, as it is quite a big one
     #the subterm names are arbitrary
     optCl = (Cd0*np.pi*acparams.ASPECT*oswald)**0.5
-    speed = (WSaxis*2/acparams.RHO_LAND/optCl)**0.5
+    speed = (massFraction*WSaxis*2/acparams.RHO_LAND/optCl)**0.5
     mach = speed/340
     situationFraction = nEngines*massFraction/(nEngines-nEnginesInoper)/thrustLapse.thrustLapseNP(0, mach)
     freeTerm = 2*(Cd0/np.pi/acparams.ASPECT/oswald)**0.5

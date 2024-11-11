@@ -1,19 +1,20 @@
-
 import numpy as np
-import ISA
-import thrustLapse
+from General import ISA
+from ClassI import thrustLapse
+import General.Constants as consts
 
-def ClimbRate(W_S):
-    beta = acparams.BETA_CRUISE
-    altitude = acparams.CRUISE_ALTITUDE
+#betaCruise is the cruise mass fraction
+def ClimbRate(W_S, oswald, betaCrusie, rocCruise, CD0, AR):
+    beta = betaCrusie
+    altitude = consts.CRUISEALTITUDE
     
-    c = acparams.ROC_CRUISE_ALT
+    c = rocCruise
     rho = ISA.density(altitude)
-    C_D0 = acparams.CD_0
-    AR = acparams.ASPECT
-    e = acparams.OSWALD
+    C_D0 = CD0
+    AR = AR
+    e = oswald
 
-    CLopt = (3*np.pi*AR*e*C_D0)
+    CLopt = (np.pi*AR*e*C_D0)
     mach = np.sqrt((W_S*2/rho/CLopt)/(1.4*287*ISA.temperature(altitude)))
 
     alpha_T = thrustLapse.thrustLapseNP(altitude, mach)
