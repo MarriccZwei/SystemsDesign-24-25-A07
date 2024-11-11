@@ -34,7 +34,7 @@ KUHT = 1.143  # unit horizontal tail, check raymer to change
 
 FXTEQPTMF = 0.1 #fixed equipment mass fraction
 OEWCGWRTLEMACPERMAC = 0.25 #OEW xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
-WNGCGWRTLEMACPERMAC = 0.2 #Wing xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
+WNGCGWRTLEMACPERMAC = 0.4 #Wing xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
 
 """GENERAL"""
 VSTALL = 58 #This is maybe a bit high for the stall landing speed 

@@ -22,7 +22,7 @@ def X_fcg(m_fus,m_emp, m_fe, l_fus):
 
 def x_lemac(X_fcg, MAC, m_wing, m_prop, m_fus, m_emp, m_fe,oew_cg_wrt_mac,w_cg_wrt_mac):
     M_W = m_wing + m_prop 
-    x_lemac = X_fcg + MAC*( w_cg_wrt_mac*((m_wing+m_prop)/(m_fus+m_emp+m_fe)) - oew_cg_wrt_mac*MAC*(1+((m_wing+m_prop)/(m_fus+m_emp+m_fe))))
+    x_lemac = X_fcg + MAC*( w_cg_wrt_mac*((m_wing+m_prop)/(m_fus+m_emp+m_fe))) - oew_cg_wrt_mac*MAC*(1+((m_wing+m_prop)/(m_fus+m_emp+m_fe)))
     return x_lemac
 
 # OE, P, F x_distances
