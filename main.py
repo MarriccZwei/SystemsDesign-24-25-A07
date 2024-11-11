@@ -176,6 +176,7 @@ for i in range(4): #later change to a while with a counter and convergence condi
         print(f"The most constraining cg location is: {cgMostConstraining}")
 
         #tail
+        #htailS = emp.S_hor()
 
         #lg - dimensions
         mainWheelPressure = lg.P_MW(mMTO, consts.NWM)
