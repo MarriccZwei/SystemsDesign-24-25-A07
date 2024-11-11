@@ -47,7 +47,7 @@ KUHT = 1.143  # unit horizontal tail, check raymer to change
 
 FXTEQPTMF = 0.1 #fixed equipment mass fraction
 OEWCGWRTLEMACPERMAC = 0.25 #OEW xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
-WNGCGWRTLEMACPERMAC = 0.2 #Wing xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
+WNGCGWRTLEMACPERMAC = 0.4 #Wing xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
 
 """GENERAL"""
 VSTALL = 58 #This is maybe a bit high for the stall landing speed 
@@ -126,8 +126,16 @@ LN = 4
 LNC = 9.551331
 LT = 12.735108
 LTC = 15.918885
+UPSWEEP = 4
+ABASE = 22.4
+AMAX = 24.1
 
 '''LG'''
 NWN = 2 #2 wheels for the nose landing gear
 NWM = 4*4 #4 wheels per 4 struts on the main landing gear
 NSTRUTS = 4 #4 struts of the main landing gear
+HEIGHTMAIN = 1.143 #m
+HEIGHTFRONT = 1.0922 #m
+WWHEELMAIN = 42.545*10**-2 #m
+WWHEELFRONT = 31.75*10**-2 #m
+WSTRUT = 20*10^-2 #m
