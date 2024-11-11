@@ -2,13 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Function to calculate horizontal and vertical tail area
-def S_hor(V_h, S, MAC, x_h, V_v, b, x_v):
+def S_tail(V_h, S, MAC, x_h, V_v, b, x_v):
     S_h = ( V_h * S * MAC ) / x_h
     S_v = ( V_v * S * b) / x_v
     return S_h, S_v
 
 # Function to calculate span of horizontal and vertical tail 
-def b_hor_tail(AR_hor_t, S_hor_tail, AR_vert_t, S_vert_tail):
+def b_tail(AR_hor_t, S_hor_tail, AR_vert_t, S_vert_tail):
     b_h = np.sqrt( AR_hor_t * S_hor_tail)
     b_v = np.sqrt( AR_vert_t * S_vert_tail)
     return b_h, b_v
