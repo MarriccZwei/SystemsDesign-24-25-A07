@@ -140,11 +140,12 @@ for i in range(4): #later change to a while with a counter and convergence condi
 
     
     '''HLD Design'''
+    clAlph = clFuns.dCLdAlpha(consts.CRUISEMACH, planform, True) #cL-Alpha of the wing
     hlds = hld.HLDs.autosize(planform, fusD/2) #using the autosize mechanic of the high lift devicesw
+    alphaMax = hlds.alphaMax(planform, np.radians(clAlph), consts.TAKEOFFCL, consts.ULTIMATECL) #landing/takeoff maximum aoa to get the scrape angle ! radians to convert from per radian to per degree
 
     '''Class II weight'''
     mDes = (.95+.7)/2*mMTO #design mass due to fuel burn in flight
-    clAlph = clFuns.dCLdAlpha(consts.CRUISEMACH, planform, True) #cL-Alpha of the wing
     nult = loadF.n_ult(planform, clAlph, mMTO) #ultimate load factor for the wing
     mWing = wEstII.wing_mass(planform, mDes, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
     print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
@@ -204,7 +205,7 @@ for i in range(4): #later change to a while with a counter and convergence condi
         #lg-weight estimations
         mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, lMainStrut, lNoseStrut, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
     
-    mOE = mLG+mWing+mEmp+mFus+mFe #getting the new OEM
+    #mOE = mLG+mWing+mEmp+mFus+mFe #getting the new OEM
         
 
     print()
@@ -213,6 +214,7 @@ for i in range(4): #later change to a while with a counter and convergence condi
     print(f"Wing Surface and ClDes: {S}, {CLdes}")
     print(f"Wing Aspect Ration and Taper Ratiom, Sweep: {planform.AR}, {planform.TR}, {planform.sweepC4}")
     print(f"Mach Drag Divergence: {Mdd}")
+    print(f"ScrapeAngle {alphaMax}")
     '''Fuselage & fuel Volume Calculations'''
 
     '''Class II Drag'''

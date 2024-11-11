@@ -28,7 +28,7 @@ class HLDs():
 
         '''flapped chord ratios'''
         self.aileronCfC = aileronCfC
-        self.flapcfC = flapCfC
+        self.flapCfC = flapCfC
         self.krugerCfC = krugerCfC
 
         '''Positions of Movable Devices expressed in y/(b/2) notation'''
@@ -89,7 +89,7 @@ class HLDs():
         cStartFlap = planform.chord_spanwise(self.flapStartyPerbHalf) #the base of the trapezoid - chord at kruger start
         cEndFlap = planform.chord_spanwise(self.flapEndyPerbHalf) #the base of the trapezoid - chord at kruger start
         HFlap = self.krugerEnd(planform.b)-self.flapStart(planform.b) #trapezoid Height - the difference is sapnwise locations
-        S_movable += HFlap*(cEndFlap+cStartFlap)*self.flapcfC #two times the trapezoid area for 2 sides of the wing, that's why the 0.5 is missing - mulled by cfc to get just the movable area
+        S_movable += HFlap*(cEndFlap+cStartFlap)*self.flapCfC #two times the trapezoid area for 2 sides of the wing, that's why the 0.5 is missing - mulled by cfc to get just the movable area
 
         #contribution of TE Flaps
         cStartAileron = planform.chord_spanwise(self.aileronStartyPerbHalf) #the base of the trapezoid - chord at kruger start
@@ -175,6 +175,30 @@ class HLDs():
         return cls(aileronStartyPerbHalf, aileronEndyPerbHalf, flapStartyPerbHalf, flapEndyPerbHalf, krugerStartyPerbHalf, krugerEndyPerbHalf, 
                    aileronCfC, flapCfC, krugerCfC, aileronDefl, aileronDiff, flapMaxDdefl)
     
+    def alphaMax(self, planform:Planform.Planform, cLalpha, CLreqToff, cLreqLand):
+        """the maximum angle of attack for the scrape angle - CLalpha must be in per degree!!!"""
+        #landing
+        alpha0L = c.DELTAALPHA0LLANDING*(self.flapSflapped(planform))/planform.S+c.ALPHAZEROLIFT
+        deltaCflapPerC = 0.6*self.flapCfC
+        cPrime1 = planform.chord_spanwise(self.flapStartyPerbHalf)*deltaCflapPerC
+        cPrime2 = planform.chord_spanwise(self.flapEndyPerbHalf)*deltaCflapPerC
+        halfSpanflapped = (self.flapEndyPerbHalf-self.flapStartyPerbHalf)*planform.b/2
+        deltaS = (cPrime1+cPrime2)*halfSpanflapped # no divided by 2 cuz symmetric planform
+        cLalphaPrime = (1+deltaS/planform.S)*cLalpha #cl alph change due to wing area increase
+        landingAlphaMax = alpha0L+cLreqLand/cLalphaPrime
+
+        #takeoff
+        alpha0L = c.DELTAALPHA0LTAKEOFF*(self.flapSflapped(planform))/planform.S+c.ALPHAZEROLIFT
+        deltaCflapPerC = 0.6*self.flapCfC
+        cPrime1 = planform.chord_spanwise(self.flapStartyPerbHalf)*deltaCflapPerC
+        cPrime2 = planform.chord_spanwise(self.flapEndyPerbHalf)*deltaCflapPerC
+        halfSpanflapped = (self.flapEndyPerbHalf-self.flapStartyPerbHalf)*planform.b/2
+        deltaS = (cPrime1+cPrime2)*halfSpanflapped # no divided by 2 cuz symmetric planform
+        cLalphaPrime = (1+deltaS/planform.S)*cLalpha #cl alph change due to wing area increase
+        takeoffAlphaMax = alpha0L+CLreqToff/cLalphaPrime
+
+        return max(takeoffAlphaMax, landingAlphaMax)
+        
 
 if __name__ == "__main__":
     class Test_Planform(unittest.TestCase):
@@ -195,5 +219,10 @@ if __name__ == "__main__":
             print(f"New Aileron Spanwise loc: [{testHLDsNew.aileronStart(testPlanform.b)}, {testHLDsNew.aileronEnd(testPlanform.b)}]")
             print(f"New Flap Spanwise loc: [{testHLDsNew.flapStart(testPlanform.b)}, {testHLDsNew.flapEnd(testPlanform.b)}]")
             print(f"New Kruger Spanwise loc: [{testHLDsNew.krugerStart(testPlanform.b)}, {testHLDsNew.krugerEnd(testPlanform.b)}]")
+
+        def test_alphaStall(self):
+            testPlanform = Planform.Planform(478.4, 9.873, 0.1, 28.5, 2.15, False)
+            testHLDsNew = HLDs.autosize(testPlanform, 2.95)
+            print(f"alpha for ClMax: {testHLDsNew.alphaMax(testPlanform, 0.1, 1.8, 2.5)}")
 
     unittest.main()
