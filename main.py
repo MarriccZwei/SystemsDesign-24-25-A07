@@ -163,14 +163,14 @@ for i in range(4): #later change to a while with a counter and convergence condi
         cgWingGroup = cg.X_wcg(mWing, mNacelle, planform.MAC, consts.ENGINEXWRTLEMAC)
         cgFusGroup = cg.X_fcg(mFus, mEmp, mFe, fuselage.L)
 
-        xLemac = cg.x_lemac(cgFusGroup, planform.MAC, mWing, mNacelle, mFus, mEmp, mFe, consts.OEWCGWRTLEMACPERMAC, 0.4) #TODO the 0.4 MAC uncertain - consult the person responsible for CG
+        xLemac = cg.x_lemac(cgFusGroup, planform.MAC, mWing, mNacelle, mFus, mEmp, mFe, consts.OEWCGWRTLEMACPERMAC, consts.OEWCGWRTLEMACPERMAC) #TODO the 0.4 MAC uncertain - consult the person responsible for CG
         print(xLemac)
         #possible cg position - OE, Fuel+OE, OE+Payload, FUEL+OE+Payload
         xCgPay = consts.LN+(consts.LFUS-consts.LT-consts.LN)/2 #cg payload at half of the cabin -
         xOe = cg.xcg_oe(xLemac, planform.MAC) #OE
-        xF = cg.xcg_oe_f(mOE/mMTO, Mfuel/mMTO, xOe, xLemac+0.4*planform.MAC) #fuel + OE
+        xF = cg.xcg_oe_f(mOE/mMTO, Mfuel/mMTO, xOe, xLemac+consts.WNGCGWRTLEMACPERMAC*planform.MAC) #fuel + OE
         xP = cg.xcg_oe_p(mOE/mMTO, consts.MAXPAYLOAD/mMTO, xOe, xCgPay) #the Payload+OE case
-        xOePF = cg.xcg_oe_p_f(mOE/mMTO, consts.MAXPAYLOAD/mMTO, Mfuel/mMTO, xOe, xCgPay, xLemac+0.4*planform.MAC) #everything case, again unsure of what the fuel cg is and does it concide with wing cg - TODO
+        xOePF = cg.xcg_oe_p_f(mOE/mMTO, consts.MAXPAYLOAD/mMTO, Mfuel/mMTO, xOe, xCgPay, xLemac+consts.OEWCGWRTLEMACPERMAC*planform.MAC) #everything case, again unsure of what the fuel cg is and does it concide with wing cg - TODO
 
         cgMostConstraining = cg.cg(xOe, xP, xF, xOePF) #the most constraining cg choice
         print(f"The most constraining cg location is: {cgMostConstraining}")
