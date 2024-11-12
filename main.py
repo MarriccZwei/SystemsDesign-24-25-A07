@@ -49,7 +49,7 @@ with open(os.getcwd()+"\\Protocols\\main.json") as mainJson:
     mNacelle = jsonDict["mNacelle"]
 
 '''Iteration loop'''
-for i in range(15): #later change to a while with a counter and convergence condition
+for i in range(20): #later change to a while with a counter and convergence condition
 
     '''Class I weight est. Based on mass fractions and Cd/AR values from class II'''
     #Class I assesment of the engine tsfc TODO; change tsfc to a constant once we have an engine and manage the 10^6 factor
@@ -257,7 +257,7 @@ for i in range(15): #later change to a while with a counter and convergence cond
     print(f"Wing Mass: {mWing}kg, MF: {mWing/mMTO}")
     print(f"Fuselage Mass: {mFus}kg, MF: {mFus/mMTO}")
     print(f"Empenage Mass: {mEmp}kg, MF: {mEmp/mMTO}")
-    print(f"LG Mass: {mLG}kg, MF: {mEngGroup/mMTO}")
+    print(f"LG Mass: {mLG}kg, MF: {mLG/mMTO}")
     print(f"Engine Group Mass: {mEngGroup}kg, MF: {mEngGroup/mMTO}")
     print(f"Electronics Mass: {mElectronics}kg, MF: {mElectronics/mMTO}")
     print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
