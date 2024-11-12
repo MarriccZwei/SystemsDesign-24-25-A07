@@ -18,9 +18,11 @@ def P_NW(MTOM,NWN):
     P_NW = 0.08 * (MTOM/NWN)
     return P_NW
 
+# TC is the Length from the nose of the aircraft to the start of the tail cone
 def TC(LFUS, LTC):
     TC = LFUS - LTC
     return TC
+
 
 # z_MLG is the height of the main landing gear wrt the ground
 #TC is the longitudinal position of the tail cone wrt the nose
@@ -29,11 +31,16 @@ def z_MLG(cg, TC, TailScrape, AbsorberStroke):
     z_MLG = tan(np.radians(TailScrape)) * (TC - cg) + AbsorberStroke
     return z_MLG
 
+# approximation of the z position of the cg 
+def z_cg(z_MLG, DEQUIVALENT):
+    z_cg = z_MLG + (DEQUIVALENT/3)
+    return z_cg
+
 # l_m is the longitudinal location of the main landing gear wrt the nose 
 # cg is the most aft location 
 # height of cg wrt to ground is assumed to be MLG height + FusDiameter/2
-def l_m(Tailscrape, cg, z_MLG, DEQUIVALENT):
-    l_m = (tan(np.radians(Tailscrape)) * (z_MLG + (DEQUIVALENT/2))) + cg
+def l_m(Tailscrape, cg, z_cg):
+    l_m = (tan(np.radians(Tailscrape)) * z_cg) + cg
     return l_m
 
 # l_n is the longitudinal position of the nose gear wrt the nose
@@ -55,8 +62,8 @@ def z_t(b, dihedral, z_MLG):
 
 # z_n is the height of the engine wrt the ground 
 # d_eng is the diameter of the engine 
-def z_n(b, dihedral, d_eng):
-    z_n = (1/3) * (b/2) * sin(np.radians(dihedral)) - d_eng
+def z_n(b, dihedral, DNACELLE):
+    z_n = (1/3) * (b/2) * sin(np.radians(dihedral)) - DNACELLE
     return z_n
 
 # Minimum MLG dist from centreline to ensure sufficient wing tip clearance
@@ -72,5 +79,9 @@ def y_MLG_ec(y_n, z_n, phi):
     y_MLG_ec = y_n - ((z_n)/(tan(np.radians(phi))))
     return y_MLG_ec
 
+# calculating the maximum value of the three conditions for the final lateral placement of MLG
+def y_MLG(y_MLG_to, y_MLG_tc, y_MLG_ec):
+    y_MLG = max(y_MLG_to, y_MLG_tc, y_MLG_ec)
+    return y_MLG
 # if __name__ == "__main__":
 
