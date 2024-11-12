@@ -198,12 +198,12 @@ for i in range(4): #later change to a while with a counter and convergence condi
 
         #lg - dimensions
         mainWheelPressure = lg.P_MW(mMTO, consts.NWM)
-        lMainStrut = lg.z_t(planform.b, planform.dihedral)
+        hLG = lg.z_MLG(cgMostConstraining, fuselage.L1+fuselage.L2, alphaMax, consts.AbsorberStroke)
         noseWheelPressure = lg.P_NW(mMTO, consts.NWN)
-        lNoseStrut= lg.z_n(planform.b, planform.dihedral)
 
         #lg-weight estimations
-        mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, lMainStrut, lNoseStrut, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
+        mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, hLG, hLG, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
+        print(f"landing gear mass: {mLG}; landing gear height: {hLG}")
     
     #mOE = mLG+mWing+mEmp+mFus+mFe #getting the new OEM
         
