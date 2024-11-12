@@ -202,7 +202,7 @@ for i in range(2): #later change to a while with a counter and convergence condi
         mainWheelPressure = lg.P_MW(mMTO, consts.NWM)
         hLG = lg.z_MLG(cgMostConstraining, fuselage.L1+fuselage.L2, alphaMax, consts.AbsorberStroke)
         noseWheelPressure = lg.P_NW(mMTO, consts.NWN)
-        xMLG = lg.l_m(alphaMax, cgMostConstraining, hLG, fuselage.D) #main landing gear x position
+        xMLG = lg.l_m(alphaMax, cgMostConstraining, hLG+fuselage.D/2) #main landing gear x position
         xNLG = lg.l_n(alphaMax, noseWheelPressure, xMLG) #nose landing gear x position
 
         #lg-weight estimations
