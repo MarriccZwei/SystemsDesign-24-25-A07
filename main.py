@@ -238,6 +238,7 @@ for i in range(4): #later change to a while with a counter and convergence condi
     print(f"Cd, cd0, Cdi: {Cd}, {Cdo}, {Cdi}") #zero-lift drag coefficient (includes wave drag coefficient)
     print(f"Drag [N]: {D}")
 
+    Cd0 = Cdo
     '''Repeat the Iteration loop until your class I and class II estimations converge'''
 
 '''Final SAR Calculation'''

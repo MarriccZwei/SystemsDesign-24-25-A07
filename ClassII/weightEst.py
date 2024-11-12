@@ -88,3 +88,11 @@ mlgStrokeStrutsN, Vstall, loadFactorTouchdown = 2.5):
     WMLGlb = 0.0106*MLlb**0.888*Nl**(.25)*mlgLength**0.4*mlgNwheels**0.321*mlgStrokeStrutsN**(-.5)*Vstall**0.1
     WNLGlb = 0.032*MLlb**0.646*Nl**(0.2)*nlgLength**0.5*nlgNwheels*0.45
     return 0.4536*(WMLGlb+WNLGlb), 0.4536*WMLGlb, 0.4536*WNLGlb #returns the lgmass as a whole pluss component masses
+
+def _mass_engine_and_contents_lb(massEngine, Kp=1, Ktr=1.18):
+    massEnginelb = 1/0.4536*massEngine
+    return 2.331*massEnginelb**.901*Kp*Ktr
+
+#all the formulae for engine related mass
+def engine_related_mass():
+    pass
