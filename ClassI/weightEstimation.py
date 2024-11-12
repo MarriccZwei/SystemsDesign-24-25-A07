@@ -3,6 +3,7 @@ if __name__ == "__main__":
     import sys
     import os
     sys.path.insert(1, os.getcwd())
+    import unittest
 from math import sqrt, pi, exp, log
 from General import Constants
 
@@ -45,3 +46,12 @@ def Rharm(MFoe, L_D, TSFC):
 
 def oswald(AR, D_par = 0.0075, eff_span = 0.97):
     return (1/(pi * AR * D_par + (1/eff_span)))
+
+if __name__ == "__main__":
+    class TestWe(unittest.TestCase):
+        def test_differentCd0Effect(self):
+            print(f"Req for L/D of 19: {Req(19)}, Req for L/D of 10 {Req(10)}")
+            tsfc = TSFC(12)
+            print(f"The fuel mass fraction for L/D of 19: {MFfuel(19, tsfc)}, for L/D of 10: {MFfuel(10, tsfc)}")
+    
+    unittest.main()

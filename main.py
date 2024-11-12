@@ -61,7 +61,7 @@ for i in range(4): #later change to a while with a counter and convergence condi
     ld = CLdes/CDcruise #lift over drag ratio
      
     #Class I range and weight calculations
-    Requivaleng = wEstI.Req(ld) #equivalent range
+    Requivalent = wEstI.Req(ld) #equivalent range
     Rauxiliary = wEstI.Raux(ld) #auxiliary range
     MFoe = mOE/mMTO #operating empty weight mass fraction
     Mfuel = wEstI.Mfuel(MFoe, ld, tsfc) #fuel mass
@@ -229,15 +229,17 @@ for i in range(4): #later change to a while with a counter and convergence condi
 
     Cdo = dragEst.Cdo(consts.CRUISEDENSITY, consts.CRUISEMACH, CLdes, consts.THICKNESSTOCHORD, planform, fuselage, hlds, S, xNLG, hLG, ka = 0.935)
     aspectEffective = dragEst.ARe(planform.AR) #effective aspect ratio
-    Cdi = CLdes*CLdes/np.pi/aspectEffective/dragEst.Oswald(aspectEffective) #induced drag coefficient
-    Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, horizontalTail) #horizontal tail contribution
-    Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, verticalTail) #horizontal tail contribution
-    Cdi += dragEst.TailCdi(planform, CLdes, horizontalTail, consts.XH, cgMostConstraining, xLemac) #trim drag
+    oswald = dragEst.Oswald(aspectEffective) #new oswald efficiency factor
+    Cdi = CLdes*CLdes/np.pi/aspectEffective/oswald #induced drag coefficient
+    Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, horizontalTail)*horizontalTail.S/planform.S #horizontal tail contribution
+    Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, verticalTail)*verticalTail.S/planform.S #horizontal tail contribution
+    Cdi += dragEst.TailCdi(planform, CLdes, horizontalTail, consts.XH, cgMostConstraining, xLemac)*horizontalTail.S/planform.S #trim drag
     Cd = Cdo + Cdi #drag coefficient
     D = .5*consts.CRUISEDENSITY*consts.CRUISEVELOCITY**2*Cd*S #the drag force experienced by the aircraft during cruise
     print(f"Cd, cd0, Cdi: {Cd}, {Cdo}, {Cdi}") #zero-lift drag coefficient (includes wave drag coefficient)
     print(f"Drag [N]: {D}")
 
+    Cd0 = Cdo
     '''Repeat the Iteration loop until your class I and class II estimations converge'''
 
 '''Final SAR Calculation'''
