@@ -2,6 +2,7 @@
 # import os
 # sys.path.insert(1, os.getcwd())
 from General import ISA
+import numpy as np
 
 """NATURAL CONSTANTS"""
 G = 9.81 #to uniformize the assumed value
@@ -23,8 +24,8 @@ VHTAIL = 0.87
 VVTAIL = 0.065
 XH = 60 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail x
 XV = 60 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail x
-SWEEPHT = 0.18 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail sweep RADIANS!!!
-SWEEPVT = 0.18 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail sweep RADIANS!!!
+SWEEPHT = np.radians(36) # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail sweep RADIANS!!!
+SWEEPVT = np.radians(40) # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail sweep RADIANS!!!
 SE = 10 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: Elevator area
 ARHTAIL = 5 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail Aspect Ratio
 ARVTAIL = 5 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail Aspect Ratio

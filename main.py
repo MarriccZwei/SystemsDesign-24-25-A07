@@ -146,7 +146,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
 
     '''Class II weight'''
     #mDes = (.95+.7)/2*mMTO #design mass due to fuel burn in flight Uncomment if needed
-    mGross = mMTO+0.05*Mfuel #gross weight -add the 5% of fuel for toff
+    mGross = mMTO+(1/.95-1)*Mfuel #gross weight -add the 5% of fuel for toff
     nult = loadF.n_ult(planform, clAlph, mMTO) #ultimate load factor for the wing
     mWing = wEstII.wing_mass(planform, mGross, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
     print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
@@ -216,7 +216,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     mEngGroup = starterMass+mEngineCtrl+mNacelle
 
     #fuels system masses
-    Vfuel = Mfuel/consts.KEROSENEDENSITY
+    Vfuel = Mfuel/.95/consts.KEROSENEDENSITY #gross fuel = Mfuel/.95
     massFuelSys = wEstII.fuel_system_mass(Vfuel, consts.FUELTANKSN)
 
     #electronics system masses
@@ -263,7 +263,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
     print(f"Other Mass: {mOther}kg, MF: {mOther/mMTO}")
     print("-------------------------------------------------------------\n")
-    mMTO = mOE + Mfuel*.95+consts.DESIGNPAYLOAD
+    mMTO = mOE + Mfuel +consts.DESIGNPAYLOAD
     '''Fuselage & fuel Volume Calculations'''
 
     '''Class II Drag'''
