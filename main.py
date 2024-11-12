@@ -190,10 +190,9 @@ for i in range(20): #later change to a while with a counter and convergence cond
         verticalTail = pf.Planform(Sv, consts.ARVTAIL, consts.TRVTAIL, consts.SWEEPVT, 0, symmetric=False)
 
         #tail mass est.
-        clAlphaHtail = clFuns.dCLdAlpha(consts.CRUISEMACH, horizontalTail)
-        massHtail = wEstII.tail_mass(mGross, loadF.n_ult(horizontalTail, clAlphaHtail, mMTO), horizontalTail, consts.XH-xC4MAC, 0.25*horizontalTail.S)
+        massHtail = wEstII.tail_mass(mGross, nult, horizontalTail, consts.XH-xC4MAC, 0.25*horizontalTail.S)
         clAlphaVtail = clFuns.dCLdAlpha(consts.CRUISEMACH, verticalTail)
-        massVtail = wEstII.tail_mass(mGross, loadF.n_ult(verticalTail, clAlphaHtail, mMTO), verticalTail, consts.XH-xC4MAC, consts.TCR)
+        massVtail = wEstII.tail_mass(mGross, nult, verticalTail, consts.XV-xC4MAC, consts.TCR)
         print(f"happens, old mEmp: {mEmp}")
         mEmp = massHtail+massVtail #upditing the empenage mass value
         print(f"happens, new mEmp: {mEmp}")

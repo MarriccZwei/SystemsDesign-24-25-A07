@@ -55,7 +55,7 @@ def tail_mass(Mgross, nult, planform:pf.Planform, tailLength, elevatorArea):
     K_y = 0.3 * L_t_ft
     sweep_ht = planform.sweepC4
     S_e_ft = elevatorArea / (0.3048**2)
-    b_h = planform.b
+    b_h = planform.b /0.3048
     A_h = planform.AR
 
     factor1 = (1+F_w_ft/b_h)**(-0.25)
@@ -66,15 +66,15 @@ def tail_mass(Mgross, nult, planform:pf.Planform, tailLength, elevatorArea):
     mass_horizontal_kg = 0.4536*mass_horizontal_lb
     return mass_horizontal_kg 
 
-def rudder_mass(Mdes, nult, planform:pf.Planform, tailLength, tcRudder): #make sure to use the asymmetric planform
-    Mdeslb = Mdes/0.4536 #to pounds-mass
+def rudder_mass(Mgross, nult, planform:pf.Planform, tailLength, tcRudder): #make sure to use the asymmetric planform
+    Mgrosslb = Mgross/0.4536 #to pounds-mass
     S_vt_ft = planform.S / (0.3048**2)
     L_t_ft = tailLength / 0.3048
     K_z = L_t_ft
     sweep_vt = planform.sweepC4
     A_v = planform.AR
 
-    mass_vertical_lb = 0.0026*Mdeslb**0.556*nult**0.536*L_t_ft**(-.5)*S_vt_ft**0.5*K_z**0.875/np.cos(sweep_vt)*A_v**0.35*tcRudder**(-.5)
+    mass_vertical_lb = 0.0026*Mgrosslb**0.556*nult**0.536*L_t_ft**(-.5)*S_vt_ft**0.5*K_z**0.875/np.cos(sweep_vt)*A_v**0.35*tcRudder**(-.5)
     mass_vertical_kg = 0.4536*mass_vertical_lb
     return mass_vertical_kg 
 
