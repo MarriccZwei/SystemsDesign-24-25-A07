@@ -25,7 +25,6 @@ XH = 60 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail moment 
 XV = 60 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail moment arm
 SHTAIL = 100 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail area
 SVTAIL = 100 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail area
-FW = 100 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: fuselage widht at horizontal tail intersection
 LT = 10 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: tail lenght
 SWEEPHT = 0.18 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail sweep RADIANS!!!
 SWEEPVT = 0.18 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail sweep RADIANS!!!
@@ -47,7 +46,7 @@ TCR = .09 #thickness to chord for the vertical tail
 
 KDOOR = 1.12  # Constant for amount of cargo doors, check Raymer weight estimation
 KLG = 1.  # Constant depending on Landing gear attachement, if it i fuselage mounted the constant equals 1.12, otherwise = 1.0
-KUHT = 1.143  # unit horizontal tail, check raymer to change
+KUHT = 1. # unit horizontal tail, check raymer to change
 
 FXTEQPTMF = 0.1 #fixed equipment mass fraction
 OEWCGWRTLEMACPERMAC = 0.25 #OEW xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
@@ -142,6 +141,7 @@ UPSWEEP = 4
 ABASE = 2
 AMAX = 24.1
 NPAX = 263
+FW = 0.5*DEQUIVALENT #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: fuselage widht at horizontal tail intersection
 
 '''LG'''
 NWN = 2 #2 wheels for the nose landing gear

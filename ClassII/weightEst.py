@@ -10,12 +10,12 @@ import OOP.Fuselage as fus
 import numpy as np
 import General.Constants as const
 
-def wing_mass(planform:pf.Planform, Mdes, nult, tc, movableArea): #from Raymer
-    Mdeslb = Mdes/0.4536 #to pounds-mass because the formula is in freedom units
+def wing_mass(planform:pf.Planform, Mgross, nult, tc, movableArea): #from Raymer
+    Mgrosslb = Mgross/0.4536 #to pounds-mass because the formula is in freedom units
     Swft2 = planform.S/0.3048/0.3048 #to ft^2
     movableAreaft2 = movableArea/0.3048/0.3048 #to ft^2
 
-    weightTerm = (Mdeslb*nult)**0.557
+    weightTerm = (Mgrosslb*nult)**0.557
     wingSurfaceTerm = Swft2**0.649*planform.AR**0.5
     wingChordTerm = tc**(-.4)*(1+planform.TR)**0.1
     sweepTerm = movableAreaft2**0.1/np.cos(planform.sweepC4)
@@ -25,9 +25,9 @@ def wing_mass(planform:pf.Planform, Mdes, nult, tc, movableArea): #from Raymer
     return 0.4536*returnlb #the returned value in kg
 
 
-def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mdes, nult): #the fuselage mass
+def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mgross, nult): #the fuselage mass
     # Convertions
-    Mdeslb = Mdes/0.4536 #to pounds-mass
+    Mgrosslb = Mgross/0.4536 #to pounds-mass
     L_ft = fuselage.L / 0.3048  # meters to feet
     D_ft = fuselage.D / 0.3048  # meters to feet
 
@@ -37,16 +37,16 @@ def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mdes, nult): #the fuse
     S_f = fuselage.Sw
 
     # Calculate some terms in order to simplify the big equation
-    weightTerm = (Mdeslb*nult)**0.5
-    k_w_s = 0.75 * (1+2*planform.TR)/(1+planform.TR) * (planform.b * np.tan(planform.sweepC4/L_ft))
+    weightTerm = (Mgrosslb*nult)**0.5
+    k_w_s = 0.75 * (1+(2*planform.TR)/(1+planform.TR)) * (planform.b * np.tan(planform.sweepC4/L_ft))
     K = 0.3280 * K_door * K_lg  # This is the constant in the big equation
     
     returnlb = K * weightTerm * L_ft**0.25 * S_f**0.302 * (1+k_w_s)**0.04 * (L_ft/D_ft)**0.10  # Formula rom Raymer
     return 0.4536*returnlb # Returns fuselage mass in kg
 
 # TODO do the vertical tail mass and add both as the output, dont forget to change units
-def tail_mass(Mdes, nult, planform:pf.Planform, tailLength, elevatorArea):
-    Mdeslb = Mdes/0.4536 #to pounds-mass
+def tail_mass(Mgross, nult, planform:pf.Planform, tailLength, elevatorArea):
+    Mgrosslb = Mgross/0.4536 #to pounds-mass
     K_uht = const.KUHT
     F_w_ft = const.FW /0.3048
     S_ht_ft = planform.S / (0.3048)**2
@@ -61,7 +61,7 @@ def tail_mass(Mdes, nult, planform:pf.Planform, tailLength, elevatorArea):
     factor2 = K_y**0.704 * np.cos(sweep_ht)**(-1.)
     factor3 = (1+S_e_ft/S_ht_ft)**0.1
 
-    mass_horizontal_lb = 0.0379 * K_uht * factor1 * Mdeslb**0.639 * nult * S_ht_ft**0.75 * L_t_ft**(-1.) * factor2 * A_h**0.166 * factor3 
+    mass_horizontal_lb = 0.0379 * K_uht * factor1 * Mgrosslb**0.639 * nult**0.1 * S_ht_ft**0.75 * L_t_ft**(-1.) * factor2 * A_h**0.166 * factor3 
     mass_horizontal_kg = 0.4536*mass_horizontal_lb
     return mass_horizontal_kg 
 
@@ -78,15 +78,18 @@ def rudder_mass(Mdes, nult, planform:pf.Planform, tailLength, tcRudder): #make s
     return mass_vertical_kg 
 
 '''Landing Gear mass Estimation'''
-#verify it's 2.5!!!
+#verify it's 3!!!
 def lg_mass(MTOM, landingMassFraction, mlgLength, nlgLength, mlgNwheels, nlgNwheels, 
-mlgStrokeStrutsN, Vstall, loadFactorTouchdown = 2.5): 
+mlgStrokeStrutsN, Vstall, loadFactorTouchdown = 3): 
     MTOMlb = MTOM/0.4536
     MLlb = MTOMlb*landingMassFraction
     Nl = 1.5 * loadFactorTouchdown
+    mlgLengthin = 39.37*mlgLength
+    nlgLengthin = 39.37*nlgLength
+    VstallFtpers = Vstall*2.24
 
-    WMLGlb = 0.0106*MLlb**0.888*Nl**(.25)*mlgLength**0.4*mlgNwheels**0.321*mlgStrokeStrutsN**(-.5)*Vstall**0.1
-    WNLGlb = 0.032*MLlb**0.646*Nl**(0.2)*nlgLength**0.5*nlgNwheels*0.45
+    WMLGlb = 0.0106*MLlb**0.888*Nl**(.25)*mlgLengthin**0.4*mlgNwheels**0.321*mlgStrokeStrutsN**(-.5)*VstallFtpers**0.1
+    WNLGlb = 0.032*MLlb**0.646*Nl**(0.2)*nlgLengthin**0.5*nlgNwheels*0.45
     return 0.4536*(WMLGlb+WNLGlb), 0.4536*WMLGlb, 0.4536*WNLGlb #returns the lgmass as a whole pluss component masses
 
 '''nacelle group mass'''

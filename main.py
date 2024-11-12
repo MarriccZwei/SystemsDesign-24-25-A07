@@ -49,7 +49,7 @@ with open(os.getcwd()+"\\Protocols\\main.json") as mainJson:
     mNacelle = jsonDict["mNacelle"]
 
 '''Iteration loop'''
-for i in range(4): #later change to a while with a counter and convergence condition
+for i in range(2): #later change to a while with a counter and convergence condition
 
     '''Class I weight est. Based on mass fractions and Cd/AR values from class II'''
     #Class I assesment of the engine tsfc TODO; change tsfc to a constant once we have an engine and manage the 10^6 factor
@@ -145,14 +145,15 @@ for i in range(4): #later change to a while with a counter and convergence condi
     alphaMax = hlds.alphaMax(planform, np.radians(clAlph), consts.TAKEOFFCL, consts.ULTIMATECL) #landing/takeoff maximum aoa to get the scrape angle ! radians to convert from per radian to per degree
 
     '''Class II weight'''
-    mDes = (.95+.7)/2*mMTO #design mass due to fuel burn in flight
+    #mDes = (.95+.7)/2*mMTO #design mass due to fuel burn in flight Uncomment if needed
+    mGross = mMTO+0.05*Mfuel #gross weight -add the 5% of fuel for toff
     nult = loadF.n_ult(planform, clAlph, mMTO) #ultimate load factor for the wing
-    mWing = wEstII.wing_mass(planform, mDes, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
+    mWing = wEstII.wing_mass(planform, mGross, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
     print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
 
     #fuselage weight est.
     fuselage = fus.Fuselage(consts.DEQUIVALENT, consts.LNC, consts.LFUS-consts.LNC-consts.LTC, consts.LTC)
-    mFus = wEstII.fus_mass(planform, fuselage, mDes, nult)
+    mFus = wEstII.fus_mass(planform, fuselage, mGross, nult)
     print(f"mFus: {mFus}, mFus/mMTO: {mFus/mMTO}")
 
     #empenage - landing gear - cg nested estimation
@@ -166,6 +167,7 @@ for i in range(4): #later change to a while with a counter and convergence condi
 
         xLemac = cg.x_lemac(cgFusGroup, planform.MAC, mWing, mNacelle, mFus, mEmp, mFe, consts.OEWCGWRTLEMACPERMAC, consts.OEWCGWRTLEMACPERMAC) #TODO the 0.4 MAC uncertain - consult the person responsible for CG
         print(xLemac)
+        xC4MAC = xLemac + planform.MAC/4 #x pos. of C/4 MAC
         #possible cg position - OE, Fuel+OE, OE+Payload, FUEL+OE+Payload
         xCgPay = consts.LN+(consts.LFUS-consts.LT-consts.LN)/2 #cg payload at half of the cabin -
         xOe = cg.xcg_oe(xLemac, planform.MAC) #OE
@@ -189,9 +191,9 @@ for i in range(4): #later change to a while with a counter and convergence condi
 
         #tail mass est.
         clAlphaHtail = clFuns.dCLdAlpha(consts.CRUISEMACH, horizontalTail)
-        massHtail = wEstII.tail_mass(mDes, loadF.n_ult(horizontalTail, clAlphaHtail, mMTO), horizontalTail, consts.XH, 0.25*horizontalTail.S)
+        massHtail = wEstII.tail_mass(mGross, loadF.n_ult(horizontalTail, clAlphaHtail, mMTO), horizontalTail, consts.XH-xC4MAC, 0.25*horizontalTail.S)
         clAlphaVtail = clFuns.dCLdAlpha(consts.CRUISEMACH, verticalTail)
-        massVtail = wEstII.tail_mass(mDes, loadF.n_ult(verticalTail, clAlphaHtail, mMTO), verticalTail, consts.XH, 0.25*verticalTail.S)
+        massVtail = wEstII.tail_mass(mGross, loadF.n_ult(verticalTail, clAlphaHtail, mMTO), verticalTail, consts.XH-xC4MAC, 0.25*verticalTail.S)
         print(f"happens, old mEmp: {mEmp}")
         mEmp = massHtail+massVtail #upditing the empenage mass value
         print(f"happens, new mEmp: {mEmp}")
@@ -205,7 +207,7 @@ for i in range(4): #later change to a while with a counter and convergence condi
 
         #lg-weight estimations
         mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, hLG, hLG, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
-        print(f"landing gear mass: {mLG}; landing gear height: {hLG}")
+        #print(f"landing gear mass: {mLG}; landing gear height: {hLG}")
     
     #engine group
     mNacelle = wEstII.nacelle_mass(consts.NACELLELEN, consts.DNACELLE, nult, consts.ENGINEMASS, 2, np.pi*consts.DNACELLE*consts.NACELLELEN)
@@ -234,11 +236,12 @@ for i in range(4): #later change to a while with a counter and convergence condi
     mFurnishings = wEstII.furnish_mass(2,consts.MAXPAYLOAD,fuselage.Sw)
     Vfus = np.pi/4*fuselage.D**2*fuselage.L #a very rough estimate of the fuselage volume
     mAirconditioning = wEstII.aircon_mass(consts.NPAX, Vfus)
-    mAntiIce = wEstII.anti_ice_mass(mMTO+0.05*Mfuel)
-    mHandling = wEstII.handling_mass(mMTO+0.05*Mfuel)
+    mAntiIce = wEstII.anti_ice_mass(mGross)
+    mHandling = wEstII.handling_mass(mGross)
     mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings
 
     mOE = mLG+mWing+mEmp+mFus+mOther+mElectronics+massFuelSys+mEngGroup #getting the new OEM
+    
         
 
     print()
@@ -249,6 +252,18 @@ for i in range(4): #later change to a while with a counter and convergence condi
     print(f"Mach Drag Divergence: {Mdd}")
     print(f"ScrapeAngle {alphaMax}")
     print(f"nult: {nult}, MTOM: {mMTO}")
+    print("\n-------------------------------------------------------------")
+    print(f"Iter {i}, MTOM: {mMTO}:")
+    print(f"Wing Mass: {mWing}kg, MF: {mWing/mMTO}")
+    print(f"Fuselage Mass: {mFus}kg, MF: {mFus/mMTO}")
+    print(f"Empenage Mass: {mEmp}kg, MF: {mEmp/mMTO}")
+    print(f"LG Mass: {mLG}kg, MF: {mEngGroup/mMTO}")
+    print(f"Engine Group Mass: {mEngGroup}kg, MF: {mEngGroup/mMTO}")
+    print(f"Electronics Mass: {mElectronics}kg, MF: {mElectronics/mMTO}")
+    print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
+    print(f"Other Mass: {mOther}kg, MF: {mOther/mMTO}")
+    print("-------------------------------------------------------------\n")
+    mMTO = mOE + Mfuel*.95+consts.DESIGNPAYLOAD
     '''Fuselage & fuel Volume Calculations'''
 
     '''Class II Drag'''
