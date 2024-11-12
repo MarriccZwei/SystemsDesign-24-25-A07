@@ -13,8 +13,8 @@ import General.Constants as const
 
 def wing_mass(planform:pf.Planform, Mgross, nult, tc, movableArea): #from Raymer
     Mgrosslb = Mgross/0.4536 #to pounds-mass because the formula is in freedom units
-    Swft2 = planform.S/0.3048/0.3048 #to ft^2
-    movableAreaft2 = movableArea/0.3048/0.3048 #to ft^2
+    Swft2 = planform.S/ (0.3048**2) #to ft^2
+    movableAreaft2 = movableArea/ (0.3048**2) #to ft^2
 
     weightTerm = (Mgrosslb*nult)**0.557
     wingSurfaceTerm = Swft2**0.649*planform.AR**0.5
@@ -35,7 +35,7 @@ def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mgross, nult): #the fu
     # Import constants from constants.py file
     K_door = const.KDOOR
     K_lg = const.KLG
-    S_f = fuselage.Sw/0.3048/.3048
+    S_f = fuselage.Sw/ (0.3048**2)
 
     # Calculate some terms in order to simplify the big equation
     weightTerm = (Mgrosslb*nult)**0.5
