@@ -89,10 +89,92 @@ mlgStrokeStrutsN, Vstall, loadFactorTouchdown = 2.5):
     WNLGlb = 0.032*MLlb**0.646*Nl**(0.2)*nlgLength**0.5*nlgNwheels*0.45
     return 0.4536*(WMLGlb+WNLGlb), 0.4536*WMLGlb, 0.4536*WNLGlb #returns the lgmass as a whole pluss component masses
 
-def _mass_engine_and_contents_lb(massEngine, Kp=1, Ktr=1.18):
-    massEnginelb = 1/0.4536*massEngine
-    return 2.331*massEnginelb**.901*Kp*Ktr
+'''nacelle group mass'''
+def nacelle_mass(Nlt, Nw, Nz, Wen, Nen, Sn):
+    Kng = 1.017
+    Nltft = Nlt /0.3048
+    Nwft = Nw / 0.3048
+    Weclb = 2.331*(Wen*2.204623)**0.901*1.18
+    Snft = Sn/(0.30348**2)
 
-#all the formulae for engine related mass
-def engine_related_mass():
-    pass
+    return 0.4536*(0.6724*Kng*Nltft**0.1*Nwft**0.294*Nz**0.119*Weclb**0.611*Nen**0.984*Snft**0.224)
+
+'''engine controls mass'''
+def engine_controls_mass(Nen,Lec):
+    Lecft = Lec/0.3048
+
+    return 0.4536*(5*Nen + 0.8*Lecft)
+
+'''starter pneumatic mass'''
+def starter_mass(Nen, Wen):
+    Wenlb = 2.204623 * Wen
+
+    return 0.4536*(49.19*(Nen*Wenlb/1000)**0.541)
+
+'''fuel system mass'''
+def fuel_system_mass(Vt, Nt):
+    Vtgal = Vt * 264.1721
+
+    return 0.4536*(2.405*Vtgal**0.606/2*Nt**0.5)
+
+'''flight control mass'''
+def flight_control_mass(Scs,Iy,Nf=6,Nm=1):#Nf and Nm are assumptions, idk what they should be
+    Scsft = Scs/(0.3048**2)
+    Iylb = Iy * 23.7304
+
+    return 0.4536*(145.9*Nf**0.554/(1+Nm/Nf)*Scsft**0.2*(Iylb/(10**6))**0.07)
+
+'''APU installed mass'''
+def apu_installed_mass(Wapu_uninstalled):
+    return 2.2 * Wapu_uninstalled
+
+'''instruments mass'''
+def instruments_mass(Nc, Nen, Lf, Bw):
+    Lfft = Lf /0.3048
+    Bwft = Bw /0.3048
+
+    return 0.4536*(4.509*Nc**0.541*Nen*(Lfft+Bwft)**0.5)
+
+'''hydraulics mass'''
+def hydraulics_mass(Lf, Bw, Nf=6):
+    Lfft = Lf /0.3048
+    Bwft = Bw /0.3048
+
+    return 0.4536*(0.2673*Nf*(Lfft+Bwft)**0.937)
+
+'''electrical systems mass'''
+def electrical_mass(La, Nen, Rkva = 50):#Rkva is between 40 and 60 for transport a/c
+    Laft = La /0.3048
+    
+    return 0.4536*(7.291*Rkva**0.782*Laft**0.346*Nen**0.1)
+
+'''avionics mass'''
+def avionics_mass(Wuav=500):
+    Wuavlb = Wuav * 2.204623
+
+    return 0.4536*(1.73*Wuavlb**0.983)
+
+'''furnishings mass'''
+def furnish_mass(Nc, Wc, Sf):
+    Wclbs = Wc*2.204623
+    Sfft = Sf/(0.30348**2)
+
+    return 0.4536*(0.0577*Nc**0.1*Wclbs**0.393*Sfft**0.75)
+
+'''air conditioning mass'''
+def aircon_mass(Np, Vpr, Wuav=500):
+    Vprft = Vpr/(0.3048**3)
+    Wuavlb = Wuav *2.204623
+
+    return 0.4536*(62.36*Np**0.25*(Vprft/1000)**0.604*Wuavlb**0.1)
+
+'''anti-ice system mass'''
+def anti_ice_mass(Wdg):
+    return 0.002*Wdg
+
+'''handling gear mass'''
+def handling_mass(Wdg):
+    return 3*10**(-4)*Wdgs
+#kg to pounds: x 2.204623
+#m to feet: /0.3048
+#m3 to gals: *264.1721
