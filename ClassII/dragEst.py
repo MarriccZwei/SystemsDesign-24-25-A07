@@ -53,8 +53,26 @@ def Cdmisc(M, ka, CL, sweepLE, tc, Sflap, S, Mcr = 0.6): #to change the Mcr valu
     CdmiscLG = 0
     #CdmiscFlap = 0.0074*0.35*Sflap/S*(consts.LADEFELCTION-10) #Commented out cuz we are at cruise
 
-    Cdmisc = CdmiscWave+CdmiscUpsweep+CdmiscBase+CdmiscLG#+CdmiscFlap
+    Cdmisc = CdmiscWave+CdmiscUpsweep+CdmiscBase+CdmiscLG #+CdmiscFlap
     return Cdmisc
+
+def PlanformCdo(rho, mach, tcMax, planForm:pf.Planform, tcMaxPos=0.38):
+    sweepMaxTc = planForm.sweep_at_c_fraction(0.38)
+    
+    #planform calculations
+    length = planForm.MAC
+    lamFrac = 0.1
+    FF = FFwing(tcMaxPos, tcMax, mach, sweepMaxTc)
+    CF = Cf(Reynolds(rho, length, mach), lamFrac, mach)
+    IF = 1
+    Swet = planForm.Sw
+    return CF*FF*IF*Swet/planForm.S
+
+def TailCdi(wing:pf.Planform, CLdes, tail:pf.Planform, xh, xcg, xlemac):
+    armWing = xlemac+wing.MAC/4-xcg #moment arm of the wing
+    armTail = xh-xcg #horizontal tail moment arm
+    CLtail = (CLdes*armWing-consts.CM*wing.MAC)/armTail*wing.S/tail.S #a derived formula for CL of the tail
+    return CLtail*CLtail/np.pi/tail.AR/Oswald(tail.AR) #Since we do not design the tail, we assume ARe=AR for the htail
 
 def Cdo(rho, mach, CLdes, tcMax, planForm:pf.Planform, fuseLage:fus.Fuselage, HLD:hld.HLDs, Sref, Mcr = 0.6, tcMaxPos=0.38, ka=0.87):
     sweepMaxTc = planForm.sweep_at_c_fraction(0.38)
