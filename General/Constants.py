@@ -145,3 +145,5 @@ WWHEELFRONT = 31.75*10**-2 #m
 WSTRUT = 20*10^-2 #m
 TailScrape = 10 # degrees 
 AbsorberStroke = 0.3 # m
+phi = 5 # degrees
+psi = 55 # degrees
