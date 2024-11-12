@@ -3,6 +3,7 @@ if __name__ == "__main__":
     import sys
     import os
     sys.path.insert(1, os.getcwd())
+    import unittest
     # ONLY FOR TESTING
 
 import OOP.Planform as pf
@@ -181,3 +182,4 @@ def handling_mass(Wdg):
 #kg to pounds: x 2.204623
 #m to feet: /0.3048
 #m3 to gals: *264.1721
+
