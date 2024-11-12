@@ -134,8 +134,8 @@ FW = 0.5*DEQUIVALENT #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: fuselage w
 
 '''LG'''
 NWN = 2 #2 wheels for the nose landing gear
-NWM = 4*3 #4 wheels per 4 struts on the main landing gear
-NSTRUTS = 5 #4 struts of the main landing gear
+NWM = 2*6 #4 wheels per 4 struts on the main landing gear
+NSTRUTS = 2 #4 struts of the main landing gear
 HEIGHTMAIN = 1.143 #m
 HEIGHTFRONT = 1.0922 #m
 WWHEELMAIN = 42.545*10**-2 #m

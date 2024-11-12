@@ -49,7 +49,7 @@ with open(os.getcwd()+"\\Protocols\\main.json") as mainJson:
     mNacelle = jsonDict["mNacelle"]
 
 '''Iteration loop'''
-for i in range(2): #later change to a while with a counter and convergence condition
+for i in range(15): #later change to a while with a counter and convergence condition
 
     '''Class I weight est. Based on mass fractions and Cd/AR values from class II'''
     #Class I assesment of the engine tsfc TODO; change tsfc to a constant once we have an engine and manage the 10^6 factor

@@ -140,14 +140,14 @@ def instruments_mass(Nc, Nen, Lf, Bw):
     return 0.4536*(4.509*Nc**0.541*Nen*(Lfft+Bwft)**0.5)
 
 '''hydraulics mass'''
-def hydraulics_mass(Lf, Bw, Nf=6):
+def hydraulics_mass(Lf, Bw, Nf=15):
     Lfft = Lf /0.3048
     Bwft = Bw /0.3048
 
     return 0.4536*(0.2673*Nf*(Lfft+Bwft)**0.937)
 
 '''electrical systems mass'''
-def electrical_mass(La, Nen, Rkva = 50):#Rkva is between 40 and 60 for transport a/c
+def electrical_mass(La, Nen, Rkva = 60):#Rkva is between 40 and 60 for transport a/c
     Laft = La /0.3048
     
     return 0.4536*(7.291*Rkva**0.782*Laft**0.346*Nen**0.1)
@@ -166,7 +166,7 @@ def furnish_mass(Nc, Wc, Sf):
     return 0.4536*(0.0577*Nc**0.1*Wclbs**0.393*Sfft**0.75)
 
 '''air conditioning mass'''
-def aircon_mass(Np, Vpr, Wuav=500):
+def aircon_mass(Np, Vpr, Wuav=635):
     Vprft = Vpr/(0.3048**3)
     Wuavlb = Wuav *2.204623
 
