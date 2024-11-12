@@ -227,7 +227,7 @@ for i in range(4): #later change to a while with a counter and convergence condi
     #It would be just coupling a few functions from ClassII.dragEst.py into a single function - for typical values, us the slides from lift 7 drag estimations
     #The Planform and Fuselage Classes have built-in wetted Surface Functions/Properties
 
-    Cdo = dragEst.Cdo(consts.CRUISEDENSITY, consts.CRUISEMACH, CLdes, consts.THICKNESSTOCHORD, planform, fuselage, hlds, S, ka = 0.935)
+    Cdo = dragEst.Cdo(consts.CRUISEDENSITY, consts.CRUISEMACH, CLdes, consts.THICKNESSTOCHORD, planform, fuselage, hlds, S, xNLG, hLG, ka = 0.935)
     aspectEffective = dragEst.ARe(planform.AR) #effective aspect ratio
     Cdi = CLdes*CLdes/np.pi/aspectEffective/dragEst.Oswald(aspectEffective) #induced drag coefficient
     Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, horizontalTail) #horizontal tail contribution
