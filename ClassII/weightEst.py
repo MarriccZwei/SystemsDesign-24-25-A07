@@ -34,11 +34,11 @@ def fus_mass(planform:pf.Planform, fuselage:fus.Fuselage, Mgross, nult): #the fu
     # Import constants from constants.py file
     K_door = const.KDOOR
     K_lg = const.KLG
-    S_f = fuselage.Sw
+    S_f = fuselage.Sw/0.3048/.3048
 
     # Calculate some terms in order to simplify the big equation
     weightTerm = (Mgrosslb*nult)**0.5
-    k_w_s = 0.75 * (1+(2*planform.TR)/(1+planform.TR)) * (planform.b * np.tan(planform.sweepC4/L_ft))
+    k_w_s = 0.75 * (1+(2*planform.TR)/(1+planform.TR)) * (planform.b/0.3048 * np.tan(planform.sweepC4)/L_ft)
     K = 0.3280 * K_door * K_lg  # This is the constant in the big equation
     
     returnlb = K * weightTerm * L_ft**0.25 * S_f**0.302 * (1+k_w_s)**0.04 * (L_ft/D_ft)**0.10  # Formula rom Raymer
