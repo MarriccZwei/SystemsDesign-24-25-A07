@@ -200,6 +200,8 @@ for i in range(4): #later change to a while with a counter and convergence condi
         mainWheelPressure = lg.P_MW(mMTO, consts.NWM)
         hLG = lg.z_MLG(cgMostConstraining, fuselage.L1+fuselage.L2, alphaMax, consts.AbsorberStroke)
         noseWheelPressure = lg.P_NW(mMTO, consts.NWN)
+        xMLG = lg.l_m(alphaMax, cgMostConstraining, hLG, fuselage.D) #main landing gear x position
+        xNLG = lg.l_n(alphaMax, noseWheelPressure, xMLG) #nose landing gear x position
 
         #lg-weight estimations
         mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, hLG, hLG, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
@@ -228,6 +230,9 @@ for i in range(4): #later change to a while with a counter and convergence condi
     Cdo = dragEst.Cdo(consts.CRUISEDENSITY, consts.CRUISEMACH, CLdes, consts.THICKNESSTOCHORD, planform, fuselage, hlds, S, ka = 0.935)
     aspectEffective = dragEst.ARe(planform.AR) #effective aspect ratio
     Cdi = CLdes*CLdes/np.pi/aspectEffective/dragEst.Oswald(aspectEffective) #induced drag coefficient
+    Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, horizontalTail) #horizontal tail contribution
+    Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, verticalTail) #horizontal tail contribution
+    Cdi += dragEst.TailCdi(planform, CLdes, horizontalTail, consts.XH, cgMostConstraining, xLemac) #trim drag
     Cd = Cdo + Cdi #drag coefficient
     D = .5*consts.CRUISEDENSITY*consts.CRUISEVELOCITY**2*Cd*S #the drag force experienced by the aircraft during cruise
     print(f"Cd, cd0, Cdi: {Cd}, {Cdo}, {Cdi}") #zero-lift drag coefficient (includes wave drag coefficient)
