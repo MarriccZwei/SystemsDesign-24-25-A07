@@ -122,7 +122,7 @@ def fuel_system_mass(Vt, Nt):
     return 0.4536*(2.405*Vtgal**0.606/2*Nt**0.5)
 
 '''flight control mass'''
-def flight_control_mass(Scs,Iy,Nf=6,Nm=1):#Nf and Nm are assumptions, idk what they should be
+def flight_control_mass(Scs,Iy,Nf=6,Nm=2):#Nf and Nm are assumptions, idk what they should be
     Scsft = Scs/(0.3048**2)
     Iylb = Iy * 23.7304
 
@@ -140,7 +140,7 @@ def instruments_mass(Nc, Nen, Lf, Bw):
     return 0.4536*(4.509*Nc**0.541*Nen*(Lfft+Bwft)**0.5)
 
 '''hydraulics mass'''
-def hydraulics_mass(Lf, Bw, Nf=15):
+def hydraulics_mass(Lf, Bw, Nf=7):
     Lfft = Lf /0.3048
     Bwft = Bw /0.3048
 
@@ -153,7 +153,7 @@ def electrical_mass(La, Nen, Rkva = 60):#Rkva is between 40 and 60 for transport
     return 0.4536*(7.291*Rkva**0.782*Laft**0.346*Nen**0.1)
 
 '''avionics mass'''
-def avionics_mass(Wuav=500):
+def avionics_mass(Wuav=635):
     Wuavlb = Wuav * 2.204623
 
     return 0.4536*(1.73*Wuavlb**0.983)

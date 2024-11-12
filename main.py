@@ -237,7 +237,8 @@ for i in range(20): #later change to a while with a counter and convergence cond
     mAirconditioning = wEstII.aircon_mass(consts.NPAX, Vfus)
     mAntiIce = wEstII.anti_ice_mass(mGross)
     mHandling = wEstII.handling_mass(mGross)
-    mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings
+    mApu = wEstII.apu_installed_mass(200)
+    mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings+mApu
 
     mOE = mLG+mWing+mEmp+mFus+mOther+mElectronics+massFuelSys+mEngGroup #getting the new OEM
     
