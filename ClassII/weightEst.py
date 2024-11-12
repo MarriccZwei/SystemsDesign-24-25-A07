@@ -174,7 +174,7 @@ def anti_ice_mass(Wdg):
 
 '''handling gear mass'''
 def handling_mass(Wdg):
-    return 3*10**(-4)*Wdgs
+    return 3*10**(-4)*Wdg
 #kg to pounds: x 2.204623
 #m to feet: /0.3048
 #m3 to gals: *264.1721

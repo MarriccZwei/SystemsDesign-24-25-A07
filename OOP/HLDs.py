@@ -91,7 +91,7 @@ class HLDs():
         HFlap = self.krugerEnd(planform.b)-self.flapStart(planform.b) #trapezoid Height - the difference is sapnwise locations
         S_movable += HFlap*(cEndFlap+cStartFlap)*self.flapCfC #two times the trapezoid area for 2 sides of the wing, that's why the 0.5 is missing - mulled by cfc to get just the movable area
 
-        #contribution of TE Flaps
+        #contribution of ailerons
         cStartAileron = planform.chord_spanwise(self.aileronStartyPerbHalf) #the base of the trapezoid - chord at kruger start
         cEndAileron = planform.chord_spanwise(self.aileronEndyPerbHalf) #the base of the trapezoid - chord at kruger start
         HAileron = self.krugerEnd(planform.b)-self.aileronStart(planform.b) #trapezoid Height - the difference is sapnwise locations
@@ -99,7 +99,14 @@ class HLDs():
 
         return S_movable
 
-    
+    #aileron Surface
+    def Saileron(self, planform:Planform.Planform):
+        cStartAileron = planform.chord_spanwise(self.aileronStartyPerbHalf) #the base of the trapezoid - chord at kruger start
+        cEndAileron = planform.chord_spanwise(self.aileronEndyPerbHalf) #the base of the trapezoid - chord at kruger start
+        HAileron = self.krugerEnd(planform.b)-self.aileronStart(planform.b) #trapezoid Height - the difference is sapnwise locations
+        return HAileron*(cEndAileron+cStartAileron)*self.aileronCfC #two times the trapezoid area for 2 sides of the wing, that's why the 0.5 is missing - mulled by cfc to get just the movable area
+
+
     '''Sizing Movable Surfaces for an existing planform, given deflections and design constraints'''
     @classmethod
     def autosize(cls, planform:Planform.Planform, radiusFuselage, aileronCfC = 0.3, flapCfC = 0.35, krugerCfC=0.15, aileronDefl=25, aileronDiff = 0.75, flapMaxDdefl=40):

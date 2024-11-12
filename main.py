@@ -207,7 +207,38 @@ for i in range(4): #later change to a while with a counter and convergence condi
         mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, hLG, hLG, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
         print(f"landing gear mass: {mLG}; landing gear height: {hLG}")
     
-    #mOE = mLG+mWing+mEmp+mFus+mFe #getting the new OEM
+    #engine group
+    mNacelle = wEstII.nacelle_mass(consts.NACELLELEN, consts.DNACELLE, nult, consts.ENGINEMASS, 2, np.pi*consts.DNACELLE*consts.NACELLELEN)
+    wire2enginesLen = 2*(consts.ENGINESPANWISEPOS*planform.b/2+xLemac)
+    mEngineCtrl = wEstII.engine_controls_mass(2, wire2enginesLen) #mass of engine controls
+    starterMass = wEstII.starter_mass(2, consts.ENGINEMASS) #engine starter mass
+    mEngGroup = starterMass+mEngineCtrl+mNacelle
+
+    #fuels system masses
+    Vfuel = Mfuel/consts.KEROSENEDENSITY
+    massFuelSys = wEstII.fuel_system_mass(Vfuel, consts.FUELTANKSN)
+
+    #electronics system masses
+    areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Saileron(planform)
+    estMwingGroup = mWing+mNacelle+Mfuel+massFuelSys #estimated full wing group mass
+    Izz = ((mMTO-estMwingGroup)*fuselage.L**2+estMwingGroup*planform.b**2)/12 #assume 2 rods crossing at COM
+    mFc = wEstII.flight_control_mass(areaCtrlSurfaces, Izz)
+    #APU not included
+    mInstruments = wEstII.instruments_mass(2, 2, fuselage.L, planform.b)
+    mHydraulics = wEstII.hydraulics_mass(fuselage.L,planform.b)
+    mElectrical = wEstII.electrical_mass(wire2enginesLen,2)
+    mAvionics = wEstII.avionics_mass()
+    mElectronics = mAvionics+mElectrical+mHydraulics+mInstruments
+
+    #mass other subsystems
+    mFurnishings = wEstII.furnish_mass(2,consts.MAXPAYLOAD,fuselage.Sw)
+    Vfus = np.pi/4*fuselage.D**2*fuselage.L #a very rough estimate of the fuselage volume
+    mAirconditioning = wEstII.aircon_mass(consts.NPAX, Vfus)
+    mAntiIce = wEstII.anti_ice_mass(mMTO+0.05*Mfuel)
+    mHandling = wEstII.handling_mass(mMTO+0.05*Mfuel)
+    mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings
+
+    mOE = mLG+mWing+mEmp+mFus+mOther+mElectronics+massFuelSys+mEngGroup #getting the new OEM
         
 
     print()
@@ -217,6 +248,7 @@ for i in range(4): #later change to a while with a counter and convergence condi
     print(f"Wing Aspect Ration and Taper Ratiom, Sweep: {planform.AR}, {planform.TR}, {planform.sweepC4}")
     print(f"Mach Drag Divergence: {Mdd}")
     print(f"ScrapeAngle {alphaMax}")
+    print(f"nult: {nult}, MTOM: {mMTO}")
     '''Fuselage & fuel Volume Calculations'''
 
     '''Class II Drag'''

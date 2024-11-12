@@ -52,12 +52,14 @@ KUHT = 1.143  # unit horizontal tail, check raymer to change
 FXTEQPTMF = 0.1 #fixed equipment mass fraction
 OEWCGWRTLEMACPERMAC = 0.25 #OEW xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
 WNGCGWRTLEMACPERMAC = 0.4 #Wing xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
+FUELTANKSN = 8
+CTRLSURFAREAFRAC = 0.25 #fraction of rudder/elevator area to vert. tail/ hor. tail area
 
 """GENERAL"""
 VSTALL = 58 #This is maybe a bit high for the stall landing speed 
 VAPPROACH = 1.23*VSTALL
 ULTIMATECL = 2.5
-
+KEROSENEDENSITY = 795 # [kg/m^3] ; fuel density
 
 """TAKEOFF"""
 TAKEOFFMACH = VAPPROACH/ISA.speedOfSound(0)
@@ -121,8 +123,13 @@ THETABREAK = 1.07
 
 """ENGINE"""
 SPECIFICENERGY = 43500000
-BYPASS = 12 #Probably has to change
+BYPASS = 9.6 #Probably has to change
 ENGINEXWRTLEMAC = 2 #position of engine CG w.r.t. xLEMAC of the wing - has to be read off the cad drawing
+ENGINEMASS = 7550 #[kg]; engin mass
+NACELLELEN = 5.812 #[m] ; nacelle legth
+DINLET = 3 #[m] ; inled diameter
+DNACELLE = DINLET+0.06*0.65*NACELLELEN+0.03 # in [m] used for class II weight
+ENGINESPANWISEPOS = 0.3 #as a fraction of halfspan
 
 '''FUSELAGE'''
 DEQUIVALENT = 5.306295
@@ -134,6 +141,7 @@ LTC = 15.918885
 UPSWEEP = 4
 ABASE = 2
 AMAX = 24.1
+NPAX = 263
 
 '''LG'''
 NWN = 2 #2 wheels for the nose landing gear

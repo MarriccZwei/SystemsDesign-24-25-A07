@@ -4,6 +4,7 @@ M_pl = 27669
 def CrossSection(M_pl):
 
     N_pax = floor(M_pl/105)
+    print(f"Npax: {N_pax}")
     N_sa = 0.45*N_pax**0.5
 
     if N_sa - floor(N_sa) >0.5:
@@ -69,3 +70,4 @@ print(l_t)
 print(l_tc)
 print(d_fus)
 print(l_fus)
+
