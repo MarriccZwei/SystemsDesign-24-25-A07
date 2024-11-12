@@ -185,7 +185,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
         xCgPrevious=cgMostConstraining #if we did not manage to exit the loop
 
         #tail
-        Sh, Sv = emp.S_tail(consts.VHTAIL, planform.S, planform.MAC, consts.XH, consts.VVTAIL, planform.b, consts.XV)
+        Sh, Sv = emp.S_tail(consts.VHTAIL, planform.S, planform.MAC, consts.XH, consts.VVTAIL, planform.b, consts.XV, cgMostConstraining)
         horizontalTail = pf.Planform(Sh, consts.ARHTAIL, consts.TRHTAIL, consts.SWEEPHT, 0)
         verticalTail = pf.Planform(Sv, consts.ARVTAIL, consts.TRVTAIL, consts.SWEEPVT, 0, symmetric=False)
 
