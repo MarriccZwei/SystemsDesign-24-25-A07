@@ -149,161 +149,155 @@ for i in range(20): #later change to a while with a counter and convergence cond
 
     mOEClassI = mOE
     '''Class II weight'''
-    for i in range(10):
-        #mDes = (.95+.7)/2*mMTO #design mass due to fuel burn in flight Uncomment if needed
-        mGross = mMTO+(1/.95-1)*Mfuel #gross weight -add the 5% of fuel for toff
-        nult = loadF.n_ult(planform, clAlph, mMTO) #ultimate load factor for the wing
-        mWing = wEstII.wing_mass(planform, mGross, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
-        print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
+    #mDes = (.95+.7)/2*mMTO #design mass due to fuel burn in flight Uncomment if needed
+    mGross = mMTO+(1/.95-1)*Mfuel #gross weight -add the 5% of fuel for toff
+    nult = loadF.n_ult(planform, clAlph, mMTO) #ultimate load factor for the wing
+    mWing = wEstII.wing_mass(planform, mGross, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
+    print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
 
-        #fuselage weight est.
-        fuselage = fus.Fuselage(consts.DEQUIVALENT, consts.LNC, consts.LFUS-consts.LNC-consts.LTC, consts.LTC)
-        mFus = wEstII.fus_mass(planform, fuselage, mGross, nult)
-        print(f"mFus: {mFus}, mFus/mMTO: {mFus/mMTO}")
+    #fuselage weight est.
+    fuselage = fus.Fuselage(consts.DEQUIVALENT, consts.LNC, consts.LFUS-consts.LNC-consts.LTC, consts.LTC)
+    mFus = wEstII.fus_mass(planform, fuselage, mGross, nult)
+    print(f"mFus: {mFus}, mFus/mMTO: {mFus/mMTO}")
 
-        #empenage - landing gear - cg nested estimation
-        xCgPrevious = 0 #will be used to compare the cg between iterations
-        for i in range(10): #after 10 empenage lg iterations, we just give up if there is no convergence - TODO throw an error in such a case
-            #masses of tail and landing gear from previous iterations
-            #cg calc I
-            mFe = consts.FXTEQPTMF*mMTO #fixed equipment mass taken from Roskam values
-            cgWingGroup = cg.X_wcg(mWing, mNacelle, planform.MAC, consts.ENGINEXWRTLEMAC)
-            cgFusGroup = cg.X_fcg(mFus, mEmp, mFe, fuselage.L)
+    #empenage - landing gear - cg nested estimation
+    xCgPrevious = 0 #will be used to compare the cg between iterations
+    for i in range(10): #after 10 empenage lg iterations, we just give up if there is no convergence - TODO throw an error in such a case
+        #masses of tail and landing gear from previous iterations
+        #cg calc I
+        mFe = consts.FXTEQPTMF*mMTO #fixed equipment mass taken from Roskam values
+        cgWingGroup = cg.X_wcg(mWing, mNacelle, planform.MAC, consts.ENGINEXWRTLEMAC)
+        cgFusGroup = cg.X_fcg(mFus, mEmp, mFe, fuselage.L)
 
-            xLemac = cg.x_lemac(cgFusGroup, planform.MAC, mWing, mNacelle, mFus, mEmp, mFe, consts.OEWCGWRTLEMACPERMAC, consts.OEWCGWRTLEMACPERMAC) #TODO the 0.4 MAC uncertain - consult the person responsible for CG
-            print(xLemac)
-            xC4MAC = xLemac + planform.MAC/4 #x pos. of C/4 MAC
-            #possible cg position - OE, Fuel+OE, OE+Payload, FUEL+OE+Payload
-            xCgPay = consts.LN+(consts.LFUS-consts.LT-consts.LN)/2 #cg payload at half of the cabin -
-            xOe = cg.xcg_oe(xLemac, planform.MAC) #OE
-            xF = cg.xcg_oe_f(mOE/mMTO, Mfuel/mMTO, xOe, xLemac+consts.WNGCGWRTLEMACPERMAC*planform.MAC) #fuel + OE
-            xP = cg.xcg_oe_p(mOE/mMTO, consts.MAXPAYLOAD/mMTO, xOe, xCgPay) #the Payload+OE case
-            xOePF = cg.xcg_oe_p_f(mOE/mMTO, consts.MAXPAYLOAD/mMTO, Mfuel/mMTO, xOe, xCgPay, xLemac+consts.OEWCGWRTLEMACPERMAC*planform.MAC) #everything case, again unsure of what the fuel cg is and does it concide with wing cg - TODO
+        xLemac = cg.x_lemac(cgFusGroup, planform.MAC, mWing, mNacelle, mFus, mEmp, mFe, consts.OEWCGWRTLEMACPERMAC, consts.OEWCGWRTLEMACPERMAC) #TODO the 0.4 MAC uncertain - consult the person responsible for CG
+        print(xLemac)
+        xC4MAC = xLemac + planform.MAC/4 #x pos. of C/4 MAC
+        #possible cg position - OE, Fuel+OE, OE+Payload, FUEL+OE+Payload
+        xCgPay = consts.LN+(consts.LFUS-consts.LT-consts.LN)/2 #cg payload at half of the cabin -
+        xOe = cg.xcg_oe(xLemac, planform.MAC) #OE
+        xF = cg.xcg_oe_f(mOE/mMTO, Mfuel/mMTO, xOe, xLemac+consts.WNGCGWRTLEMACPERMAC*planform.MAC) #fuel + OE
+        xP = cg.xcg_oe_p(mOE/mMTO, consts.MAXPAYLOAD/mMTO, xOe, xCgPay) #the Payload+OE case
+        xOePF = cg.xcg_oe_p_f(mOE/mMTO, consts.MAXPAYLOAD/mMTO, Mfuel/mMTO, xOe, xCgPay, xLemac+consts.OEWCGWRTLEMACPERMAC*planform.MAC) #everything case, again unsure of what the fuel cg is and does it concide with wing cg - TODO
 
-            cgMostConstraining = cg.cg(xOe, xP, xF, xOePF) #the most constraining cg choice
-            print(f"The most constraining cg location is: {cgMostConstraining}")
+        cgMostConstraining = cg.cg(xOe, xP, xF, xOePF) #the most constraining cg choice
+        print(f"The most constraining cg location is: {cgMostConstraining}")
 
-            #comparing cgs to see if iteration necessary and saving the cg values before next iteration
-            if abs(1-xCgPrevious/cgMostConstraining)<.01:
-                break #exits the loop
+        #comparing cgs to see if iteration necessary and saving the cg values before next iteration
+        if abs(1-xCgPrevious/cgMostConstraining)<.01:
+            break #exits the loop
 
-            xCgPrevious=cgMostConstraining #if we did not manage to exit the loop
+        xCgPrevious=cgMostConstraining #if we did not manage to exit the loop
 
-            #tail
-            Sh, Sv = emp.S_tail(consts.VHTAIL, planform.S, planform.MAC, consts.XH, consts.VVTAIL, planform.b, consts.XV, cgMostConstraining)
-            horizontalTail = pf.Planform(Sh, consts.ARHTAIL, consts.TRHTAIL, consts.SWEEPHT, 0)
-            verticalTail = pf.Planform(Sv, consts.ARVTAIL, consts.TRVTAIL, consts.SWEEPVT, 0, symmetric=False)
+        #tail
+        Sh, Sv = emp.S_tail(consts.VHTAIL, planform.S, planform.MAC, consts.XH, consts.VVTAIL, planform.b, consts.XV, cgMostConstraining)
+        horizontalTail = pf.Planform(Sh, consts.ARHTAIL, consts.TRHTAIL, consts.SWEEPHT, 0)
+        verticalTail = pf.Planform(Sv, consts.ARVTAIL, consts.TRVTAIL, consts.SWEEPVT, 0, symmetric=False)
 
-            #tail mass est.
-            massHtail = wEstII.tail_mass(mGross, nult, horizontalTail, consts.XH-xC4MAC, consts.CTRLSURFAREAFRAC*horizontalTail.S)
-            clAlphaVtail = clFuns.dCLdAlpha(consts.CRUISEMACH, verticalTail)
-            massVtail = wEstII.tail_mass(mGross, nult, verticalTail, consts.XV-xC4MAC, consts.TCR)
-            print(f"happens, old mEmp: {mEmp}")
-            mEmp = massHtail+massVtail #upditing the empenage mass value
-            print(f"happens, new mEmp: {mEmp}")
+        #tail mass est.
+        massHtail = wEstII.tail_mass(mGross, nult, horizontalTail, consts.XH-xC4MAC, consts.CTRLSURFAREAFRAC*horizontalTail.S)
+        clAlphaVtail = clFuns.dCLdAlpha(consts.CRUISEMACH, verticalTail)
+        massVtail = wEstII.tail_mass(mGross, nult, verticalTail, consts.XV-xC4MAC, consts.TCR)
+        print(f"happens, old mEmp: {mEmp}")
+        mEmp = massHtail+massVtail #upditing the empenage mass value
+        print(f"happens, new mEmp: {mEmp}")
 
-            #lg - dimensions
-            mainWheelPressure = lg.P_MW(mMTO, consts.NWM)
-            hLG = lg.z_MLG(cgMostConstraining, fuselage.L1+fuselage.L2, alphaMax, consts.AbsorberStroke)
-            noseWheelPressure = lg.P_NW(mMTO, consts.NWN)
-            xMLG = lg.l_m(alphaMax, cgMostConstraining, hLG+fuselage.D/2) #main landing gear x position
-            xNLG = lg.l_n(alphaMax, noseWheelPressure, xMLG) #nose landing gear x position
+        #lg - dimensions
+        mainWheelPressure = lg.P_MW(mMTO, consts.NWM)
+        hLG = lg.z_MLG(cgMostConstraining, fuselage.L1+fuselage.L2, alphaMax, consts.AbsorberStroke)
+        noseWheelPressure = lg.P_NW(mMTO, consts.NWN)
+        xMLG = lg.l_m(alphaMax, cgMostConstraining, hLG+fuselage.D/2) #main landing gear x position
+        xNLG = lg.l_n(alphaMax, noseWheelPressure, xMLG) #nose landing gear x position
 
-            #lg-weight estimations
-            mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, hLG, hLG, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
-            #print(f"landing gear mass: {mLG}; landing gear height: {hLG}")
+        #lg-weight estimations
+        mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, hLG, hLG, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
+        #print(f"landing gear mass: {mLG}; landing gear height: {hLG}")
+    
+    #engine group
+    mNacelle = wEstII.nacelle_mass(consts.NACELLELEN, consts.DNACELLE, nult, consts.ENGINEMASS, 2, np.pi*consts.DNACELLE*consts.NACELLELEN)
+    wire2enginesLen = 2*(consts.ENGINESPANWISEPOS*planform.b/2+xLemac)
+    mEngineCtrl = wEstII.engine_controls_mass(2, wire2enginesLen) #mass of engine controls
+    starterMass = wEstII.starter_mass(2, consts.ENGINEMASS) #engine starter mass
+    mEngGroup = starterMass+mEngineCtrl+mNacelle
+
+    #fuels system masses
+    Vfuel = Mfuel/.95/consts.KEROSENEDENSITY #gross fuel = Mfuel/.95
+    massFuelSys = wEstII.fuel_system_mass(Vfuel, consts.FUELTANKSN)
+
+    #electronics system masses
+    areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Saileron(planform)
+    estMwingGroup = mWing+mNacelle+Mfuel+massFuelSys #estimated full wing group mass
+    Izz = ((mMTO-estMwingGroup)*fuselage.L**2+estMwingGroup*planform.b**2)/12 #assume 2 rods crossing at COM
+    mFc = wEstII.flight_control_mass(areaCtrlSurfaces, Izz)
+    #APU not included
+    mInstruments = wEstII.instruments_mass(2, 2, fuselage.L, planform.b)
+    mHydraulics = wEstII.hydraulics_mass(fuselage.L,planform.b)
+    mElectrical = wEstII.electrical_mass(wire2enginesLen,2)
+    mAvionics = wEstII.avionics_mass()
+    mElectronics = mAvionics+mElectrical+mHydraulics+mInstruments
+
+    #mass other subsystems
+    mFurnishings = wEstII.furnish_mass(2,consts.MAXPAYLOAD,fuselage.Sw)
+    Vfus = np.pi/4*fuselage.D**2*fuselage.L #a very rough estimate of the fuselage volume
+    mAirconditioning = wEstII.aircon_mass(consts.NPAX, Vfus)
+    mAntiIce = wEstII.anti_ice_mass(mGross)
+    mHandling = wEstII.handling_mass(mGross)
+    mApu = wEstII.apu_installed_mass(200)
+    mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings+mApu
+    mOther += 0.08*mMTO
+
+    oldOEM = mOE #OEM from class I - for convergence check at the end of the loop
+    mOE = mLG+mWing+mEmp+mFus+mOther+mElectronics+massFuelSys+mEngGroup #getting the new OEM
+    
         
-        #engine group
-        mNacelle = wEstII.nacelle_mass(consts.NACELLELEN, consts.DNACELLE, nult, consts.ENGINEMASS, 2, np.pi*consts.DNACELLE*consts.NACELLELEN)
-        wire2enginesLen = 2*(consts.ENGINESPANWISEPOS*planform.b/2+xLemac)
-        mEngineCtrl = wEstII.engine_controls_mass(2, wire2enginesLen) #mass of engine controls
-        starterMass = wEstII.starter_mass(2, consts.ENGINEMASS) #engine starter mass
-        mEngGroup = starterMass+mEngineCtrl+mNacelle
 
-        #fuels system masses
-        Vfuel = Mfuel/.95/consts.KEROSENEDENSITY #gross fuel = Mfuel/.95
-        massFuelSys = wEstII.fuel_system_mass(Vfuel, consts.FUELTANKSN)
+    print()
 
-        #electronics system masses
-        areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Saileron(planform)
-        estMwingGroup = mWing+mNacelle+Mfuel+massFuelSys #estimated full wing group mass
-        Izz = ((mMTO-estMwingGroup)*fuselage.L**2+estMwingGroup*planform.b**2)/12 #assume 2 rods crossing at COM
-        mFc = wEstII.flight_control_mass(areaCtrlSurfaces, Izz)
-        #APU not included
-        mInstruments = wEstII.instruments_mass(2, 2, fuselage.L, planform.b)
-        mHydraulics = wEstII.hydraulics_mass(fuselage.L,planform.b)
-        mElectrical = wEstII.electrical_mass(wire2enginesLen,2)
-        mAvionics = wEstII.avionics_mass()
-        mElectronics = mAvionics+mElectrical+mHydraulics+mInstruments
-
-        #mass other subsystems
-        mFurnishings = wEstII.furnish_mass(2,consts.MAXPAYLOAD,fuselage.Sw)
-        Vfus = np.pi/4*fuselage.D**2*fuselage.L #a very rough estimate of the fuselage volume
-        mAirconditioning = wEstII.aircon_mass(consts.NPAX, Vfus)
-        mAntiIce = wEstII.anti_ice_mass(mGross)
-        mHandling = wEstII.handling_mass(mGross)
-        mApu = wEstII.apu_installed_mass(200)
-        mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings+mApu
-        mOther += 0.05*mMTO
-
-        oldOEM = mOE #OEM from class I - for convergence check at the end of the loop
-        mOE = mLG+mWing+mEmp+mFus+mOther+mElectronics+massFuelSys+mEngGroup #getting the new OEM
-        
-            
-
-        print()
-
-        print(f"Design point: {WSselected}, {TWselected}")
-        print(f"Wing Surface and ClDes: {S}, {CLdes}")
-        print(f"Wing Aspect Ration and Taper Ratiom, Sweep: {planform.AR}, {planform.TR}, {planform.sweepC4}")
-        print(f"Mach Drag Divergence: {Mdd}")
-        print(f"ScrapeAngle {alphaMax}")
-        print(f"nult: {nult}, MTOM: {mMTO}")
-        print("\n-------------------------------------------------------------")
-        print(f"Iter {i}, MTOM: {mMTO}:")
-        print(f"Wing Mass: {mWing}kg, MF: {mWing/mMTO}")
-        print(f"Fuselage Mass: {mFus}kg, MF: {mFus/mMTO}")
-        print(f"Empenage Mass: {mEmp}kg, MF: {mEmp/mMTO}")
-        print(f"LG Mass: {mLG}kg, MF: {mLG/mMTO}")
-        print(f"Engine Group Mass: {mEngGroup}kg, MF: {mEngGroup/mMTO}")
-        print(f"Electronics Mass: {mElectronics}kg, MF: {mElectronics/mMTO}")
-        print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
-        print(f"Other Mass: {mOther}kg, MF: {mOther/mMTO}")
-        print("-------------------------------------------------------------\n")
+    print(f"Design point: {WSselected}, {TWselected}")
+    print(f"Wing Surface and ClDes: {S}, {CLdes}")
+    print(f"Wing Aspect Ration and Taper Ratiom, Sweep: {planform.AR}, {planform.TR}, {planform.sweepC4}")
+    print(f"Mach Drag Divergence: {Mdd}")
+    print(f"ScrapeAngle {alphaMax}")
+    print(f"nult: {nult}, MTOM: {mMTO}")
+    print("\n-------------------------------------------------------------")
+    print(f"Iter {i}, MTOM: {mMTO}:")
+    print(f"Wing Mass: {mWing}kg, MF: {mWing/mMTO}")
+    print(f"Fuselage Mass: {mFus}kg, MF: {mFus/mMTO}")
+    print(f"Empenage Mass: {mEmp}kg, MF: {mEmp/mMTO}")
+    print(f"LG Mass: {mLG}kg, MF: {mLG/mMTO}")
+    print(f"Engine Group Mass: {mEngGroup}kg, MF: {mEngGroup/mMTO}")
+    print(f"Electronics Mass: {mElectronics}kg, MF: {mElectronics/mMTO}")
+    print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
+    print(f"Other Mass: {mOther}kg, MF: {mOther/mMTO}")
+    print("-------------------------------------------------------------\n")
 
 
-        #re-assigning the MTOM
-        #mMTO = (mOE+consts.DESIGNPAYLOAD)/(1-MFfuel)
-        '''Fuselage & fuel Volume Calculations'''
+    #re-assigning the MTOM
+    #mMTO = (mOE+consts.DESIGNPAYLOAD)/(1-MFfuel)
+    '''Fuselage & fuel Volume Calculations'''
 
-        '''Class II Drag'''
-        #At this point your planform and fuselage variables will be your final planform and fuselage
-        #Use the functions from Class II Drag estimations to do the drag estimation for Planform and the fuselage for cruise conditions
-        #Empenage to be added later, but will be done as two other planforms for the tail and the rudder
-        #Thus, it would be extra nice to make a fuction that estimates drag using the Class II drag est for any planform
-        #It would be just coupling a few functions from ClassII.dragEst.py into a single function - for typical values, us the slides from lift 7 drag estimations
-        #The Planform and Fuselage Classes have built-in wetted Surface Functions/Properties
+    '''Class II Drag'''
+    #At this point your planform and fuselage variables will be your final planform and fuselage
+    #Use the functions from Class II Drag estimations to do the drag estimation for Planform and the fuselage for cruise conditions
+    #Empenage to be added later, but will be done as two other planforms for the tail and the rudder
+    #Thus, it would be extra nice to make a fuction that estimates drag using the Class II drag est for any planform
+    #It would be just coupling a few functions from ClassII.dragEst.py into a single function - for typical values, us the slides from lift 7 drag estimations
+    #The Planform and Fuselage Classes have built-in wetted Surface Functions/Properties
 
-        Cdo = dragEst.Cdo(consts.CRUISEDENSITY, consts.CRUISEMACH, CLdes, consts.THICKNESSTOCHORD, planform, fuselage, hlds, S, xNLG, hLG, ka = 0.935)
-        aspectEffective = dragEst.ARe(planform.AR) #effective aspect ratio
-        oswald = dragEst.Oswald(aspectEffective) #new oswald efficiency factor
-        Cdi = CLdes*CLdes/np.pi/aspectEffective/oswald #induced drag coefficient
-        Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, horizontalTail)*horizontalTail.S/planform.S #horizontal tail contribution
-        Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, verticalTail)*verticalTail.S/planform.S #horizontal tail contribution
-        Cdi += dragEst.TailCdi(planform, CLdes, horizontalTail, consts.XH, cgMostConstraining, xLemac)*horizontalTail.S/planform.S #trim drag
-        Cd = Cdo + Cdi #drag coefficient
-        D = .5*consts.CRUISEDENSITY*consts.CRUISEVELOCITY**2*Cd*S #the drag force experienced by the aircraft during cruise
-        print(f"Cd, cd0, Cdi: {Cd}, {Cdo}, {Cdi}") #zero-lift drag coefficient (includes wave drag coefficient)
-        print(f"Drag [N]: {D}")
+    Cdo = dragEst.Cdo(consts.CRUISEDENSITY, consts.CRUISEMACH, CLdes, consts.THICKNESSTOCHORD, planform, fuselage, hlds, S, xNLG, hLG, ka = 0.935)
+    aspectEffective = dragEst.ARe(planform.AR) #effective aspect ratio
+    oswald = dragEst.Oswald(aspectEffective) #new oswald efficiency factor
+    Cdi = CLdes*CLdes/np.pi/aspectEffective/oswald #induced drag coefficient
+    Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, horizontalTail)*horizontalTail.S/planform.S #horizontal tail contribution
+    Cdo += dragEst.PlanformCdo(consts.CRUISEDENSITY, consts.CRUISEMACH, consts.THICKNESSTOCHORD, verticalTail)*verticalTail.S/planform.S #horizontal tail contribution
+    Cdi += dragEst.TailCdi(planform, CLdes, horizontalTail, consts.XH, cgMostConstraining, xLemac)*horizontalTail.S/planform.S #trim drag
+    Cd = Cdo + Cdi #drag coefficient
+    D = .5*consts.CRUISEDENSITY*consts.CRUISEVELOCITY**2*Cd*S #the drag force experienced by the aircraft during cruise
+    print(f"Cd, cd0, Cdi: {Cd}, {Cdo}, {Cdi}") #zero-lift drag coefficient (includes wave drag coefficient)
+    print(f"Drag [N]: {D}")
 
-        Cd0 = Cdo
+    Cd0 = Cdo
 
-        '''Repeat the Iteration loop until your class I and class II estimations converge'''
-        if abs(1-oldOEM/mOE)<0.01:
-            print("~~CONVERGED~~")
-            break
-        else:
-            print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {mOE-oldOEM}")
+
     if abs(1-mOEClassI/mOE)<0.01:
         print("~~CONVERGED~~")
         break
