@@ -240,6 +240,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     mApu = wEstII.apu_installed_mass(200)
     mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings+mApu
 
+    oldOEM = mOE #OEM from class I - for convergence check at the end of the loop
     mOE = mLG+mWing+mEmp+mFus+mOther+mElectronics+massFuelSys+mEngGroup #getting the new OEM
     
         
@@ -263,6 +264,9 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
     print(f"Other Mass: {mOther}kg, MF: {mOther/mMTO}")
     print("-------------------------------------------------------------\n")
+
+
+    #re-assigning the MTOM
     mMTO = mOE + Mfuel +consts.DESIGNPAYLOAD
     '''Fuselage & fuel Volume Calculations'''
 
@@ -287,6 +291,12 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"Drag [N]: {D}")
 
     Cd0 = Cdo
+
     '''Repeat the Iteration loop until your class I and class II estimations converge'''
+    if abs(1-oldOEM/mOE)<0.01:
+        print("~~CONVERGED~~")
+        break
+    else:
+        print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {mOE-oldOEM}")
 
 '''Final SAR Calculation'''
