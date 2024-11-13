@@ -8,19 +8,19 @@ def p_tire(LCN):
 
 #static load per main landing gear wheel in kg
 #NWM is the total number of MLG wheels
-def P_MW(mTOM,NWM):
-    P_MW = 0.92 * (mTOM/NWM)
+def P_MW(LT, mTOM,NWM):
+    P_MW = LT * (mTOM/NWM)
     return P_MW
 
 #static load per nose landing gear wheel in kg 
 #NWN is the total number of NLG wheels
-def P_NW(mTOM,NWN):
-    P_NW = 0.08 * (mTOM/NWN)
+def P_NW(mTOM,NWN, LT):
+    P_NW = LT * (mTOM/NWN)
     return P_NW
 
 # TC is the Length from the nose of the aircraft to the start of the tail cone
-def TC(LFUS, LTC):
-    TC = LFUS - LTC
+def TC(LFUS, LTC, cg):
+    TC = LFUS - (LTC + cg)
     return TC
 
 # z_MLG is the height of the main landing gear wrt the ground
@@ -56,8 +56,8 @@ def P_n(mMTO, P_MW, NSTRUT):
     
 
 # l_n is the longitudinal position of the nose gear wrt the nose
-def l_n(mMTO, l_m, P_N):
-    l_n = (((mMTO)/(P_N)) -1) * l_m
+def l_n(mMTO, l_m, P_n, cg):
+    l_n = (((mMTO)/(P_n)) -1) * (l_m - cg)
     return l_n
 
 # Minimum MLG dist from centreline to avoid laterap tip over
