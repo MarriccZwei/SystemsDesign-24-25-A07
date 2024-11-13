@@ -201,7 +201,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
         #tail mass est.
         massHtail = wEstII.tail_mass(mGross, nult, horizontalTail, consts.XH-xC4MAC, consts.CTRLSURFAREAFRAC*horizontalTail.S)
         clAlphaVtail = clFuns.dCLdAlpha(consts.CRUISEMACH, verticalTail)
-        massVtail = wEstII.tail_mass(mGross, nult, verticalTail, consts.XV-xC4MAC, consts.TCR)
+        massVtail = wEstII.rudder_mass(mGross, nult, verticalTail, consts.XV-xC4MAC, consts.TCR)
         print(f"happens, old mEmp: {mEmp}")
         mEmp = massHtail+massVtail #upditing the empenage mass value
         print(f"happens, new mEmp: {mEmp}")
@@ -232,6 +232,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Smovable(planform)
     estMwingGroup = mWing+mNacelle+Mfuel+massFuelSys #estimated full wing group mass
     Izz = ((mMTO-estMwingGroup)*fuselage.L**2+estMwingGroup*planform.b**2)/12 #assume 2 rods crossing at COM
+    print(f"IZZ: {Izz}")
     mFc = wEstII.flight_control_mass(areaCtrlSurfaces, Izz)
     #APU not included
     mInstruments = wEstII.instruments_mass(2, 2, fuselage.L, planform.b)
@@ -309,9 +310,10 @@ for i in range(20): #later change to a while with a counter and convergence cond
     Cd0 = Cdo
 
 
-    # if abs(1-mOEClassI/mOE)<0.01:
-    #      print("~~CONVERGED~~")
-    #      break
+    if abs((mOE-oldOEM)/mOE)<0.01:
+        print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {(mOE-oldOEM)/mOE}")
+        print("~~CONVERGED~~")
+        break
     # else:
     print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {(mOE-oldOEM)/mOE}")
 
