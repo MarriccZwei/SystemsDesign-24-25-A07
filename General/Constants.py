@@ -26,11 +26,10 @@ XH = 60 # horizontal tail x
 XV = 60 # vertical tail x
 SWEEPHT = np.radians(36) #  horizontal tail sweep RADIANS!!!
 SWEEPVT = np.radians(40) #  vertical tail sweep RADIANS!!!
-SE = 10 #  Elevator area
-ARHTAIL = 5 #  horizontal tail Aspect Ratio
-ARVTAIL = 5 #  vertical tail Aspect Ratio
-TRVTAIL = 0.5
-TRHTAIL = 0.5 # horizontal tail taper ratio
+ARHTAIL = 4 #  horizontal tail Aspect Ratio
+ARVTAIL = 1.8 #  vertical tail Aspect Ratio
+TRVTAIL = 0.3 # vertical tail taper ratio
+TRHTAIL = 0.3 # horizontal tail taper ratio
 TCH = .09 #thickness to chord for the horizontal tail
 TCR = .09 #thickness to chord for the vertical tail
 
