@@ -22,8 +22,8 @@ LANDINUHAT = 65*0.3048 #value read for the graph, subject to scrutiny #converted
 
 VHTAIL = 0.87
 VVTAIL = 0.065
-XH = 60 # horizontal tail x w.r.t nose
-XV = 60 # vertical tail x w.r.t nose
+XH = 55 # horizontal tail x w.r.t nose
+XV = 50 # vertical tail x w.r.t nose
 SWEEPHT = np.radians(36) #  horizontal tail sweep RADIANS!!!
 SWEEPVT = np.radians(40) #  vertical tail sweep RADIANS!!!
 ARHTAIL = 4 #  horizontal tail Aspect Ratio

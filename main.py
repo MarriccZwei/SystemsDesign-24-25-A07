@@ -67,6 +67,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     MFfuel = wEstI.MFfuel(ld, tsfc) #fuel mass fraction
     MFoe = mOE/mMTO #operating empty weight mass fraction
     mMTO = wEstI.mtom(MFoe, ld, tsfc) #first overwriting of mtom
+    mFe = consts.FXTEQPTMF*mMTO #fixed equipment mass
 
     Mfuel = wEstI.Mfuel(MFoe, ld, tsfc) #fuel mass
     mOE = MFoe*mMTO #updating the OEM
@@ -164,8 +165,8 @@ for i in range(20): #later change to a while with a counter and convergence cond
     xCgPrevious = 0 #will be used to compare the cg between iterations
     for i in range(10): #after 10 empenage lg iterations, we just give up if there is no convergence - TODO throw an error in such a case
         #masses of tail and landing gear from previous iterations
-        #cg calc I
-        mFe = consts.FXTEQPTMF*mMTO #fixed equipment mass taken from Roskam values
+        #cg calc 
+        #fixed equipment mass taken from Roskam values
         cgWingGroup = cg.X_wcg(mWing, mNacelle, planform.MAC, consts.ENGINEXWRTLEMAC)
         cgFusGroup = cg.X_fcg(mFus, mEmp, mFe, fuselage.L)
 
@@ -251,6 +252,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
 
     oldOEM = mOE #OEM from class I - for convergence check at the end of the loop
     mOE = mLG+mWing+mEmp+mFus+mOther+mEngGroup+mElectronics #getting the new OEM
+    mFe = mOther+mElectronics
     
         
 
