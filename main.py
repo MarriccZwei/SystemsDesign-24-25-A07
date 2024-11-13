@@ -224,7 +224,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     massFuelSys = wEstII.fuel_system_mass(Vfuel, consts.FUELTANKSN)
 
     # #electronics system masses
-    areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Saileron(planform)
+    areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Smovable(planform)
     estMwingGroup = mWing+mNacelle+Mfuel+massFuelSys #estimated full wing group mass
     Izz = ((mMTO-estMwingGroup)*fuselage.L**2+estMwingGroup*planform.b**2)/12 #assume 2 rods crossing at COM
     mFc = wEstII.flight_control_mass(areaCtrlSurfaces, Izz)
@@ -303,6 +303,6 @@ for i in range(20): #later change to a while with a counter and convergence cond
     #      print("~~CONVERGED~~")
     #      break
     # else:
-    print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {mOE-oldOEM}")
+    print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {(mOE-oldOEM)/mOE}")
 
 '''Final SAR Calculation'''
