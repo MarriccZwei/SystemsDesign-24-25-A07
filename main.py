@@ -192,6 +192,10 @@ for i in range(20): #later change to a while with a counter and convergence cond
         Sh, Sv = emp.S_tail(consts.VHTAIL, planform.S, planform.MAC, consts.XH, consts.VVTAIL, planform.b, consts.XV, cgMostConstraining)
         horizontalTail = pf.Planform(Sh, consts.ARHTAIL, consts.TRHTAIL, consts.SWEEPHT, 0)
         verticalTail = pf.Planform(Sv, consts.ARVTAIL, consts.TRVTAIL, consts.SWEEPVT, 0, symmetric=False)
+        bh, bv = emp.b_tail(consts.ARHTAIL, Sh, consts.ARVTAIL, Sv)
+        crh, crv = emp.c_r_tail(Sh, consts.TRHTAIL, bh, Sv, consts.TRVTAIL, bv)
+        cth, ctv = emp.c_t_tail(consts.TRHTAIL, crh, consts.TRVTAIL, crv)
+        mach, macv = emp.mac_tail(crh, crv, consts.TRHTAIL, consts.TRVTAIL)
 
         #tail mass est.
         massHtail = wEstII.tail_mass(mGross, nult, horizontalTail, consts.XH-xC4MAC, consts.CTRLSURFAREAFRAC*horizontalTail.S)
@@ -269,6 +273,10 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
     print(f"Other Mass: {mOther}kg, MF: {mOther/mMTO}")
     print(f"H Tail Surface: {horizontalTail.S}, Vert. Tail Surface: {verticalTail.S}")
+    print(f"H Tail Span: {bh}, Vert. Tail Span: {bv}")
+    print(f"H Tail root chord: {crh}, Vert. Tail root chord: {crv}")
+    print(f"H Tail tip chord: {cth}, Vert. Tail tip chord: {ctv}")
+    print(f"H Tail mac chord: {mach}, Vert. Tail mac chord: {macv}")
     print("-------------------------------------------------------------\n")
 
 
