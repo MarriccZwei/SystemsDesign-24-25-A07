@@ -22,15 +22,14 @@ LANDINUHAT = 65*0.3048 #value read for the graph, subject to scrutiny #converted
 
 VHTAIL = 0.87
 VVTAIL = 0.065
-XH = 60 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail x
-XV = 60 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail x
-SWEEPHT = np.radians(36) # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail sweep RADIANS!!!
-SWEEPVT = np.radians(40) # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail sweep RADIANS!!!
-SE = 10 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: Elevator area
-ARHTAIL = 5 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail Aspect Ratio
-ARVTAIL = 5 # THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: vertical tail Aspect Ratio
-TRVTAIL = 0.5
-TRHTAIL = 0.5 #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: horizontal tail taper ratio
+XH = 55 # horizontal tail x w.r.t nose
+XV = 50 # vertical tail x w.r.t nose
+SWEEPHT = np.radians(36) #  horizontal tail sweep RADIANS!!!
+SWEEPVT = np.radians(40) #  vertical tail sweep RADIANS!!!
+ARHTAIL = 4 #  horizontal tail Aspect Ratio
+ARVTAIL = 1.8 #  vertical tail Aspect Ratio
+TRHTAIL = 0.3 # horizontal tail taper ratio
+TRVTAIL = 0.3 # vertical tail taper ratio
 TCH = .09 #thickness to chord for the horizontal tail
 TCR = .09 #thickness to chord for the vertical tail
 
@@ -131,7 +130,7 @@ UPSWEEP = 4
 ABASE = 2
 AMAX = 24.1
 NPAX = 263
-FW = 0.5*DEQUIVALENT #THIS VALUE IS WRONG, WHEN CALCULATED PLUG HERE: fuselage widht at horizontal tail intersection
+FW = 0.5*DEQUIVALENT # fuselage widht at horizontal tail intersection
 
 '''LG'''
 NWN = 2 #2 wheels for the nose landing gear

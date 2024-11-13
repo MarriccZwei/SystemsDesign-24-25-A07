@@ -67,6 +67,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     MFfuel = wEstI.MFfuel(ld, tsfc) #fuel mass fraction
     MFoe = mOE/mMTO #operating empty weight mass fraction
     mMTO = wEstI.mtom(MFoe, ld, tsfc) #first overwriting of mtom
+    mFe = consts.FXTEQPTMF*mMTO #fixed equipment mass
 
     Mfuel = wEstI.Mfuel(MFoe, ld, tsfc) #fuel mass
     mOE = MFoe*mMTO #updating the OEM
@@ -78,7 +79,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     '''Matching Diagram. Figuring out a design point'''
     '''This is the new matching diagram code all it only takes this as argumanets as this should probably be included in the itteration.
     The last argumeent is if the diagram should actual be plot or not.'''
-    constraints, constraintNames, point = MatchingDiagram(aspect, consts.BETA_LAND, consts.BETA_CRUISE, ClmaxLand, oswald, Cd0, True) 
+    constraints, constraintNames, point = MatchingDiagram(aspect, consts.BETA_LAND, consts.BETA_CRUISE, ClmaxLand, oswald, Cd0, False) 
     WSselected  = point[0]
     TWselected = point[1]
     #constr.prepare_Constraint_List(aspect, oswald, Cd0, ClmaxLand) #obtaining constraints
@@ -164,8 +165,8 @@ for i in range(20): #later change to a while with a counter and convergence cond
     xCgPrevious = 0 #will be used to compare the cg between iterations
     for i in range(10): #after 10 empenage lg iterations, we just give up if there is no convergence - TODO throw an error in such a case
         #masses of tail and landing gear from previous iterations
-        #cg calc I
-        mFe = consts.FXTEQPTMF*mMTO #fixed equipment mass taken from Roskam values
+        #cg calc 
+        #fixed equipment mass taken from Roskam values
         cgWingGroup = cg.X_wcg(mWing, mNacelle, planform.MAC, consts.ENGINEXWRTLEMAC)
         cgFusGroup = cg.X_fcg(mFus, mEmp, mFe, fuselage.L)
 
@@ -192,6 +193,10 @@ for i in range(20): #later change to a while with a counter and convergence cond
         Sh, Sv = emp.S_tail(consts.VHTAIL, planform.S, planform.MAC, consts.XH, consts.VVTAIL, planform.b, consts.XV, cgMostConstraining)
         horizontalTail = pf.Planform(Sh, consts.ARHTAIL, consts.TRHTAIL, consts.SWEEPHT, 0)
         verticalTail = pf.Planform(Sv, consts.ARVTAIL, consts.TRVTAIL, consts.SWEEPVT, 0, symmetric=False)
+        bh, bv = emp.b_tail(consts.ARHTAIL, Sh, consts.ARVTAIL, Sv)
+        crh, crv = emp.c_r_tail(Sh, consts.TRHTAIL, bh, Sv, consts.TRVTAIL, bv)
+        cth, ctv = emp.c_t_tail(consts.TRHTAIL, crh, consts.TRVTAIL, crv)
+        mach, macv = emp.mac_tail(crh, crv, consts.TRHTAIL, consts.TRVTAIL)
 
         #tail mass est.
         massHtail = wEstII.tail_mass(mGross, nult, horizontalTail, consts.XH-xC4MAC, consts.CTRLSURFAREAFRAC*horizontalTail.S)
@@ -230,8 +235,8 @@ for i in range(20): #later change to a while with a counter and convergence cond
     Vfuel = Mfuel/.95/consts.KEROSENEDENSITY #gross fuel = Mfuel/.95
     massFuelSys = wEstII.fuel_system_mass(Vfuel, consts.FUELTANKSN)
 
-    #electronics system masses
-    areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Saileron(planform)
+    # #electronics system masses
+    areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Smovable(planform)
     estMwingGroup = mWing+mNacelle+Mfuel+massFuelSys #estimated full wing group mass
     Izz = ((mMTO-estMwingGroup)*fuselage.L**2+estMwingGroup*planform.b**2)/12 #assume 2 rods crossing at COM
     mFc = wEstII.flight_control_mass(areaCtrlSurfaces, Izz)
@@ -240,7 +245,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     mHydraulics = wEstII.hydraulics_mass(fuselage.L,planform.b)
     mElectrical = wEstII.electrical_mass(wire2enginesLen,2)
     mAvionics = wEstII.avionics_mass()
-    mElectronics = mAvionics+mElectrical+mHydraulics+mInstruments
+    mElectronics = mAvionics+mElectrical+mHydraulics+mInstruments+mFc
 
     #mass other subsystems
     mFurnishings = wEstII.furnish_mass(2,consts.MAXPAYLOAD,fuselage.Sw)
@@ -249,11 +254,12 @@ for i in range(20): #later change to a while with a counter and convergence cond
     mAntiIce = wEstII.anti_ice_mass(mGross)
     mHandling = wEstII.handling_mass(mGross)
     mApu = wEstII.apu_installed_mass(200)
-    mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings+mApu
-    mOther += 0.08*mMTO
+    mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings+mApu+massFuelSys
+    #mOther = 0.12*mMTO
 
     oldOEM = mOE #OEM from class I - for convergence check at the end of the loop
-    mOE = mLG+mWing+mEmp+mFus+mOther+mElectronics+massFuelSys+mEngGroup #getting the new OEM
+    mOE = mLG+mWing+mEmp+mFus+mOther+mEngGroup+mElectronics #getting the new OEM
+    mFe = mOther+mElectronics
     
         
 
@@ -275,6 +281,11 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"Electronics Mass: {mElectronics}kg, MF: {mElectronics/mMTO}")
     print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
     print(f"Other Mass: {mOther}kg, MF: {mOther/mMTO}")
+    print(f"H Tail Surface: {horizontalTail.S}, Vert. Tail Surface: {verticalTail.S}")
+    print(f"H Tail Span: {bh}, Vert. Tail Span: {bv}")
+    print(f"H Tail root chord: {crh}, Vert. Tail root chord: {crv}")
+    print(f"H Tail tip chord: {cth}, Vert. Tail tip chord: {ctv}")
+    print(f"H Tail mac chord: {mach}, Vert. Tail mac chord: {macv}")
     print("-------------------------------------------------------------\n")
     print(f"X pos MLG: {xMLG}")
     print(f"X pos NLG: {xNLG}")
@@ -316,10 +327,10 @@ for i in range(20): #later change to a while with a counter and convergence cond
     Cd0 = Cdo
 
 
-    if abs(1-mOEClassI/mOE)<0.01:
-        print("~~CONVERGED~~")
-        break
-    else:
-        print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {mOE-oldOEM}")
+    # if abs(1-mOEClassI/mOE)<0.01:
+    #      print("~~CONVERGED~~")
+    #      break
+    # else:
+    print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {(mOE-oldOEM)/mOE}")
 
 '''Final SAR Calculation'''
