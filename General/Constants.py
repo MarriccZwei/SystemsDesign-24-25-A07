@@ -22,14 +22,16 @@ LANDINUHAT = 65*0.3048 #value read for the graph, subject to scrutiny #converted
 
 VHTAIL = 0.87
 VVTAIL = 0.065
-XH = 34.48 # horizontal tail x
-XV = 34.48 # vertical tail x
+XH = 60 # horizontal tail x
+XV = 60 # vertical tail x
 SWEEPHT = np.radians(36) #  horizontal tail sweep RADIANS!!!
 SWEEPVT = np.radians(40) #  vertical tail sweep RADIANS!!!
 ARHTAIL = 4 #  horizontal tail Aspect Ratio
 ARVTAIL = 1.8 #  vertical tail Aspect Ratio
 TRHTAIL = 0.3 # horizontal tail taper ratio
 TRVTAIL = 0.3 # vertical tail taper ratio
+TCH = .09 #thickness to chord for the horizontal tail
+TCR = .09 #thickness to chord for the vertical tail
 
 KDOOR = 1.12  # Constant for amount of cargo doors, check Raymer weight estimation
 KLG = 1.  # Constant depending on Landing gear attachement, if it i fuselage mounted the constant equals 1.12, otherwise = 1.0
