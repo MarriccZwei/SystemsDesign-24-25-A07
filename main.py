@@ -151,7 +151,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     mOEClassI = mOE
     '''Class II weight'''
     #mDes = (.95+.7)/2*mMTO #design mass due to fuel burn in flight Uncomment if needed
-    mGross = mMTO+(1/.95-1)*Mfuel #gross weight -add the 5% of fuel for toff
+    mGross = mMTO #gross weight -add the 5% of fuel for toff
     nult = loadF.n_ult(planform, clAlph, mMTO) #ultimate load factor for the wing
     mWing = wEstII.wing_mass(planform, mGross, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
     print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
