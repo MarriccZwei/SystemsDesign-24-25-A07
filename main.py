@@ -220,33 +220,33 @@ for i in range(20): #later change to a while with a counter and convergence cond
     mEngGroup = starterMass+mEngineCtrl+mNacelle
 
     #fuels system masses
-    Vfuel = Mfuel/.95/consts.KEROSENEDENSITY #gross fuel = Mfuel/.95
-    massFuelSys = wEstII.fuel_system_mass(Vfuel, consts.FUELTANKSN)
+    # Vfuel = Mfuel/.95/consts.KEROSENEDENSITY #gross fuel = Mfuel/.95
+    # massFuelSys = wEstII.fuel_system_mass(Vfuel, consts.FUELTANKSN)
 
-    #electronics system masses
-    areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Saileron(planform)
-    estMwingGroup = mWing+mNacelle+Mfuel+massFuelSys #estimated full wing group mass
-    Izz = ((mMTO-estMwingGroup)*fuselage.L**2+estMwingGroup*planform.b**2)/12 #assume 2 rods crossing at COM
-    mFc = wEstII.flight_control_mass(areaCtrlSurfaces, Izz)
-    #APU not included
-    mInstruments = wEstII.instruments_mass(2, 2, fuselage.L, planform.b)
-    mHydraulics = wEstII.hydraulics_mass(fuselage.L,planform.b)
-    mElectrical = wEstII.electrical_mass(wire2enginesLen,2)
-    mAvionics = wEstII.avionics_mass()
-    mElectronics = mAvionics+mElectrical+mHydraulics+mInstruments
+    # #electronics system masses
+    # areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Saileron(planform)
+    # estMwingGroup = mWing+mNacelle+Mfuel+massFuelSys #estimated full wing group mass
+    # Izz = ((mMTO-estMwingGroup)*fuselage.L**2+estMwingGroup*planform.b**2)/12 #assume 2 rods crossing at COM
+    # mFc = wEstII.flight_control_mass(areaCtrlSurfaces, Izz)
+    # #APU not included
+    # mInstruments = wEstII.instruments_mass(2, 2, fuselage.L, planform.b)
+    # mHydraulics = wEstII.hydraulics_mass(fuselage.L,planform.b)
+    # mElectrical = wEstII.electrical_mass(wire2enginesLen,2)
+    # mAvionics = wEstII.avionics_mass()
+    # mElectronics = mAvionics+mElectrical+mHydraulics+mInstruments
 
-    #mass other subsystems
-    mFurnishings = wEstII.furnish_mass(2,consts.MAXPAYLOAD,fuselage.Sw)
-    Vfus = np.pi/4*fuselage.D**2*fuselage.L #a very rough estimate of the fuselage volume
-    mAirconditioning = wEstII.aircon_mass(consts.NPAX, Vfus)
-    mAntiIce = wEstII.anti_ice_mass(mGross)
-    mHandling = wEstII.handling_mass(mGross)
-    mApu = wEstII.apu_installed_mass(200)
-    mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings+mApu
-    mOther += 0.08*mMTO
+    # #mass other subsystems
+    # mFurnishings = wEstII.furnish_mass(2,consts.MAXPAYLOAD,fuselage.Sw)
+    # Vfus = np.pi/4*fuselage.D**2*fuselage.L #a very rough estimate of the fuselage volume
+    # mAirconditioning = wEstII.aircon_mass(consts.NPAX, Vfus)
+    # mAntiIce = wEstII.anti_ice_mass(mGross)
+    # mHandling = wEstII.handling_mass(mGross)
+    # mApu = wEstII.apu_installed_mass(200)
+    # mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings+mApu
+    mOther = 0.12*mMTO
 
     oldOEM = mOE #OEM from class I - for convergence check at the end of the loop
-    mOE = mLG+mWing+mEmp+mFus+mOther+mElectronics+massFuelSys+mEngGroup #getting the new OEM
+    mOE = mLG+mWing+mEmp+mFus+mOther+mEngGroup #getting the new OEM
     
         
 
@@ -265,8 +265,8 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"Empenage Mass: {mEmp}kg, MF: {mEmp/mMTO}")
     print(f"LG Mass: {mLG}kg, MF: {mLG/mMTO}")
     print(f"Engine Group Mass: {mEngGroup}kg, MF: {mEngGroup/mMTO}")
-    print(f"Electronics Mass: {mElectronics}kg, MF: {mElectronics/mMTO}")
-    print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
+    # print(f"Electronics Mass: {mElectronics}kg, MF: {mElectronics/mMTO}")
+    # print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
     print(f"Other Mass: {mOther}kg, MF: {mOther/mMTO}")
     print("-------------------------------------------------------------\n")
 
