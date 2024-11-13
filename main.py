@@ -208,16 +208,16 @@ for i in range(20): #later change to a while with a counter and convergence cond
         print(f"happens, new mEmp: {mEmp}")
 
         #lg - dimensions
-        mainPoint = lg.P_MW(mMTO, consts.NWM)
+        mainPoint = lg.P_MW(consts.LT, mMTO, consts.NWM)
         hLG = lg.z_MLG(cgMostConstraining, fuselage.L1+fuselage.L2, alphaMax, consts.AbsorberStroke)
-        nosePoint = lg.P_NW(mMTO, consts.NWN)
+        nosePoint = lg.P_NW(mMTO, consts.NWN, consts.LT)
         P = lg.P_N(consts.LF, mMTO) # total load for nose gear
         P_n = lg.P_n(mMTO, mainPoint, consts.NSTRUTS) 
         xMLG = lg.l_m(alphaMax, cgMostConstraining, hLG+fuselage.D/2) #main landing gear x position
-        xNLG = lg.l_n(mMTO, xMLG, P_n) #nose landing gear x position
+        xNLG = lg.l_n(mMTO, xMLG, P_n, cgMostConstraining) #nose landing gear x position
         z_t = lg.z_t(planform.b, planform.dihedral, hLG) # hieght of wing tip
         z_n = lg.z_n(hLG, planform.b, planform.dihedral, consts.DNACELLE) # height of engine base
-        y_TIPOVER = lg.y_MLG_to(xNLG, xMLG, hLG+(consts.DEQUIVALENT/3) , consts.psi) # tipover constraint lateral
+        #y_TIPOVER = lg.y_MLG_to(xNLG, xMLG, hLG+(consts.DEQUIVALENT/3) , consts.psi) # tipover constraint lateral
         y_WTIP = lg.y_MLG_tc(planform.b, z_t, consts.phi) #wing tip lateral constraint
         y_ENG = lg.y_MLG_ec(planform.b, z_n, consts.phi) #engine lateral constraint
 
@@ -299,7 +299,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"NLG point load: {nosePoint}")
     print(f"height of wing tip : {z_t}")
     print(f"height of engine base: {z_n}")
-    print(f"Tipover pos: {y_TIPOVER}")
+    #print(f"Tipover pos: {y_TIPOVER}")
     print(f"Wing Tip pos: {y_WTIP}")
     print(f"ENG pos: {y_ENG}")
 
