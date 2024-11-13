@@ -152,7 +152,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     mOEClassI = mOE
     '''Class II weight'''
     #mDes = (.95+.7)/2*mMTO #design mass due to fuel burn in flight Uncomment if needed
-    mGross = mMTO+(1/.95-1)*Mfuel #gross weight -add the 5% of fuel for toff
+    mGross = mMTO #gross weight -add the 5% of fuel for toff
     nult = loadF.n_ult(planform, clAlph, mMTO) #ultimate load factor for the wing
     mWing = wEstII.wing_mass(planform, mGross, nult, consts.THICKNESSTOCHORD, hlds.Smovable(planform)) #class II weight estimation on the wing
     print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
@@ -202,7 +202,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
         #tail mass est.
         massHtail = wEstII.tail_mass(mGross, nult, horizontalTail, consts.XH-xC4MAC, consts.CTRLSURFAREAFRAC*horizontalTail.S)
         clAlphaVtail = clFuns.dCLdAlpha(consts.CRUISEMACH, verticalTail)
-        massVtail = wEstII.tail_mass(mGross, nult, verticalTail, consts.XV-xC4MAC, consts.TCR)
+        massVtail = wEstII.rudder_mass(mGross, nult, verticalTail, consts.XV-xC4MAC, consts.TCR)
         print(f"happens, old mEmp: {mEmp}")
         mEmp = massHtail+massVtail #upditing the empenage mass value
         print(f"happens, new mEmp: {mEmp}")
@@ -215,6 +215,11 @@ for i in range(20): #later change to a while with a counter and convergence cond
         P_n = lg.P_n(mMTO, mainPoint, consts.NSTRUTS) 
         xMLG = lg.l_m(alphaMax, cgMostConstraining, hLG+fuselage.D/2) #main landing gear x position
         xNLG = lg.l_n(mMTO, xMLG, P_n) #nose landing gear x position
+        z_t = lg.z_t(planform.b, planform.dihedral, hLG) # hieght of wing tip
+        z_n = lg.z_n(hLG, planform.b, planform.dihedral, consts.DNACELLE) # height of engine base
+        y_TIPOVER = lg.y_MLG_to(xNLG, xMLG, hLG+(consts.DEQUIVALENT/3) , consts.psi) # tipover constraint lateral
+        y_WTIP = lg.y_MLG_tc(planform.b, z_t, consts.phi) #wing tip lateral constraint
+        y_ENG = lg.y_MLG_ec(planform.b, z_n, consts.phi) #engine lateral constraint
 
         #lg-weight estimations
         mLG, mMLG, mNLG = wEstII.lg_mass(mMTO, consts.BETA_LAND, hLG, hLG, consts.NWM, consts.NWN, consts.NSTRUTS, consts.VSTALL)
@@ -235,6 +240,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     areaCtrlSurfaces = consts.CTRLSURFAREAFRAC*(horizontalTail.S+verticalTail.S)+hlds.Smovable(planform)
     estMwingGroup = mWing+mNacelle+Mfuel+massFuelSys #estimated full wing group mass
     Izz = ((mMTO-estMwingGroup)*fuselage.L**2+estMwingGroup*planform.b**2)/12 #assume 2 rods crossing at COM
+    print(f"IZZ: {Izz}")
     mFc = wEstII.flight_control_mass(areaCtrlSurfaces, Izz)
     #APU not included
     mInstruments = wEstII.instruments_mass(2, 2, fuselage.L, planform.b)
@@ -286,6 +292,16 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"Fuselage dimensions: D: {fuselage.D}m, L: {fuselage.L}, L_NC: {fuselage.L1}, L_UNCURVED: {fuselage.L2}, L_TC: {fuselage.L3}")
     print(f"Fuselage Dimensions L_N: {consts.LN}m, L_CABIN: {fuselage.L-consts.LN-consts.LT}m, L_T: {consts.LT}")
     print("-------------------------------------------------------------\n")
+    print(f"X pos MLG: {xMLG}")
+    print(f"X pos NLG: {xNLG}")
+    print(f"h LG: {hLG}")
+    print(f"MLG point load: {mainPoint}")
+    print(f"NLG point load: {nosePoint}")
+    print(f"height of wing tip : {z_t}")
+    print(f"height of engine base: {z_n}")
+    print(f"Tipover pos: {y_TIPOVER}")
+    print(f"Wing Tip pos: {y_WTIP}")
+    print(f"ENG pos: {y_ENG}")
 
 
 
@@ -316,9 +332,10 @@ for i in range(20): #later change to a while with a counter and convergence cond
     Cd0 = Cdo
 
 
-    # if abs(1-mOEClassI/mOE)<0.01:
-    #      print("~~CONVERGED~~")
-    #      break
+    if abs((mOE-oldOEM)/mOE)<0.01:
+        print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {(mOE-oldOEM)/mOE}")
+        print("~~CONVERGED~~")
+        break
     # else:
     print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {(mOE-oldOEM)/mOE}")
 
@@ -331,6 +348,8 @@ print(f"TE flap spanwise location: [{hlds.flapStart(planform.b)}, {hlds.flapEnd(
 print()
 print(f"Fuselage dimensions: D: {fuselage.D}m, L: {fuselage.L}, L_NC: {fuselage.L1}, L_UNCURVED: {fuselage.L2}, L_TC: {fuselage.L3}")
 print(f"Fuselage Dimensions L_N: {consts.LN}m, L_CABIN: {fuselage.L-consts.LN-consts.LT}m, L_T: {consts.LT}")
+print()
 print(f"horizontal Tail: S: {horizontalTail.S}, span:{horizontalTail.b}, Root Chord: {horizontalTail.cr}, Tip Chord: {horizontalTail.ct}, Quarter chord sweep [deg]: {np.degrees(horizontalTail.sweepC4)}, Dihedral [deg]: {np.degrees(horizontalTail.dihedral)}, Taper Ratio: {horizontalTail.TR}, aspect ratio: {horizontalTail.AR}")
+print()
 print(f"horizontal Tail: S: {verticalTail.S}, span:{verticalTail.b}, Root Chord: {verticalTail.cr}, Tip Chord: {verticalTail.ct}, Quarter chord sweep [deg]: {np.degrees(verticalTail.sweepC4)}, Taper Ratio: {verticalTail.TR}, aspect ratio: {verticalTail.AR}")
 print("Next to that add: HLD deflections (at toff and landing), hldTypes, airfoils for all 3 planforms, landing gear dimensions")
