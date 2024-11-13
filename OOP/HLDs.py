@@ -140,7 +140,7 @@ class HLDs():
 
         dAlphaDeltaCLC = (2*c.DCLALPHA*tau)/(planform.S*planform.b)
 
-        requiredIntegral1 = -(20*pCL)/(dAlphaDeltaCLC*deltaAlpha*((2*c.VAPPROACH)/planform.b))
+        requiredIntegral1 = -(11*pCL)/(dAlphaDeltaCLC*deltaAlpha*((2*c.VAPPROACH)/planform.b))
         
         integral1 = 0
         b1 = aileronEndyPerbHalf*halfSpan

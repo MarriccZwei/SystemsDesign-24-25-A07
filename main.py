@@ -144,8 +144,9 @@ for i in range(20): #later change to a while with a counter and convergence cond
 
     
     '''HLD Design'''
+    fuselage = fus.Fuselage(consts.DEQUIVALENT, consts.LNC, consts.LFUS-consts.LNC-consts.LTC, consts.LTC)
     clAlph = clFuns.dCLdAlpha(consts.CRUISEMACH, planform, True) #cL-Alpha of the wing
-    hlds = hld.HLDs.autosize(planform, fusD/2) #using the autosize mechanic of the high lift devicesw
+    hlds = hld.HLDs.autosize(planform, fuselage.D/2) #using the autosize mechanic of the high lift devicesw
     alphaMax = hlds.alphaMax(planform, np.radians(clAlph), consts.TAKEOFFCL, consts.ULTIMATECL) #landing/takeoff maximum aoa to get the scrape angle ! radians to convert from per radian to per degree
 
     mOEClassI = mOE
@@ -157,7 +158,6 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"mWing: {mWing} mWingFraction: {mWing/mMTO}")
 
     #fuselage weight est.
-    fuselage = fus.Fuselage(consts.DEQUIVALENT, consts.LNC, consts.LFUS-consts.LNC-consts.LTC, consts.LTC)
     mFus = wEstII.fus_mass(planform, fuselage, mGross, nult)
     print(f"mFus: {mFus}, mFus/mMTO: {mFus/mMTO}")
 
@@ -192,7 +192,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
 
         #tail
         Sh, Sv = emp.S_tail(consts.VHTAIL, planform.S, planform.MAC, consts.XH, consts.VVTAIL, planform.b, consts.XV, cgMostConstraining)
-        horizontalTail = pf.Planform(Sh, consts.ARHTAIL, consts.TRHTAIL, consts.SWEEPHT, 0)
+        horizontalTail = pf.Planform(Sh, consts.ARHTAIL, consts.TRHTAIL, consts.SWEEPHT, planform.dihedral)
         verticalTail = pf.Planform(Sv, consts.ARVTAIL, consts.TRVTAIL, consts.SWEEPVT, 0, symmetric=False)
         bh, bv = emp.b_tail(consts.ARHTAIL, Sh, consts.ARVTAIL, Sv)
         crh, crv = emp.c_r_tail(Sh, consts.TRHTAIL, bh, Sv, consts.TRVTAIL, bv)
@@ -341,7 +341,13 @@ for i in range(20): #later change to a while with a counter and convergence cond
 
 '''Final HLDs, planform 'n stuff'''
 print("========================")
-print(f"wingS: {planform.S}, span:{planform.b}, Root Chord: {planform.cr}, Tip Chord: {planform.ct}, Quarter chord sweep: {planform.sweepC4}")
-print(f"xLECRPlanform: {xLemac-planform.YMAC*np.tan(planform.sweepLE)}, Incidence angle:{consts.ALPHAZEROLIFT+np.degrees(CLdes/clAlph)}, Dihedral [deg]: {planform.dihedral}, Taper Ratio: {planform.TR}, aspect ratio: {planform.AR}")
+print(f"wingS: {planform.S}, span:{planform.b}, Root Chord: {planform.cr}, Tip Chord: {planform.ct}, Quarter chord sweep [deg]: {np.degrees(planform.sweepC4)}")
+print(f"xLECRPlanform: {xLemac-planform.YMAC*np.tan(planform.sweepLE)}, Incidence angle:{consts.ALPHAZEROLIFT+np.degrees(CLdes/clAlph)}, Dihedral [deg]: {np.degrees(planform.dihedral)}, Taper Ratio: {planform.TR}, aspect ratio: {planform.AR}")
 print()
 print(f"TE flap spanwise location: [{hlds.flapStart(planform.b)}, {hlds.flapEnd(planform.b)}], Kruger spanwise loc: [{hlds.krugerStart(planform.b)}, {hlds.krugerEnd(planform.b)}], Aileron spanwise loc [{hlds.aileronStart(planform.b)}, {hlds.aileronEnd(planform.b)}]")
+print()
+print(f"Fuselage dimensions: D: {fuselage.D}m, L: {fuselage.L}, L_NC: {fuselage.L1}, L_UNCURVED: {fuselage.L2}, L_TC: {fuselage.L3}")
+print(f"Fuselage Dimensions L_N: {consts.LN}m, L_CABIN: {fuselage.L-consts.LN-consts.LT}m, L_T: {consts.LT}")
+print(f"horizontal Tail: S: {horizontalTail.S}, span:{horizontalTail.b}, Root Chord: {horizontalTail.cr}, Tip Chord: {horizontalTail.ct}, Quarter chord sweep [deg]: {np.degrees(horizontalTail.sweepC4)}, Dihedral [deg]: {np.degrees(horizontalTail.dihedral)}, Taper Ratio: {horizontalTail.TR}, aspect ratio: {horizontalTail.AR}")
+print(f"horizontal Tail: S: {verticalTail.S}, span:{verticalTail.b}, Root Chord: {verticalTail.cr}, Tip Chord: {verticalTail.ct}, Quarter chord sweep [deg]: {np.degrees(verticalTail.sweepC4)}, Taper Ratio: {verticalTail.TR}, aspect ratio: {verticalTail.AR}")
+print("Next to that add: HLD deflections (at toff and landing), hldTypes, airfoils for all 3 planforms, landing gear dimensions")
