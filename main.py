@@ -147,6 +147,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     hlds = hld.HLDs.autosize(planform, fusD/2) #using the autosize mechanic of the high lift devicesw
     alphaMax = hlds.alphaMax(planform, np.radians(clAlph), consts.TAKEOFFCL, consts.ULTIMATECL) #landing/takeoff maximum aoa to get the scrape angle ! radians to convert from per radian to per degree
 
+    mOEClassI = mOE
     '''Class II weight'''
     for i in range(10):
         #mDes = (.95+.7)/2*mMTO #design mass due to fuel burn in flight Uncomment if needed
@@ -272,7 +273,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
 
 
         #re-assigning the MTOM
-        mMTO = mOE+consts.DESIGNPAYLOAD+Mfuel
+        #mMTO = (mOE+consts.DESIGNPAYLOAD)/(1-MFfuel)
         '''Fuselage & fuel Volume Calculations'''
 
         '''Class II Drag'''
@@ -303,7 +304,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
             break
         else:
             print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {mOE-oldOEM}")
-    if abs(1-oldOEM/mOE)<0.01:
+    if abs(1-mOEClassI/mOE)<0.01:
         print("~~CONVERGED~~")
         break
     else:
