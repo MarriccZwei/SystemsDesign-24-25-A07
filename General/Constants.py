@@ -134,8 +134,8 @@ FW = 0.5*DEQUIVALENT # fuselage widht at horizontal tail intersection
 
 '''LG'''
 NWN = 2 #2 wheels for the nose landing gear
-NWM = 2*6 #4 wheels per 4 struts on the main landing gear
-NSTRUTS = 2 #4 struts of the main landing gear
+NWM = 2*6 #6 wheels per 2 struts on the main landing gear
+NSTRUTS = 2 # per main landing gear
 HEIGHTMAIN = 1.143 #m
 HEIGHTFRONT = 1.0922 #m
 WWHEELMAIN = 42.545*10**-2 #m
@@ -143,5 +143,6 @@ WWHEELFRONT = 31.75*10**-2 #m
 WSTRUT = 20*10^-2 #m
 TailScrape = 10 # degrees 
 AbsorberStroke = 0.3 # m
-phi = 5 # degrees
+phi = 9 # degrees
 psi = 55 # degrees
+LF = 0.90 # LOAD FACTOR MLG

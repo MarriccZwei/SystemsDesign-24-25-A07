@@ -1,5 +1,5 @@
 import numpy as np
-from math import log, sqrt, tan, sin
+from math import log, sqrt, tan, sin, pi
 
 #tire pressure in kg/cm^2
 def p_tire(LCN):
@@ -23,7 +23,6 @@ def TC(LFUS, LTC):
     TC = LFUS - LTC
     return TC
 
-
 # z_MLG is the height of the main landing gear wrt the ground
 #TC is the longitudinal position of the tail cone wrt the nose
 # cg is the most aft longitudinal position of the centre of grav wrt the nose
@@ -40,43 +39,56 @@ def z_cg(z_MLG, DEQUIVALENT):
 # cg is the most aft location 
 # height of cg wrt to ground is assumed to be MLG height + FusDiameter/2
 def l_m(Tailscrape, cg, z_cg):
-    l_m = (tan(np.radians(Tailscrape)) * z_cg) + cg
+    l_m = (z_cg *  tan(np.radians(Tailscrape))) + cg
     return l_m
 
+def P_M(mMTO, LF):
+    P_M = LF * mMTO
+    return P_M
+
+def P_N(LF, mMTO):
+    P_N = mMTO * (1- LF)
+    return P_N
+
+def P_n(mMTO, P_MW, NSTRUT):
+    P_n = mMTO - P_MW * NSTRUT
+    return P_n
+    
+
 # l_n is the longitudinal position of the nose gear wrt the nose
-def l_n(mTOM, P_NW, l_m):
-    l_n = l_m * ((mTOM/P_NW) -1)
+def l_n(mMTO, l_m, P_N):
+    l_n = (((mMTO)/(P_N)) -1) * l_m
     return l_n
 
 # Minimum MLG dist from centreline to avoid laterap tip over
 # l_n nose gear position (from nose), l_m main gear position (from nose)
 # z_cg height of cg relaitve to ground, psi assumed to be <= 55 deg
 def y_MLG_to(l_n, l_m, z_cg, psi):
-    y_MLG_to = (l_n + l_m)/(sqrt(((l_n**2 * tan(np.radians(psi))**2)/(z_cg**2)-1)))
+    y_MLG_to = ((l_n + l_m)/(sqrt(((((l_n)**2 * (tan(np.radians(psi)))**2)/(z_cg)**2))- 1)))
     return y_MLG_to
 
 # z_t is the height of the wing tip wrt the ground 
 def z_t(b, dihedral, z_MLG):
-    z_t = z_MLG + (b/2) * sin(np.radians(dihedral))
+    z_t = z_MLG + (b/2) * sin(dihedral)
     return z_t
 
 # z_n is the height of the engine wrt the ground 
 # d_eng is the diameter of the engine 
-def z_n(b, dihedral, DNACELLE):
-    z_n = (1/3) * (b/2) * sin(np.radians(dihedral)) - DNACELLE
+def z_n(z_MLG, b, dihedral, DNACELLE):
+    z_n = z_MLG + ((1/3) * (b/2) * sin(dihedral)) - DNACELLE
     return z_n
 
 # Minimum MLG dist from centreline to ensure sufficient wing tip clearance
 # b span, z_t height of wing tip wrt ground, phi angle between MLG and wing tip >5 deg
 def y_MLG_tc(b, z_t, phi):
-    y_MLG_tc = (b/2) - ((z_t)/tan(np.radians(phi)))
+    y_MLG_tc = (b/2) - ((z_t)/ tan(np.radians(phi)))
     return y_MLG_tc
 
 # Minimum MLG dist from centreline to ensure sufficient engine tip clearance
 # b span, z_n height of engine wrt ground, phi angle between MLG and engine >5 deg
 # y_n is the lateral location of the centerline of the engine approx 1/3(b/2)
-def y_MLG_ec(y_n, z_n, phi):
-    y_MLG_ec = y_n - ((z_n)/(tan(np.radians(phi))))
+def y_MLG_ec(b, z_n, phi):
+    y_MLG_ec = ((1/3) * (b/2)) - ((z_n)/(tan(np.radians(phi))))
     return y_MLG_ec
 
 # calculating the maximum value of the three conditions for the final lateral placement of MLG
