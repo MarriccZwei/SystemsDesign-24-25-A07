@@ -42,7 +42,7 @@ FXTEQPTMF = 0.1 #fixed equipment mass fraction
 OEWCGWRTLEMACPERMAC = 0.25 #OEW xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
 WNGCGWRTLEMACPERMAC = 0.4 #Wing xCg wrt xLEMAC as a fraction of MAC chord (a design choice)
 FUELTANKSN = 8
-CTRLSURFAREAFRAC = 0.25 #fraction of rudder/elevator area to vert. tail/ hor. tail area
+CTRLSURFAREAFRAC = 0.33 #fraction of rudder/elevator area to vert. tail/ hor. tail area
 
 """GENERAL"""
 VSTALL = 58 #This is maybe a bit high for the stall landing speed 
