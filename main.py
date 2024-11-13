@@ -280,9 +280,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"Empenage Mass: {mEmp}kg, MF: {mEmp/mMTO}")
     print(f"LG Mass: {mLG}kg, MF: {mLG/mMTO}")
     print(f"Engine Group Mass: {mEngGroup}kg, MF: {mEngGroup/mMTO}")
-    print(f"Electronics Mass: {mElectronics}kg, MF: {mElectronics/mMTO}")
-    print(f"WFuel System Mass: {massFuelSys}kg, MF: {massFuelSys/mMTO}")
-    print(f"Other Mass: {mOther}kg, MF: {mOther/mMTO}")
+    print(f"Other Mass: {mOther+mElectronics}kg, MF: {(mOther+mElectronics)/mMTO}")
     print(f"OEM/MTOM: {mOE/mMTO}")
     print(f"H Tail Surface: {horizontalTail.S}, Vert. Tail Surface: {verticalTail.S}")
     print(f"H Tail Span: {bh}, Vert. Tail Span: {bv}")
@@ -290,7 +288,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"H Tail tip chord: {cth}, Vert. Tail tip chord: {ctv}")
     print(f"H Tail mac chord: {mach}, Vert. Tail mac chord: {macv}")
     print(f"CG most aft position {cgMostConstraining}, cg forwardmost {cgLeastConstraining}, oswald: {oswald}, Cd0: {Cd0}, aspect: {planform.AR}")
-    print(f"Scrape Angle {alphaMax} deg")
+    print(f"Scrape Angle {alphaMax} deg, span: {planform.b}")
     print(f"Fuselage dimensions: D: {fuselage.D}m, L: {fuselage.L}, L_NC: {fuselage.L1}, L_UNCURVED: {fuselage.L2}, L_TC: {fuselage.L3}")
     print(f"Fuselage Dimensions L_N: {consts.LN}m, L_CABIN: {fuselage.L-consts.LN-consts.LT}m, L_T: {consts.LT}")
     print("-------------------------------------------------------------\n")
@@ -341,4 +339,9 @@ for i in range(20): #later change to a while with a counter and convergence cond
     # else:
     print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {(mOE-oldOEM)/mOE}")
 
-'''Final SAR Calculation'''
+'''Final HLDs, planform 'n stuff'''
+print("========================")
+print(f"wingS: {planform.S}, span:{planform.b}, Root Chord: {planform.cr}, Tip Chord: {planform.ct}, Quarter chord sweep: {planform.sweepC4}")
+print(f"xLECRPlanform: {xLemac-planform.YMAC*np.tan(planform.sweepLE)}, Incidence angle:{consts.ALPHAZEROLIFT+np.degrees(CLdes/clAlph)}, Dihedral [deg]: {planform.dihedral}, Taper Ratio: {planform.TR}, aspect ratio: {planform.AR}")
+print()
+print(f"TE flap spanwise location: [{hlds.flapStart(planform.b)}, {hlds.flapEnd(planform.b)}], Kruger spanwise loc: [{hlds.krugerStart(planform.b)}, {hlds.krugerEnd(planform.b)}], Aileron spanwise loc [{hlds.aileronStart(planform.b)}, {hlds.aileronEnd(planform.b)}]")
