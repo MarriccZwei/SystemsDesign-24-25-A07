@@ -242,7 +242,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     mAntiIce = wEstII.anti_ice_mass(mGross)
     mHandling = wEstII.handling_mass(mGross)
     mApu = wEstII.apu_installed_mass(200)
-    mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings+mApu
+    mOther = mHandling+mAntiIce+mAirconditioning+mFurnishings+mApu+massFuelSys
     #mOther = 0.12*mMTO
 
     oldOEM = mOE #OEM from class I - for convergence check at the end of the loop
