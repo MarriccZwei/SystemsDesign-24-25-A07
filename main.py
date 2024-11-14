@@ -353,3 +353,4 @@ print(f"horizontal Tail: S: {horizontalTail.S}, span:{horizontalTail.b}, Root Ch
 print()
 print(f"vertical Tail: S: {verticalTail.S}, span:{verticalTail.b}, Root Chord: {verticalTail.cr}, Tip Chord: {verticalTail.ct}, Quarter chord sweep [deg]: {np.degrees(verticalTail.sweepC4)}, Taper Ratio: {verticalTail.TR}, aspect ratio: {verticalTail.AR}, xPos: {consts.XV}")
 print("Next to that add: HLD deflections (at toff and landing), hldTypes, airfoils for all 3 planforms, landing gear dimensions")
+print(f"design point WS: {WSselected} N/m2, TWR: {TWselected} ")
