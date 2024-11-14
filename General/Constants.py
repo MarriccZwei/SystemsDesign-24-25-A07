@@ -46,7 +46,7 @@ CTRLSURFAREAFRAC = 0.33 #fraction of rudder/elevator area to vert. tail/ hor. ta
 """GENERAL"""
 VSTALL = 58 #This is maybe a bit high for the stall landing speed 
 VAPPROACH = 1.23*VSTALL
-ULTIMATECL = 2.5
+ULTIMATECL = 2.46
 KEROSENEDENSITY = 795 # [kg/m^3] ; fuel density
 
 """TAKEOFF"""

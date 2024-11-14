@@ -153,13 +153,13 @@ class HLDs():
 
         krugerEndyPerbHalf = 1-krugerWingTipMargin
         flapEndyPerbHalf = (b1-aileronFlapMargin)/halfSpan
-        flapStartyPerbHalf = radiusFuselage/halfSpan
+        flapStartyPerbHalf = (radiusFuselage+1.25)/halfSpan
 
         deltaCCf = 0.6
         cPrimeC = 1 + deltaCCf*flapCfC
         deltaClFlaps = 1.3*cPrimeC
 
-        areaFlaps = (fun.partialSurface(flapEndyPerbHalf*halfSpan, planform)-fun.partialSurface(radiusFuselage, planform))*2
+        areaFlaps = (fun.partialSurface(flapEndyPerbHalf*halfSpan, planform)-fun.partialSurface(radiusFuselage+1.25, planform))*2
         deltaCLFlaps = 0.9*deltaClFlaps*areaFlaps/planform.S*np.cos(planform.sweep_at_c_fraction(backSparLoc))
 
         deltaClKruger = 0.3
@@ -175,7 +175,7 @@ class HLDs():
             krugerBegin = krugerBegin+0.1
             area = fun.partialSurface(krugerBegin, planform)
 
-        flapStartyPerbHalf = radiusFuselage/halfSpan
+        flapStartyPerbHalf = (radiusFuselage+1.25)/halfSpan
         krugerStartyPerbHalf = krugerBegin/halfSpan
         
         '''Returning the sized Movable Surfaces'''
