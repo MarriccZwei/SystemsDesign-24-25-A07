@@ -12,9 +12,9 @@ def centroid(L1, L2, L3, L4, x1, x2, x3, t):
         "x2": {"i": x1 + x2/2, "j": t/2, "length": x2, "thickness": t},
         "x3": {"i": x1 + x2 + x3/2, "j": t/2, "length": x3, "thickness": t},
         "L1": {"i": t/2, "j": L1/2, "length": L1, "thickness": t},
-        "L2": {"i": t/2 + x1, "j": L2/2, "length": L2, "thickness": t},
-        "L3": {"i": t/2 + x1 + x2, "j": L3/2, "length": L3, "thickness": t},
-        "L4": {"i": t/2 + x1 + x2 + x3, "j": L4/2, "length": L4, "thickness": t},
+        "L2": {"i": x1, "j": L2/2, "length": L2, "thickness": t},
+        "L3": {"i": x1 + x2, "j": L3/2, "length": L3, "thickness": t},
+        "L4": {"i": x1 + x2 + x3, "j": L4/2, "length": L4, "thickness": t},
         "d1": {"i": x1/2, "j": L1 - (d1/2) * np.sin(alpha), "length": d1, "thickness": t},
         "d2": {"i": x1 + x2/2, "j": L2 - (d2/2) * np.sin(alpha), "length": d2, "thickness": t},
         "d3": {"i": x1 + x2 + x3/2, "j": L3 - (d3/2) * np.sin(alpha), "length": d3, "thickness": t}
