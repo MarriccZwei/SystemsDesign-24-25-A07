@@ -1,12 +1,7 @@
 import numpy as np
-#Function to determine the centroid of the wingbox cross-section
-def centroid(L1, L2, L3, L4, x1, x2, x3, t):
-    alpha = np.arctan((L1 - L4)  / (x1 + x2 + x3))
-    d1 = x1 / np.cos(alpha)
-    d2 = x2 / np.cos(alpha)
-    d3 = x3 / np.cos(alpha)
 
-    #Coordinates of segments' centroids
+#Function to define the segments of the corss-section
+def get_segments(L1, L2, L3, L4, x1, x2, x3, t):
     segments = {
         "x1": {"i": x1/2, "j": t/2, "length": x1, "thickness": t},
         "x2": {"i": x1 + x2/2, "j": t/2, "length": x2, "thickness": t},
@@ -19,6 +14,16 @@ def centroid(L1, L2, L3, L4, x1, x2, x3, t):
         "d2": {"i": x1 + x2/2, "j": L2 - (d2/2) * np.sin(alpha), "length": d2, "thickness": t},
         "d3": {"i": x1 + x2 + x3/2, "j": L3 - (d3/2) * np.sin(alpha), "length": d3, "thickness": t}
     }
+    return segments
+
+#Function to determine the centroid of the wingbox cross-section
+def centroid(L1, L2, L3, L4, x1, x2, x3, t):
+    alpha = np.arctan((L1 - L4)  / (x1 + x2 + x3))
+    d1 = x1 / np.cos(alpha)
+    d2 = x2 / np.cos(alpha)
+    d3 = x3 / np.cos(alpha)
+
+    segments = get_segments(L1, L2, L3, L4, x1, x2, x3, t)
 
     #Calculating the weighted sum of the x and y coordinates
     total_x = sum(segment["i"] * segment["length"] * segment["thickness"] for segment in segments.values())
@@ -41,3 +46,7 @@ x3 = 1 #m
 t = 0.001 #m
 cg = centroid(L1, L2, L3, L4, x1, x2, x3, t)
 print(f"CG = {cg}")
+
+def MOI(L1, L2, L3, L4, x1, x2, x3, t, x_bar, y_bar):
+
+
