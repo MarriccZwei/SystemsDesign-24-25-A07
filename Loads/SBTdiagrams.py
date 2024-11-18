@@ -39,7 +39,7 @@ class SBTdiagramMaker(object):
 
     #distr is a function of position, points are stored in a list of tuples (position, magnitude)
     #!The input is assumed to follow a sign convention for the right type of load!
-    def _general_diagram(self, distr, points, length):
+    def _general_diagram(self, distr:function, points, length):
         '''Generates a diagram of any "distribution plus point oad load"
         by the method of superposition, as two numpy arrays,
         one with the steps along the length of the element, 
@@ -51,9 +51,18 @@ class SBTdiagramMaker(object):
         #the array that will contain the internal loads at the point from lenPts
         loadVals = np.zeros(self.accuracy+1)
 
+        dl = length/self.accuracy #the length element for integrating the load
+
         #the distributed load
-        for i in range(self.accuracy+2):
-            position = length - i #as mentioned in the class
+        intLoadDueToDistr = 0 #internal load due to distributed load
+        for i in range(self.accuracy+1):
+            #as mentioned in the class description, we count position from the root. 
+            #Yet, we have to start internal force buil-up from the tip
+            position = length - i/self.accuracy
+            intLoadDueToDistr += distr(position)*dl #numerical integration of the distr load
+            #due to it being cantilever, the integration constants for applied loads will be 0.
+
+
 
         return lenPts, loadVals
 
