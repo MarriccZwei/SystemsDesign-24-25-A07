@@ -1,4 +1,6 @@
 import numpy as np
+import unittest
+import matplotlib.pyplot as plt
 
 '''A class that provides the internal shear, normal, bending and torsion diagrams, 
 the __init__ attributes are assumptions and settings, the method arguments are the loads'''
@@ -39,7 +41,7 @@ class SBTdiagramMaker(object):
 
     #distr is a function of position, points are stored in a list of tuples (position, magnitude)
     #!The input is assumed to follow a sign convention for the right type of load!
-    def _general_diagram(self, distr:function, points, length):
+    def _general_diagram(self, distr, points, length):
         '''Generates a diagram of any "distribution plus point oad load"
         by the method of superposition, as two numpy arrays,
         one with the steps along the length of the element, 
@@ -62,7 +64,34 @@ class SBTdiagramMaker(object):
             intLoadDueToDistr += distr(position)*dl #numerical integration of the distr load
             #due to it being cantilever, the integration constants for applied loads will be 0.
 
+            #updating the corresponding field in loadVals
+            loadVals[self.accuracy-i] += intLoadDueToDistr
 
+        #the point loads
+        for pointLoad in points:
+            #we add the point load only to positions before where the point load is applied.
+            #self.accuracy*pointLoad[0]/length gives the index at which the point load should end working, right?
+            for i in range(int(np.round(self.accuracy*pointLoad[0]/length))):
+                loadVals[i]+=pointLoad[1]
 
         return lenPts, loadVals
 
+if __name__ == "__main__":
+    class TestSBTdiagrams(unittest.TestCase):
+        def test_generalDiagram(self):
+            zeroIntLoad = lambda pos:0
+            linearIntLoad = lambda pos:0.2
+            length = 50 # to have sth easy to everse engineer, but affecting the result, in the right order of magnitude
+            pointForces = [(0, 2), (21, 37), (13, 15)]
+            maker = SBTdiagramMaker(accuracy = 50) #default settings, but low accuracy so that it is visible
+            lenPts, loadVals = maker._general_diagram(zeroIntLoad, pointForces, length)
+            plt.plot(lenPts, loadVals)
+            plt.show()
+            lenPts, loadVals = maker._general_diagram(linearIntLoad, [], length)
+            plt.plot(lenPts, loadVals)
+            plt.show()
+            lenPts, loadVals = maker._general_diagram(linearIntLoad, pointForces, length)
+            plt.plot(lenPts, loadVals)
+            plt.show()
+
+    unittest.main()
