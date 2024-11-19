@@ -364,4 +364,4 @@ print(mOE/mMTO)
 
 def fuel_volume( b, cr, tr, A2c2=0.038, safetyFactor=1.5):
     return A2c2*b/safetyFactor*cr*cr/3*(1+tr+tr*tr)
-print(f"Fuel Volume in the wing: {fuel_volume(planform.b, planform.cr, planform.TR)}, total fuel volume required: {Mfuel/consts.KEROSENEDENSITY}")
+print(f"Fuel Volume in the wing: {fuel_volume(planform.b, planform.cr, planform.TR)}, total fuel volume required: {Mfuel/consts.KEROSENEDENSITY}, fuel fraction: {Mfuel/mMTO}, payload fraction: {consts.DESIGNPAYLOAD/mMTO}")
