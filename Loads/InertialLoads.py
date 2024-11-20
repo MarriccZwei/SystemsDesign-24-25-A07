@@ -57,4 +57,5 @@ def engine_xpos(root_chord):
     return engine_xpos  
 
 
-def engine_shear(engine_mass, engine_zpos)
+def engine_shear(engine_mass, engine_zpos):
+    return (engine_zpos, engine_mass)
