@@ -77,7 +77,7 @@ def MOI(segments, stringers, x_bar, y_bar, alpha):
         I_xx_segment = 0
         I_yy_segment = (t * segment["length"]**3) / 12
 
-        # Parallel Axis Theorem contribution
+        #Parallel Axis Theorem contribution
         I_xx += I_xx_segment + segment["length"] * segment["thickness"] * dy**2
         I_yy += I_yy_segment + segment["length"] * segment["thickness"] * dx**2
 
@@ -91,7 +91,7 @@ def MOI(segments, stringers, x_bar, y_bar, alpha):
         I_xx_segment = (t * segment["length"]**3) / 12
         I_yy_segment = 0
 
-        # Parallel Axis Theorem contribution
+        #Parallel Axis Theorem contribution
         I_xx += I_xx_segment + segment["length"] * segment["thickness"] * dy**2
         I_yy += I_yy_segment + segment["length"] * segment["thickness"] * dx**2
 
@@ -106,9 +106,18 @@ def MOI(segments, stringers, x_bar, y_bar, alpha):
         I_xx_segment = (t * segment["length"]**3 * (np.sin(alpha))**2) / 12
         I_yy_segment = (t * segment["length"]**3 * (np.cos(alpha))**2) / 12
 
-        # Parallel Axis Theorem contribution
+        #Parallel Axis Theorem contribution
         I_xx += I_xx_segment + segment["length"] * segment["thickness"] * dy**2
         I_yy += I_yy_segment + segment["length"] * segment["thickness"] * dx**2
+        
+    for stringer in stringers.values():
+        dx = stringer["i"] - x_bar
+        dy = stringer["j"] - y_bar
+
+        'Only the parallel axis theorem term in the stringers’ contribution to the moment of inertia is taken into account'
+        #Parallel Axis Theorem contribution
+        I_xx += stringer["area"] * dy**2
+        I_yy += stringer["area"] * dx**2
 
     return I_xx, I_yy, I_xy
 
