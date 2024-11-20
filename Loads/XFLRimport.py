@@ -19,7 +19,7 @@ Cm_0 = -0.179106
 Cm_10 = -1.13864
 
 # --- certain load factor 𝑛, weight 𝑊, freestream velocity 𝑉 and density (dependent on altitude) ρ. The required lift coefficient 
-# then follows simply from these values.
+# then follows simply from these values. FILL IN THOSE VALUES HERE!
 q = 0.5 * 1.225 * 10**2 #add later dynamic pressure
 CL_d = 0.8 #later import CL_d
 Cm_d = 0.8
