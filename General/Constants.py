@@ -146,3 +146,6 @@ AbsorberStroke = 0.3 # m
 phi = 9 # degrees
 psi = 55 # degrees
 LF = 0.90 # LOAD FACTOR MLG
+
+'''WP4'''
+engine_y_offset_from_wing = 1.1285
