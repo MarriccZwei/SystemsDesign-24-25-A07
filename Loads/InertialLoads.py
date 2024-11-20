@@ -1,3 +1,9 @@
+if __name__ == "__main__":
+    # ONLY FOR TESTING
+    import sys
+    import os
+    sys.path.insert(1, os.getcwd())
+    # ONLY FOR TESTING
 import General.Constants as consts
 
 import General.Constants as consts
@@ -49,6 +55,11 @@ def wing_weight_distr_est(planform:pf.Planform, mWing:float, wingboxArea:float, 
 
     #the distr Weight is coming from the wingbox, the point loads are coming from the ribs
     return distrWeight, ribPtLoads
+
+def fuel_in_wing_weight_est(planform:pf.Planform, wingBoxA2c2:float=.038):
+    '''returns a weight distribution resulting from the presence of fuel in the wing'''
+    
+    return lambda pos:planform.chord_spanwise(pos)**2*wingBoxA2c2*consts.G*consts.KEROSENEDENSITY
 
 
 def engine_zpos(span):
