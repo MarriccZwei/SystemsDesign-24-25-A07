@@ -50,6 +50,8 @@ def Cy(y):
     Cy = Cr - Cr * (1-TR) * (y/Halfspan)
     return Cy
 
+
+
 # --   chord interpolation .... --
 # def chord(ylst,Chord):
 #     c = sp.interpolate.interp1d(ylst,Chord,kind='linear',fill_value="extrapolate")
@@ -96,7 +98,6 @@ def Momperspany(y):
 
 
 
-
 #Lift coef distribution and Angle of attack degrees
 def LiftCoef(y):
     Alpha_d = ((CL_d - CL_0)/(CL_10 - CL_0)) * 10
@@ -108,3 +109,24 @@ def LiftCoef(y):
 def MomCoef(y):
     Cm_dy = interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[3]))(y) + ((Cm_d - Cm_0)/(Cm_10 - Cm_0)) * (interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[3]))(y) - interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[3]))(y))
     return Cm_dy
+
+
+# step = 0.05 
+# ytab=[]
+# cltab=[]
+
+# for i in range(24):
+#     cl = MomCoef(i)
+#     i = i + step
+
+#     ytab.append(i)
+#     cltab.append(cl)
+
+# # Plot
+# plt.plot(ytab, cltab)
+
+# plt.title('test')
+# plt.xlabel('y')
+# plt.ylabel('cl')    
+
+# plt.show()
