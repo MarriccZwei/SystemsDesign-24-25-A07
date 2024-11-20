@@ -9,6 +9,8 @@ Loads/:
     CriticalLoads.py - a file finding the critical loads, using the other modules
 Deflections/
     MoI.py - a file with moment of inertia estimations
+    wingbox.py - a file with the definition of the wingbox
+        - wingbox function returns latice points of the wingbox in wrong coordinate system
     TorsionalStiffness.py - a file with torsional stiffness estimations
     Bending.py - a file analysing the bending deflection given MoI
     Twist.py - a file analasying the twisting given Torsional Constant
