@@ -1,4 +1,5 @@
 import numpy as np
+from Deflections.wingbox import wingbox
 
 #Function to define the segments of the cross-section
 'L_i variables are vertical segments of the wingbox'
@@ -7,7 +8,6 @@ import numpy as np
 't is the thickness of the segments'
 
 def get_segments_root(L1, L2, L3, L4, x1, x2, x3, t):
-    global alpha
     alpha = np.arctan((L1 - L4)  / (x1 + x2 + x3))
     d1 = x1 / np.cos(alpha)
     d2 = x2 / np.cos(alpha)
@@ -25,7 +25,7 @@ def get_segments_root(L1, L2, L3, L4, x1, x2, x3, t):
         "d2": {"i": x1 + x2/2, "j": L2 - (d2/2) * np.sin(alpha), "length": d2, "thickness": t},
         "d3": {"i": x1 + x2 + x3/2, "j": L3 - (d3/2) * np.sin(alpha), "length": d3, "thickness": t}
     }
-    return segments
+    return segments, alpha
 
 #Function to define the sringers of the cross-section
 'A is the point area of a stringer'
@@ -38,6 +38,7 @@ def get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A):
     return stringers
 
 #Function to determine the centroid of the wingbox cross-section
+'W.r.t to the top left corner of the wingbox'
 def centroid(segments, stringers):
 
     #Calculating the weighted sum of the x and y coordinates
@@ -60,14 +61,14 @@ x2 = 2 #m
 x3 = 1 #m
 t = 0.001 #m
 A = 0.01 #m^2
-segments = get_segments_root(L1, L2, L3, L4, x1, x2, x3, t)
+segments, alpha = get_segments_root(L1, L2, L3, L4, x1, x2, x3, t)
+#print(alpha) #rad
 stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A)
 x_bar, y_bar = centroid(segments, stringers)
-centroid.alpha
 print(f"CG = {x_bar, y_bar}")
 
 #Function to calculate the MOI of the wingbox
-def MOI(segments, stringers, x_bar, y_bar):
+def MOI(segments, stringers, x_bar, y_bar, alpha):
     # Initialize moments of inertia (about the centroidal axes)
     I_xx = 0  # Moment of inertia about the x-axis (centroidal)
     I_yy = 0  # Moment of inertia about the y-axis (centroidal)
@@ -111,8 +112,8 @@ def MOI(segments, stringers, x_bar, y_bar):
 
         #Moment of inertia of each segment about its own centroid
         'The higher order contributions of the thickness t are neglected'
-        I_xx_segment = (t * segment["length"]**3) / 12
-        I_yy_segment = 0
+        I_xx_segment = (t * segment["length"]**3 * (np.sin(alpha))**2) / 12
+        I_yy_segment = (t * segment["length"]**3 * (np.cos(alpha))**2) / 12
 
         # Parallel Axis Theorem contribution
         I_xx += I_xx_segment + segment["length"] * segment["thickness"] * dy**2
