@@ -1,22 +1,34 @@
+if __name__ == "__main__":
+    # ONLY FOR TESTING
+    import sys
+    import os
+    sys.path.insert(1, os.getcwd())
+    import unittest
+    # ONLY FOR TESTING
+
 import numpy as np
 from matplotlib import pyplot as plt
+from General import ISA
+from General import Constants
+
 class LoadChart():
-    def __init__(self, altitude,mass):
+    def __init__(self, altitude,mass, nmin, vso, vs1, vc, vLand):
         self.altitude = altitude
+        mach = ISA.speedOfSound(altitude)
         self.weight = mass
         self.nmax = 2.1 + 24000/(self.weight*2.204623+10000)
-        self.nmin = 1.5
-        self.vso = 60
-        self.vs1 = 85
-        self.va = int(self.vs1 * (self.nmax)**0.5)
-        self.vc = 230
-        self.vd = 245
-        self.vf = 75
+        self.nmin = nmin
+        self.vso = round(vso)
+        self.vs1 = round(vs1)
+        self.va = round(self.vs1 * (self.nmax)**0.5)
+        self.vc = round(vc)
+        self.vd = round(vc + 0.05*mach)
+        self.vf = round(1.8*vLand)
 
     def positiveLoadCurve(self):
-        curveLimit = int((self.nmax)**0.5 * self.vso)
+        curveLimit = int((self.nmax)**0.5 * self.vs1)
         lowSpeed = np.linspace(0,curveLimit,curveLimit)
-        curve = lowSpeed*lowSpeed/self.vso/self.vso
+        curve = lowSpeed*lowSpeed/self.vs1/self.vs1
         highSpeed = np.linspace(curveLimit+1,self.vd, self.vd -curveLimit +1)
         flat = np.ones(self.vd - curveLimit +1)*self.nmax
         flat[-1]=0
@@ -27,12 +39,30 @@ class LoadChart():
         return chart, speed
     
     def flapsLoadCurve(self):
-        pass
+        curveLimit = min(int(2**0.5 * self.vso),self.vf)
+        lowSpeed = np.linspace(0,curveLimit,curveLimit)
+        curve = lowSpeed*lowSpeed/self.vso/self.vso
+        if curveLimit <= self.vf:
+            highSpeed = np.linspace(curveLimit+1,self.vf, self.vf -curveLimit +1)
+            flat = np.ones(self.vf - curveLimit +1)*2
+        else: 
+            print("FAIL")
+            highSpeed = lowSpeed[-1]
+            flat = np.zeros(1)
+        print(self.vf*self.vf/self.vs1/self.vs1)
+        if self.vf*self.vf/self.vs1/self.vs1 <2:
+            print("DROP")
+            flat[-1] = self.vf*self.vf/self.vs1/self.vs1
+        chart = np.concatenate((curve,flat))
+        speed = np.concatenate((lowSpeed,highSpeed))
+
+        
+        return chart, speed
 
     def negativeLoadCurve(self):
-        curveLimit = int((self.nmin)**0.5 * self.vso)
+        curveLimit = int((self.nmin)**0.5 * self.vs1)
         lowSpeed = np.linspace(0,curveLimit,curveLimit)
-        curve = lowSpeed*lowSpeed/self.vso/self.vso*(-1)
+        curve = lowSpeed*lowSpeed/self.vs1/self.vs1*(-1)
 
         highSpeed = np.linspace(curveLimit+1,self.vc, self.vc -curveLimit +1)
         flat = np.ones(self.vc - curveLimit +1)*self.nmin*(-1)
@@ -45,9 +75,34 @@ class LoadChart():
 
         return chart, speed
 
-testCase = LoadChart(11000,180000)
-x = testCase.positiveLoadCurve()
-y= testCase.negativeLoadCurve()
-plt.plot(x[1],x[0])
-plt.plot(y[1],y[0])
+    def oneGeeLines(self):
+        speed = np.linspace(0,self.vd, self.vd)
+        line = np.ones(self.vd)
+        negLine = line*(-1)
+
+        return  line, speed, negLine
+
+    def plotVN(self, number = 0, plot = True):
+        colourList = ["black", "xkcd:red", "xkcd:orange", 'xkcd:yellow', "xkcd:neon green", "xkcd:green", "xkcd:sky blue", "xkcd:bright blue", "xkcd:indigo", "xkcd:purple", "xkcd:violet", "xkcd:light purple", "xkcd:pink"]
+        if number > len(colourList):
+            number = 0
+        colourChoice = colourList[number]
+        u = self.flapsLoadCurve()
+        w = self.positiveLoadCurve()
+        x = self.negativeLoadCurve()
+        y = self.oneGeeLines()
+        
+        plt.plot(y[1],y[0], "xkcd:slate")
+        plt.plot(u[1],u[0], colourChoice)
+        plt.plot(w[1],w[0], colourChoice)
+        plt.plot(x[1],x[0], colourChoice)
+
+        if plot:
+            plt.show()
+
+for i in range(11):
+    altitude = i*1000
+    testCase = LoadChart(altitude,180000, 1.75, 75, 85, 230, 78)
+    testCase.plotVN(i, plot=False)
+    del testCase
 plt.show()
