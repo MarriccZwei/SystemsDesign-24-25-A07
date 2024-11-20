@@ -22,7 +22,7 @@ Cm_10 = -1.13864
 # then follows simply from these values. FILL IN THOSE VALUES HERE!
 q = 0.5 * 1.225 * 10**2 #add later dynamic pressure
 CL_d = 0.8 #later import CL_d
-Cm_d = 0.8
+Cm_d = -0.5
 
 
 def filetolist(txt):
@@ -95,8 +95,6 @@ def DragperSpan(y):
 def MomperSpan(y):
     Mprime = Cy(y)**2 * MomCoef(y) * q
     return Mprime
-
-
 
 
 #Lift coef distribution and Angle of attack degrees
