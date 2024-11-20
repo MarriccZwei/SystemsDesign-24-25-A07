@@ -58,6 +58,7 @@ def centroid(segments, stringers):
     return x_bar, y_bar
 
 #Function to calculate the MOI of the wingbox
+'About the centroid of the wingbox'
 def MOI(segments, stringers, x_bar, y_bar, alpha):
     # Initialize moments of inertia (about the centroidal axes)
     I_xx = 0  # Moment of inertia about the x-axis (centroidal)
@@ -112,15 +113,25 @@ def MOI(segments, stringers, x_bar, y_bar, alpha):
     return I_xx, I_yy
 
 #Test
-L1 = 0.6 #m
-L2 = 0.5 #m
-L3 = 0.4 #m
-L4 = 0.3 #m
-x1 = 1 #m
-x2 = 2 #m
-x3 = 1 #m
-t = 0.001 #m
-A = 0.01 #m^2
+
+# Call wingbox function
+chord = 8.17  # MAC value
+sparLocs = [0.3, 0.4]  # Spar locations
+
+upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
+'W.r.t to LE, in order FS, RS, middle spars'
+print("Upper Wing Box Coordinates:", upperCoords)
+print("Lower Wing Box Coordinates:", lowerCoords)
+
+L1 = upperCoords[1][0] - lowerCoords[1][0] #m
+L2 = upperCoords[1][2] - lowerCoords[1][2] #m
+L3 = upperCoords[1][3] - lowerCoords[1][3] #m
+L4 = upperCoords[1][1] - lowerCoords[1][1] #m
+x1 = upperCoords[0][2] - upperCoords[0][0] #m
+x2 = upperCoords[0][3] - upperCoords[0][2] #m
+x3 = upperCoords[0][1] - upperCoords[0][3] #m
+t = 0.002 #m
+A = 0.003 #m^2
 segments, alpha = get_segments_root(L1, L2, L3, L4, x1, x2, x3, t)
 stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A)
 x_bar, y_bar = centroid(segments, stringers)
@@ -128,12 +139,4 @@ I_xx, I_yy = MOI(segments, stringers, x_bar, y_bar, alpha)
 print(f"CG = {x_bar, y_bar}")
 print(f"I_xx, I_yy = {I_xx, I_yy}")
 
-# Call wingbox function
-chord = 8.17  # MAC value
-sparLocs = [0.3, 0.4]  # Spar locations
-
-upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
-
-print("Upper Wing Box Coordinates:", upperCoords)
-print("Lower Wing Box Coordinates:", lowerCoords)
 
