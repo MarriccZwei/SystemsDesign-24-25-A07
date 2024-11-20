@@ -59,8 +59,8 @@ def wingbox(chord: float, sparLocs: list = None, plot: bool = False) -> tuple[li
     baseUpperWingboxCoords = [[frontSpar, backSpar], [float(interpUpper(frontSpar)), float(interpUpper(backSpar))]]
     baseLowerWingboxCoords = [[frontSpar, backSpar], [float(interpLower(frontSpar)), float(interpLower(backSpar))]]
 
-    upperWingBoxCoords = baseUpperWingboxCoords
-    lowerWingBoxCoords = baseLowerWingboxCoords
+    upperWingBoxCoords = [[],[]]
+    lowerWingBoxCoords = [[],[]]
 
     for spar in spars:
         loc = spar*chord
