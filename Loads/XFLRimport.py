@@ -3,6 +3,11 @@ import scipy as sp
 from scipy import interpolate
 import matplotlib.pyplot as plt
 
+# Constants
+TR = 0.1
+Cr = 9.174
+Halfspan = 49.81384193430594/2
+
 # File path
 txt_a0 = "Loads\MainWing_a=0.00_v=10.00ms.txt"
 txt_a10 = "Loads\MainWing_a=10.00_v=10.00ms.txt"
@@ -13,13 +18,14 @@ def filetolist(txt):
     txt,
     skip_header=40,  # Skip the first 40 
     max_rows=19,     # max rows
-    usecols=(0, 3, 5, 6)  # Columns: y, Cl, Cd, Cm
+    usecols=(0, 3, 5, 6, 1)  # Columns: y, Cl, Cd, Cm
     )
     ylst = data[:, 0].tolist()
     Cllst = data[:, 1].tolist()
     Cdlst = data[:, 2].tolist()
     Cmlst = data[:, 3].tolist()
-    return(ylst,Cllst,Cdlst,Cmlst)
+    Chord = data[:, 4].tolist()
+    return(ylst,Cllst,Cdlst,Cmlst,Chord)
 
 
 def interpolate(ylst,cnst):
@@ -27,7 +33,13 @@ def interpolate(ylst,cnst):
     return(f)
 
 
-# TEST TO PLOTTT
+# --   chord interpolation .... --
+# def chord(ylst,Chord):
+#     c = sp.interpolate.interp1d(ylst,Chord,kind='linear',fill_value="extrapolate")
+#     return(c)
+# print(chord((filetolist(txt_a10)[0]),(filetolist(txt_a10)[4]))(20))
+
+#  --    TEST TO PLOT    --
 # step = 0.1
 # ytab=[]
 # cltab=[]
@@ -48,4 +60,12 @@ def interpolate(ylst,cnst):
 
 # plt.show()
 
+def Cy(y):
+    Cy = Cr - Cr * (1-TR) * (y/Halfspan)
+    return Cy
 
+print(Cy(20))
+
+
+#  TO DO: 
+# LIFT PER SPAN
