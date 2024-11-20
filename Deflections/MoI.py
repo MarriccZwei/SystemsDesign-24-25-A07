@@ -13,7 +13,7 @@ from Deflections.wingbox import wingbox
 'd_i variables are angled segments of the wingbox'
 't is the thickness of the segments'
 
-def get_segments_root(L1, L2, L3, L4, x1, x2, x3, t):
+def get_segments(L1, L2, L3, L4, x1, x2, x3, t):
     alpha = np.arctan((L1 - L4)  / (x1 + x2 + x3))
     d1 = x1 / np.cos(alpha)
     d2 = x2 / np.cos(alpha)
@@ -113,7 +113,6 @@ def MOI(segments, stringers, x_bar, y_bar, alpha):
     return I_xx, I_yy, I_xy
 
 #Test
-
 # Call wingbox function
 chord = 8.17  # MAC value
 sparLocs = [0.3, 0.4]  # Spar locations
@@ -132,7 +131,7 @@ x2 = upperCoords[0][3] - upperCoords[0][2] #m
 x3 = upperCoords[0][1] - upperCoords[0][3] #m
 t = 0.002 #m
 A = 0.003 #m^2
-segments, alpha = get_segments_root(L1, L2, L3, L4, x1, x2, x3, t)
+segments, alpha = get_segments(L1, L2, L3, L4, x1, x2, x3, t)
 stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A)
 x_bar, y_bar = centroid(segments, stringers)
 I_xx, I_yy, I_xy = MOI(segments, stringers, x_bar, y_bar, alpha)
