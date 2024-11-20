@@ -47,3 +47,14 @@ def mass_distr_est(planform:pf.Planform, mWing:float, wingboxArea:float, ribsPer
 
     #the distr Weight is coming from the wingbox, the point loads are coming from the ribs
     return distrWeight, ribPtLoads
+def engine_zpos(span):
+    L = span/2
+    engine_zpos = 0.3*L
+    return engine_zpos
+
+def engine_xpos(root_chord):
+    engine_xpos = (1/2)*root_chord
+    return engine_xpos  
+
+
+def engine_shear(engine_mass, engine_zpos)
