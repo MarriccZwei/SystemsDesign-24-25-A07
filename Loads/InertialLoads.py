@@ -27,7 +27,7 @@ def wing_weight_distr_est(planform:pf.Planform, mWing:float, wingboxArea:float, 
 
     #find the area of the ribs
     ribPoses = np.linspace(0, planform.b/2, ribsPerb2)
-    ribChords = np.array([planform.chord_spanwise(ribPos/planform.b) for ribPos in ribPoses])
+    ribChords = np.array([planform.chord_spanwise(2*ribPos/planform.b) for ribPos in ribPoses])
     ribAreas = np.square(ribChords)*wingBoxA2c2 #ribAreas
     totalRibArea = np.sum(ribAreas)
 
@@ -51,7 +51,7 @@ def wing_weight_distr_est(planform:pf.Planform, mWing:float, wingboxArea:float, 
     dArea2chord = wingboxArea*4/planform.b/(planform.cr+planform.ct)
     dMass2chord = dArea2chord/wingboxArea*wgboxMass #d mass per unit chord
     #preparing the reutrn lambda
-    distrWeight = lambda pos:dMass2chord*planform.chord_spanwise(pos/planform.b)*consts.G
+    distrWeight = lambda pos:dMass2chord*planform.chord_spanwise(2*pos/planform.b)*consts.G
 
     #the distr Weight is coming from the wingbox, the point loads are coming from the ribs
     return distrWeight, ribPtLoads
@@ -59,12 +59,12 @@ def wing_weight_distr_est(planform:pf.Planform, mWing:float, wingboxArea:float, 
 def wingMassParabolic(planform:pf.Planform, mWing):
     #a constant describing dMass/db over chord^2
     dmassc2sb = 1.5*mWing*planform.b/planform.cr/(1-planform.TR)/(1-planform.TR**3)
-    return lambda pos:planform.chord_spanwise(pos)**2*dmassc2sb*consts.G
+    return lambda pos:planform.chord_spanwise(2*pos/planform.b)**2*dmassc2sb*consts.G
 
-def fuel_in_wing_weight_est(planform:pf.Planform, wingBoxA2c2:float=.038):
+def fuel_in_wing_weight_est(planform:pf.Planform, wingBoxA2c2:float=.038, safetyFactor=1.5):
     '''returns a weight distribution resulting from the presence of fuel in the wing'''
 
-    return lambda pos:planform.chord_spanwise(pos)**2*wingBoxA2c2*consts.G*consts.KEROSENEDENSITY
+    return lambda pos:planform.chord_spanwise(2*pos/planform.b)**2*wingBoxA2c2*consts.G*consts.KEROSENEDENSITY/safetyFactor
 
 
 def engine_zpos(span):
