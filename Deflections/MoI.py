@@ -122,9 +122,9 @@ def MOI(segments, stringers, x_bar, y_bar, alpha):
     return I_xx, I_yy, I_xy
 
 #Test
-# Call wingbox function
-chord = 8.17  # MAC value
-sparLocs = [0.3, 0.4]  # Spar locations
+#Call wingbox function
+chord = 8.17  #MAC value
+sparLocs = [0.3, 0.4]  #Spar locations
 
 upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
 'W.r.t to LE, in order FS, RS, middle spars'
