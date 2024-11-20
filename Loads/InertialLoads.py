@@ -1,3 +1,4 @@
+import General.Constants as consts
 
 import General.Constants as consts
 from OOP import Planform as pf
@@ -11,11 +12,11 @@ import numpy as np
 
 #we will obtain surface area ratio between the wingboxand ribs, and use it as an estimator
 #for mass ratio between spars and ribs 
-wingboxArea = 123.969 #measured from CATIA
+#wingboxArea = 123.969 #measured from CATIA
 
-#planform is the Wing, mWing is the Class II weight estimate, wingboxArea is the surface area of the wingbox measured in CATIA
-#ribsPerb2 is how many ribs are along the span
-def mass_distr_est(planform:pf.Planform, mWing:float, wingboxArea:float, ribsPerb2:int=30, wingBoxA2c2:float=.038):
+#planform is the Wing, mWing is the Class II weight estimate [kg], wingboxArea is the surface area of the wingbox measured in CATIA
+#ribsPerb2 is how many ribs are along the span, wingBoxA2c2 is the area coefficient of the airfoil
+def wing_weight_distr_est(planform:pf.Planform, mWing:float, wingboxArea:float, ribsPerb2:int=30, wingBoxA2c2:float=.038):
     '''Gives a "Class-II.5 estimate of the wing mass distr, looking at the linear (wgbox) and parabolic (rib)" weighs'''
 
     #find the area of the ribs
@@ -37,18 +38,20 @@ def mass_distr_est(planform:pf.Planform, mWing:float, wingboxArea:float, ribsPer
     #estimation of mass per ribs as a fraction of rib area taken by a certain rib
     ribMasses = ribAreas/totalRibArea*ribsMass
     #preparing the return value for point loads
-    ribPtLoads = [(ribPoses[i], ribMasses[i]) for i in range(ribsPerb2)]
+    ribPtLoads = [(ribPoses[i], ribMasses[i]*consts.G) for i in range(ribsPerb2)]
 
     #estimation of wing distributed span function skin
     #proportionality constant between the wgbox area per span and chord length
     dArea2chord = wingboxArea*4/planform.b/(planform.cr+planform.ct)
     dMass2chord = dArea2chord/wingboxArea*wgboxMass #d mass per unit chord
     #preparing the reutrn lambda
-    distrWeight = lambda pos:dMass2chord*planform.chord_spanwise(pos)
+    distrWeight = lambda pos:dMass2chord*planform.chord_spanwise(pos)*consts.G
 
     #the distr Weight is coming from the wingbox, the point loads are coming from the ribs
     return distrWeight, ribPtLoads
-def engine_zpos_func(span):
+
+
+def engine_zpos(span):
     L = span/2
     engine_zpos = 0.3*L
     return engine_zpos
@@ -62,6 +65,12 @@ def engine_shear(engine_mass, engine_zpos):
     return (engine_zpos, engine_mass*9.81)
 
 
-def engine_torque(engine_thrust, consts.engine_y_offset_from_wing, sweep_angle, engine_zpos):
-    torque = np.sin(np.radians(sweep_angle))*engine_thrust*consts.engine_y_offset_from_wing
+def engine_torque(engine_thrust, sweep_angle, engine_zpos):
+    torque = sweep_angle*engine_thrust*consts.engine_y_offset_from_wing
     return (engine_zpos , torque)
+
+if __name__ == "__main__":
+    testPlanform = pf.Planform(251.34, 9.7, 0.1, 28.5, 2.15, False)
+    mWing = 22963 #kg
+    wingboxArea = 123.969 #measured from CATIA
+    distrWeight, ptWeights = wing_weight_distr_est(testPlanform, mWing, wingboxArea)
