@@ -85,7 +85,7 @@ def Cy(y):
 
 #C_l * c * q lift per unit span
 def LiftperSpan(y):
-    Lprime = Cy(y) * interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[1]))(y) * q
+    Lprime = Cy(y) * LiftCoef(y)[0] * q
     return Lprime
 
 def DragperSpan(y):
@@ -93,7 +93,7 @@ def DragperSpan(y):
     return Dprime
 
 def MomperSpan(y):
-    Mprime = Cy(y)**2 * interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[3]))(y) * q
+    Mprime = Cy(y)**2 * MomCoef(y) * q
     return Mprime
 
 
