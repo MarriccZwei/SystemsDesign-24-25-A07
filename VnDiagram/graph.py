@@ -10,20 +10,34 @@ import numpy as np
 from matplotlib import pyplot as plt
 from General import ISA
 from General import Constants
+from ClassIV import flappedWing as fw
+from OOP.Planform import Planform
 
 class LoadChart():
-    def __init__(self, altitude,mass, nmin, vso, vs1, vc, vLand):
+    def __init__(self, altitude,mass, planform:Planform, nmin=1):
+        cltakeoff = Constants.TAKEOFFCL
+        clclean = fw.CLClean(planform, onlymax=True)
+        S = planform.S
         self.altitude = altitude
+        rho = ISA.density(altitude)
         mach = ISA.speedOfSound(altitude)
         self.weight = mass
         self.nmax = 2.1 + 24000/(self.weight*2.204623+10000)
         self.nmin = nmin
+        
+        g=9.81
+        vso = (2*mass*g/rho/S/clclean)**0.5
         self.vso = round(vso)
+        
+        vs1 = (2*mass*g/rho/S/cltakeoff)**0.5
         self.vs1 = round(vs1)
+        
         self.va = round(self.vs1 * (self.nmax)**0.5)
+        
+        vc=Constants.CRUISEVELOCITY
         self.vc = round(vc)
         self.vd = round(vc + 0.05*mach)
-        self.vf = round(1.8*vLand)
+        self.vf = round(min(1.8*self.vs1, 1.8*self.vso))
 
     def positiveLoadCurve(self):
         curveLimit = int((self.nmax)**0.5 * self.vs1)
@@ -39,7 +53,7 @@ class LoadChart():
         return chart, speed
     
     def flapsLoadCurve(self):
-        curveLimit = min(int(2**0.5 * self.vso),self.vf)
+        curveLimit = round(min(int(2**0.5 * self.vso),self.vf))
         lowSpeed = np.linspace(0,curveLimit,curveLimit)
         curve = lowSpeed*lowSpeed/self.vso/self.vso
         if curveLimit <= self.vf:
@@ -55,8 +69,6 @@ class LoadChart():
             flat[-1] = self.vf*self.vf/self.vs1/self.vs1
         chart = np.concatenate((curve,flat))
         speed = np.concatenate((lowSpeed,highSpeed))
-
-        
         return chart, speed
 
     def negativeLoadCurve(self):
@@ -100,9 +112,11 @@ class LoadChart():
         if plot:
             plt.show()
 
+testPF = Planform(400, 10, 0.3, 0.3, 0)
+
 for i in range(11):
     altitude = i*1000
-    testCase = LoadChart(altitude,180000, 1.75, 75, 85, 230, 78)
+    testCase = LoadChart(altitude,180000, testPF)
     testCase.plotVN(i, plot=False)
     del testCase
 plt.show()

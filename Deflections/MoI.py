@@ -123,7 +123,7 @@ def MOI(segments, stringers, x_bar, y_bar, alpha):
 
 #Test
 #Call wingbox function
-chord = 8.17  #MAC value
+chord = 6.17  #MAC value
 sparLocs = [0.3, 0.4]  #Spar locations
 
 upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
