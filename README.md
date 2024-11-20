@@ -9,6 +9,8 @@ Loads/:
     CriticalLoads.py - a file finding the critical loads, using the other modules
 Deflections/
     MoI.py - a file with moment of inertia estimations
+        - centroid function returns centroid coordinates w.r.t the left upper corned of the wingbox
+        - MOI function return the moments of inertia about the centroid of the wingbox
     wingbox.py - a file with the definition of the wingbox
         - wingbox function returns latice points of the wingbox in wrong coordinate system
     TorsionalStiffness.py - a file with torsional stiffness estimations
