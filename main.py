@@ -110,7 +110,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     #     plt.text(point[0] + 30, point[1] + 0.005, i+1) #Hard coded numbers are offset of labels.
     # plt.xlabel("Wing Loading, [N/m^2]")
     # plt.ylabel("Thrust-Weight Ratio, [-]")
-    # plt.show()
+    # plt.show()S
 
     '''Wing Planform Design'''
     S = consts.G*mMTO/WSselected #wing surface
