@@ -91,7 +91,7 @@ def DragperSpan(y):
     Dprime = Cy(y) * interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[2]))(y) * q
     return Dprime
 
-def Momperspany(y):
+def MomperSpan(y):
     Mprime = Cy(y)**2 * interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[3]))(y) * q
     return Mprime
 
@@ -111,22 +111,22 @@ def MomCoef(y):
     return Cm_dy
 
 
-# step = 0.05 
-# ytab=[]
-# cltab=[]
+step = 0.05 
+ytab=[]
+cltab=[]
 
-# for i in range(24):
-#     cl = MomCoef(i)
-#     i = i + step
+for i in range(24):
+    cl = LiftperSpan(i)
+    i = i + step
 
-#     ytab.append(i)
-#     cltab.append(cl)
+    ytab.append(i)
+    cltab.append(cl)
 
-# # Plot
-# plt.plot(ytab, cltab)
+# Plot
+plt.plot(ytab, cltab)
 
-# plt.title('test')
-# plt.xlabel('y')
-# plt.ylabel('cl')    
+plt.title('test')
+plt.xlabel('y')
+plt.ylabel('cnst')    
 
-# plt.show()
+plt.show()
