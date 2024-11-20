@@ -18,13 +18,12 @@ def CLClean(planform: Planform, alpha=0, mach=c.LANDMACH, onlymax=False):
         cL = dCda*(alpha-c.ALPHAZEROLIFT)
         return cL
 
-
-def CLLand(planform: Planform, hld: HLDs, alpha, onlymax=False):
-    cPrimeC = 1+c.DELTACCFLAND*hld.flapcfC
+def CLLand(planform: Planform, hld: HLDs, alpha=0, onlymax=False):
+    cPrimeC = 1+c.DELTACCFLAND*hld.flapCfC
     if onlymax:
         cleanMax = CLClean(planform)
-        deltaCLFlapped = 0.9*c.FLAPFACTOR*cPrimeC*hld.flapSflapped/planform.S*cos(planform.sweep_at_c_fraction(hld.backSparLoc))
-        deltaCLKruger = 0.9*c.KRUGERDELTACL*hld.krugerSflapped/planform.S*cos(planform.sweep_at_c_fraction(hld.frontSparLoc))
+        deltaCLFlapped = 0.9*c.FLAPFACTOR*cPrimeC*hld.flapSflapped(planform)/planform.S*cos(planform.sweep_at_c_fraction(hld.backSparLoc))
+        deltaCLKruger = 0.9*c.KRUGERDELTACL*hld.krugerSflapped(planform)/planform.S*cos(planform.sweep_at_c_fraction(hld.frontSparLoc))
         return cleanMax+deltaCLFlapped+deltaCLKruger
     else:
         dCLdAlphaClean = dCLdAlpha(c.LANDMACH, planform)
@@ -34,12 +33,12 @@ def CLLand(planform: Planform, hld: HLDs, alpha, onlymax=False):
         cl = dCLdAlphaLand*(alpha-c.ALPHAZEROLIFT+deltaAlpha)
         return cl
     
-def CLTakeOff(planform: Planform, hld: HLDs, alpha, onlymax=False):
-    cPrimeC = 1+c.DELTACCFTAKEOFF*hld.flapcfC
+def CLTakeOff(planform: Planform, hld: HLDs, alpha=0, onlymax=False):
+    cPrimeC = 1+c.DELTACCFTAKEOFF*hld.flapCfC
     if onlymax:
         cleanMax = CLClean(planform)
-        deltaCLFlapped = 0.9*c.FLAPFACTOR*c.TAKEOFFHLDDEPLOYMENT*cPrimeC*hld.flapSflapped/planform.S*cos(planform.sweep_at_c_fraction(hld.backSparLoc))
-        deltaCLKruger = 0.9*c.KRUGERDELTACL*c.TAKEOFFHLDDEPLOYMENT*hld.krugerSflapped/planform.S*cos(planform.sweep_at_c_fraction(hld.frontSparLoc))
+        deltaCLFlapped = 0.9*c.FLAPFACTOR*c.TAKEOFFHLDDEPLOYMENT*cPrimeC*hld.flapSflapped(planform)/planform.S*cos(planform.sweep_at_c_fraction(hld.backSparLoc))
+        deltaCLKruger = 0.9*c.KRUGERDELTACL*c.TAKEOFFHLDDEPLOYMENT*hld.krugerSflapped(planform)/planform.S*cos(planform.sweep_at_c_fraction(hld.frontSparLoc))
         return cleanMax+deltaCLFlapped+deltaCLKruger
     else:
         dCLdAlphaClean = dCLdAlpha(c.LANDMACH, planform)

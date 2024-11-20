@@ -203,7 +203,7 @@ class HLDs():
         deltaS = (cPrime1+cPrime2)*halfSpanflapped # no divided by 2 cuz symmetric planform
         cLalphaPrime = (1+deltaS/planform.S)*cLalpha #cl alph change due to wing area increase
         takeoffAlphaMax = alpha0L+CLreqToff/cLalphaPrime
-
+    
         return max(takeoffAlphaMax, landingAlphaMax)
         
 

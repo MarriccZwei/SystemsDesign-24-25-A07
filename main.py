@@ -17,6 +17,7 @@ import ClassI.constraints as constr
 
 import ClassIV.clFunctions as clFuns
 from ClassIV import cruiseConditions as crCond
+from ClassIV import flappedWing as fWing
 
 import ClassII.weightEst as wEstII
 import ClassII.LoadFactor as loadF
@@ -266,7 +267,6 @@ for i in range(20): #later change to a while with a counter and convergence cond
         
 
     print()
-
     print(f"Design point: {WSselected}, {TWselected}")
     print(f"Wing Surface and ClDes: {S}, {CLdes}")
     print(f"Wing Aspect Ration and Taper Ratiom, Sweep: {planform.AR}, {planform.TR}, {planform.sweepC4}")
@@ -303,7 +303,9 @@ for i in range(20): #later change to a while with a counter and convergence cond
     print(f"Wing Tip pos: {y_WTIP}")
     print(f"ENG pos: {y_ENG}")
 
-
+    print(f"CLmax clean: {fWing.CLClean(planform, 15)}")
+    print(f"CLmax Land: {fWing.CLLand(planform, hlds, 15)}")
+    print(f"CLmax TO: {fWing.CLTakeOff(planform, hlds, 15)}")
 
     #re-assigning the MTOM
     #mMTO = (mOE+consts.DESIGNPAYLOAD)/(1-MFfuel)
