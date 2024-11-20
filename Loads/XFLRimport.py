@@ -12,6 +12,18 @@ Halfspan = 49.81384193430594/2
 txt_a0 = "Loads\MainWing_a=0.00_v=10.00ms.txt"
 txt_a10 = "Loads\MainWing_a=10.00_v=10.00ms.txt"
 
+#FROM TXT FILES
+CL_0 = 0.132396
+CL_10 = 0.964418
+Cm_0 = -0.179106
+Cm_10 = -1.13864
+
+
+q = 0.5 * 1.225 * 10**2 #add later dynamic pressure
+CL_d = 0.8 #later import CL_d
+Cm_d = 0.8
+
+
 def filetolist(txt):
     # Load data, skipping the header and footer lines to extract the table
     data = np.genfromtxt(
@@ -32,6 +44,11 @@ def interpolate(ylst,cnst):
     f = sp.interpolate.interp1d(ylst,cnst,kind='cubic',fill_value="extrapolate")
     return(f)
 
+
+#Chord calculation
+def Cy(y):
+    Cy = Cr - Cr * (1-TR) * (y/Halfspan)
+    return Cy
 
 # --   chord interpolation .... --
 # def chord(ylst,Chord):
@@ -60,12 +77,34 @@ def interpolate(ylst,cnst):
 
 # plt.show()
 
-def Cy(y):
-    Cy = Cr - Cr * (1-TR) * (y/Halfspan)
-    return Cy
-
-print(Cy(20))
 
 
-#  TO DO: 
-# LIFT PER SPAN
+
+#C_l * c * q lift per unit span
+def LiftperSpan(y):
+    Lprime = Cy(y) * interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[1]))(y) * q
+    return Lprime
+
+def DragperSpan(y):
+    Dprime = Cy(y) * interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[2]))(y) * q
+    return Dprime
+
+def Momperspany(y):
+    Mprime = Cy(y)**2 * interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[3]))(y) * q
+    return Mprime
+
+
+
+
+
+#Lift coef distribution and Angle of attack degrees
+def LiftCoef(y):
+    Alpha_d = ((CL_d - CL_0)/(CL_10 - CL_0)) * 10
+    CL_dy = interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[1]))(y) + ((CL_d - CL_0)/(CL_10 - CL_0)) * (interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[1]))(y) - interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[1]))(y))
+    return CL_dy, Alpha_d
+
+#pitching moment coef distribution and Angle of attack degrees
+
+def MomCoef(y):
+    Cm_dy = interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[3]))(y) + ((Cm_d - Cm_0)/(Cm_10 - Cm_0)) * (interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[3]))(y) - interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[3]))(y))
+    return Cm_dy
