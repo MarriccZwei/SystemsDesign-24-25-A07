@@ -1,4 +1,5 @@
 
+import General.Constants as consts
 from OOP import Planform as pf
 import numpy as np
 # def wingskin_mass(total_ribs_mass, wing_mass, root_chord, tip_chord, length):
@@ -59,3 +60,6 @@ def engine_xpos(root_chord):
 
 def engine_shear(engine_mass, engine_zpos):
     return (engine_zpos, engine_mass)
+
+
+def engine_torque(engine_thrust, consts.engine_y_offset_from_wing ):
