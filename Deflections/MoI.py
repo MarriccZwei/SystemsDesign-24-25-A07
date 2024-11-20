@@ -110,7 +110,7 @@ def MOI(segments, stringers, x_bar, y_bar, alpha):
         I_xx += I_xx_segment + segment["length"] * segment["thickness"] * dy**2
         I_yy += I_yy_segment + segment["length"] * segment["thickness"] * dx**2
 
-    return I_xx, I_yy
+    return I_xx, I_yy, I_xy
 
 #Test
 
@@ -135,8 +135,8 @@ A = 0.003 #m^2
 segments, alpha = get_segments_root(L1, L2, L3, L4, x1, x2, x3, t)
 stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A)
 x_bar, y_bar = centroid(segments, stringers)
-I_xx, I_yy = MOI(segments, stringers, x_bar, y_bar, alpha)
+I_xx, I_yy, I_xy = MOI(segments, stringers, x_bar, y_bar, alpha)
 print(f"CG = {x_bar, y_bar}")
-print(f"I_xx, I_yy = {I_xx, I_yy}")
+print(f"I_xx, I_yy, I_xy = {I_xx, I_yy, I_xy}")
 
 
