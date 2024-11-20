@@ -183,4 +183,3 @@ def handling_mass(Wdg):
 #m to feet: /0.3048
 #m3 to gals: *264.1721
 
-
