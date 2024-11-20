@@ -128,4 +128,12 @@ I_xx, I_yy = MOI(segments, stringers, x_bar, y_bar, alpha)
 print(f"CG = {x_bar, y_bar}")
 print(f"I_xx, I_yy = {I_xx, I_yy}")
 
+# Call wingbox function
+chord = 8.17  # MAC value
+sparLocs = [0.3, 0.4]  # Spar locations
+
+upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
+
+print("Upper Wing Box Coordinates:", upperCoords)
+print("Lower Wing Box Coordinates:", lowerCoords)
 
