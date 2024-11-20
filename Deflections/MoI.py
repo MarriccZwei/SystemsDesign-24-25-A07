@@ -4,8 +4,10 @@ import numpy as np
 'L_i variables are vertical segments of the wingbox'
 'x_i variables are horizontal segments of the wingbox'
 'd_i variables are angled segments of the wingbox'
+'t is the thickness of the segments'
 
 def get_segments_root(L1, L2, L3, L4, x1, x2, x3, t):
+    global alpha
     alpha = np.arctan((L1 - L4)  / (x1 + x2 + x3))
     d1 = x1 / np.cos(alpha)
     d2 = x2 / np.cos(alpha)
@@ -37,8 +39,6 @@ def get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A):
 
 #Function to determine the centroid of the wingbox cross-section
 def centroid(segments, stringers):
-    #segments = get_segments_root(L1, L2, L3, L4, x1, x2, x3, t)
-    #stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A)
 
     #Calculating the weighted sum of the x and y coordinates
     total_x = sum(segment["i"] * segment["length"] * segment["thickness"] for segment in segments.values()) + sum(stringer["i"] * stringer["area"] for stringer in stringers.values())
@@ -62,11 +62,63 @@ t = 0.001 #m
 A = 0.01 #m^2
 segments = get_segments_root(L1, L2, L3, L4, x1, x2, x3, t)
 stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A)
-cg = centroid(segments, stringers)
-print(f"CG = {cg}")
+x_bar, y_bar = centroid(segments, stringers)
+centroid.alpha
+print(f"CG = {x_bar, y_bar}")
 
 #Function to calculate the MOI of the wingbox
-#def MOI():
+def MOI(segments, stringers, x_bar, y_bar):
+    # Initialize moments of inertia (about the centroidal axes)
+    I_xx = 0  # Moment of inertia about the x-axis (centroidal)
+    I_yy = 0  # Moment of inertia about the y-axis (centroidal)
+    I_xy = 0  # Moment of inertia about the xy-axis (product of inertia)
+    'I_xy is assumed 0 since the horizontal axis going through the centroid is a principal axis'
+
+    #Calculate distance from wall centroid to section centroid
+    'Horizontal segments'
+    for segment in list(segments.values())[:3]:
+        dx = segment["i"] - x_bar
+        dy = segment["j"] - y_bar
+
+        #Moment of inertia of each segment about its own centroid
+        'The higher order contributions of the thickness t are neglected'
+        I_xx_segment = 0
+        I_yy_segment = (t * segment["length"]**3) / 12
+
+        # Parallel Axis Theorem contribution
+        I_xx += I_xx_segment + segment["length"] * segment["thickness"] * dy**2
+        I_yy += I_yy_segment + segment["length"] * segment["thickness"] * dx**2
+
+    'Vertical segments'
+    for segment in list(segments.values())[3:7]:
+        dx = segment["i"] - x_bar
+        dy = segment["j"] - y_bar
+
+        #Moment of inertia of each segment about its own centroid
+        'The higher order contributions of the thickness t are neglected'
+        I_xx_segment = (t * segment["length"]**3) / 12
+        I_yy_segment = 0
+
+        # Parallel Axis Theorem contribution
+        I_xx += I_xx_segment + segment["length"] * segment["thickness"] * dy**2
+        I_yy += I_yy_segment + segment["length"] * segment["thickness"] * dx**2
+
+    
+    'Angled segments'
+    for segment in list(segments.values())[7:]:
+        dx = segment["i"] - x_bar
+        dy = segment["j"] - y_bar
+
+        #Moment of inertia of each segment about its own centroid
+        'The higher order contributions of the thickness t are neglected'
+        I_xx_segment = (t * segment["length"]**3) / 12
+        I_yy_segment = 0
+
+        # Parallel Axis Theorem contribution
+        I_xx += I_xx_segment + segment["length"] * segment["thickness"] * dy**2
+        I_yy += I_yy_segment + segment["length"] * segment["thickness"] * dx**2
+
+
 
 
 
