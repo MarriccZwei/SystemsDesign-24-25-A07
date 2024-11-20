@@ -83,7 +83,7 @@ def wingbox(chord: float, sparLocs: list = None, plot: bool = False) -> tuple[li
         plt.axis('equal')
         plt.grid(True)
         plt.show()
-    return
+    return upperWingBoxCoords, lowerWingBoxCoords
 
 if __name__ == '__main__':
-    wingbox(8.14, sparLocs=[0.3,0.4],plot=True)
+    wingbox(8.14, sparLocs=[0.3,0.4], plot=True)
