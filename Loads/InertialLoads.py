@@ -94,3 +94,13 @@ if __name__ == "__main__":
     mWing = 22963 #kg
     wingboxArea = 123.969 #measured from CATIA
     distrWeight, ptWeights = wing_weight_distr_est(testPlanform, mWing, wingboxArea)
+    print(f"rib positions and masses: {ptWeights}")
+    wgboxWeight = 0
+    for pos in range(24):
+        wgboxWeight+= distrWeight(pos)
+    print(f"wgbox weight{wgboxWeight}")
+    ribweights = 0
+    for pt in ptWeights:
+        ribweights += pt[1]
+    print(f"wing weight summed: {wgboxWeight+ribweights}, vs. initial wing weight: {mWing*consts.G}")
+    print(f"Percent difference {1-(wgboxWeight+ribweights)/mWing/consts.G}")
