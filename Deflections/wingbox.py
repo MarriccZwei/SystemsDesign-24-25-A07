@@ -15,10 +15,10 @@ def readCSVFile(name) -> pd.DataFrame:
 def sparHeight(upperCoords, lowerCoords, sparLoc) -> list:
     interpUpper = interp1d(upperCoords[0], upperCoords[1], bounds_error=False, fill_value="extrapolate")
     interpLower = interp1d(lowerCoords[0], lowerCoords[1], bounds_error=False, fill_value="extrapolate")
-    coords = [[sparLoc, sparLoc], [interpUpper(sparLoc), interpLower(sparLoc)]]
+    coords = [[sparLoc, sparLoc], [float(interpUpper(sparLoc)), float(interpLower(sparLoc))]]
     return coords
 
-def wingbox(chord: float, sparLocs: list = None, plot: bool = False) -> tuple[list, list]:
+def wingbox(chord: float, sparLocs: list = None, plot: bool = False) -> tuple[list, list]: #Returns in flipped coordinate axis
     #data is for chord of 0.1m MAC 8.17m
     spars = [FRONTSPARFRAC, BACKSPARFRAC]
     if sparLocs != None: spars.extend(sparLocs)
@@ -56,8 +56,8 @@ def wingbox(chord: float, sparLocs: list = None, plot: bool = False) -> tuple[li
     interpUpper = interp1d(upperCoords[0], upperCoords[1], bounds_error=False, fill_value="extrapolate")
     interpLower = interp1d(lowerCoords[0], lowerCoords[1], bounds_error=False, fill_value="extrapolate")
 
-    baseUpperWingboxCoords = [[frontSpar, backSpar], [interpUpper(frontSpar), interpUpper(backSpar)]]
-    baseLowerWingboxCoords = [[frontSpar, backSpar], [interpLower(frontSpar), interpLower(backSpar)]]
+    baseUpperWingboxCoords = [[frontSpar, backSpar], [float(interpUpper(frontSpar)), float(interpUpper(backSpar))]]
+    baseLowerWingboxCoords = [[frontSpar, backSpar], [float(interpLower(frontSpar)), float(interpLower(backSpar))]]
 
     upperWingBoxCoords = baseUpperWingboxCoords
     lowerWingBoxCoords = baseLowerWingboxCoords
@@ -86,4 +86,4 @@ def wingbox(chord: float, sparLocs: list = None, plot: bool = False) -> tuple[li
     return upperWingBoxCoords, lowerWingBoxCoords
 
 if __name__ == '__main__':
-    wingbox(8.14, sparLocs=[0.3,0.4], plot=True)
+    print(wingbox(8.14))
