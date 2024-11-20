@@ -1,4 +1,6 @@
 import General.Constants as consts
+
+import General.Constants as consts
 from OOP import Planform as pf
 import numpy as np
 # def wingskin_mass(total_ribs_mass, wing_mass, root_chord, tip_chord, length):
@@ -47,6 +49,7 @@ def wing_weight_distr_est(planform:pf.Planform, mWing:float, wingboxArea:float, 
 
     #the distr Weight is coming from the wingbox, the point loads are coming from the ribs
     return distrWeight, ribPtLoads
+def engine_zpos_func(span):
 
 
 def engine_zpos(span):
@@ -54,7 +57,7 @@ def engine_zpos(span):
     engine_zpos = 0.3*L
     return engine_zpos
 
-def engine_xpos(root_chord):
+def engine_xpos_func(root_chord):
     engine_xpos = (1/2)*root_chord
     return engine_xpos  
 
@@ -62,11 +65,7 @@ def engine_xpos(root_chord):
 def engine_shear(engine_mass, engine_zpos):
     return (engine_zpos, engine_mass*9.81)
 
-if __name__ == "__main__":
-    testPlanform = pf.Planform(251.34, 9.7, 0.1, 28.5, 2.15, False)
-    mWing = 22963 #kg
-    wingboxArea = 123.969 #measured from CATIA
-    distrWeight, ptWeights = wing_weight_distr_est(testPlanform, mWing, wingboxArea)
-    
 
-
+def engine_torque(engine_thrust, consts.engine_y_offset_from_wing, sweep_angle, engine_zpos):
+    torque = np.sin(np.radians(sweep_angle))*engine_thrust*consts.engine_y_offset_from_wing
+    return (engine_zpos , torque)
