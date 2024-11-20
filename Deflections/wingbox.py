@@ -12,58 +12,78 @@ def readCSVFile(name) -> pd.DataFrame:
     df = pd.read_csv(path)
     return df
 
-def mainSparHeight():
-    
+def sparHeight(upperCoords, lowerCoords, sparLoc) -> list:
+    interpUpper = interp1d(upperCoords[0], upperCoords[1], bounds_error=False, fill_value="extrapolate")
+    interpLower = interp1d(lowerCoords[0], lowerCoords[1], bounds_error=False, fill_value="extrapolate")
+    coords = [[sparLoc, sparLoc], [interpUpper(sparLoc), interpLower(sparLoc)]]
+    return coords
 
-def plotWingbox():
-#data is for chord of 0.1m MAC 8.17m
-chord = 8.17
-scaleFactor = chord/0.1/1000
+def wingbox(chord: float, sparLocs: list = None, plot: bool = False) -> tuple[list, list]:
+    #data is for chord of 0.1m MAC 8.17m
+    spars = [FRONTSPARFRAC, BACKSPARFRAC]
+    if sparLocs != None: spars.extend(sparLocs)
 
-frontSpar = FRONTSPARFRAC*chord #c frac
-backSpar = BACKSPARFRAC*chord #c frac
+    scaleFactor = chord/0.1/1000
 
-df = readCSVFile('naca64a210-il.csv')
-xCoor = np.array(df['X(mm)'].to_list())*scaleFactor
-yCoor = np.array(df['Y(mm)'].to_list())*scaleFactor
-xcCoor = np.array(df['XC(mm)'].to_list())*scaleFactor
-ycCoor = np.array(df['YC(mm)'].to_list())*scaleFactor
+    frontSpar = FRONTSPARFRAC*chord #c frac
+    backSpar = BACKSPARFRAC*chord #c frac
 
-yUpperCoor = []
-yLowerCoor = [0]
-xUpperCoor = []
-xLowerCoor = [0]
+    df = readCSVFile('naca64a210-il.csv')
+    xCoor = np.array(df['X(mm)'].to_list())*scaleFactor
+    yCoor = np.array(df['Y(mm)'].to_list())*scaleFactor
+    xcCoor = np.array(df['XC(mm)'].to_list())*scaleFactor
+    ycCoor = np.array(df['YC(mm)'].to_list())*scaleFactor
 
-for i, coor in enumerate(yCoor):
-    if coor >= 0: 
-        yUpperCoor.append(coor)
-        xUpperCoor.append(xCoor[i])
-    else:
-        yLowerCoor.append(coor)
-        xLowerCoor.append(xCoor[i])
+    yUpperCoor = []
+    yLowerCoor = [0]
+    xUpperCoor = []
+    xLowerCoor = [0]
 
-yUpperCoor.append(0)
-xUpperCoor.append(0)
+    for i, coor in enumerate(yCoor):
+        if coor >= 0: 
+            yUpperCoor.append(coor)
+            xUpperCoor.append(xCoor[i])
+        else:
+            yLowerCoor.append(coor)
+            xLowerCoor.append(xCoor[i])
 
-interpUpper = interp1d(xUpperCoor, yUpperCoor, bounds_error=False, fill_value="extrapolate")
-interpLower = interp1d(xLowerCoor, yLowerCoor, bounds_error=False, fill_value="extrapolate")
+    yUpperCoor.append(0)
+    xUpperCoor.append(0)
 
-yUpperFront = interpUpper(frontSpar)
-yLowerFront = interpLower(frontSpar)
+    upperCoords = [xUpperCoor, yUpperCoor]
+    lowerCoords = [xLowerCoor, yLowerCoor]
 
-yUpperBack = interpUpper(backSpar)
-yLowerBack = interpLower(backSpar)
+    interpUpper = interp1d(upperCoords[0], upperCoords[1], bounds_error=False, fill_value="extrapolate")
+    interpLower = interp1d(lowerCoords[0], lowerCoords[1], bounds_error=False, fill_value="extrapolate")
 
-frontSparHeight = yUpperFront-yLowerFront
-backSparHeight = yUpperBack-yLowerBack
+    baseUpperWingboxCoords = [[frontSpar, backSpar], [interpUpper(frontSpar), interpUpper(backSpar)]]
+    baseLowerWingboxCoords = [[frontSpar, backSpar], [interpLower(frontSpar), interpLower(backSpar)]]
 
-plt.plot(xUpperCoor, yUpperCoor, color='red')
-plt.plot(xLowerCoor, yLowerCoor, color='red')
-plt.plot(xcCoor, ycCoor, color='black')
-plt.plot([frontSpar, frontSpar], [yUpperFront, yLowerFront], color='blue')
-plt.plot([backSpar, backSpar], [yUpperBack, yLowerBack], color='blue')
-plt.plot([backSpar, frontSpar], [yUpperBack, yUpperFront], color='blue')
-plt.plot([backSpar, frontSpar], [yLowerBack, yLowerFront], color='blue')
-plt.axis('equal')
-plt.grid(True)
-plt.show()
+    upperWingBoxCoords = baseUpperWingboxCoords
+    lowerWingBoxCoords = baseLowerWingboxCoords
+
+    for spar in spars:
+        loc = spar*chord
+        point = sparHeight(baseUpperWingboxCoords, baseLowerWingboxCoords, loc)
+        upperWingBoxCoords[0].append(loc)
+        lowerWingBoxCoords[0].append(loc)
+        upperWingBoxCoords[1].append(point[1][0])
+        lowerWingBoxCoords[1].append(point[1][1])
+        if plot: plt.plot(point[0], point[1], color='blue')
+
+
+    if plot:
+        plt.plot(xUpperCoor, yUpperCoor, color='red')
+        plt.plot(xLowerCoor, yLowerCoor, color='red')
+        plt.plot(xcCoor, ycCoor, color='black')
+
+        plt.plot(upperWingBoxCoords[0], upperWingBoxCoords[1], color='blue')
+        plt.plot(lowerWingBoxCoords[0], lowerWingBoxCoords[1], color='blue')
+
+        plt.axis('equal')
+        plt.grid(True)
+        plt.show()
+    return upperWingBoxCoords, lowerWingBoxCoords
+
+if __name__ == '__main__':
+    wingbox(8.14, sparLocs=[0.3,0.4], plot=True)
