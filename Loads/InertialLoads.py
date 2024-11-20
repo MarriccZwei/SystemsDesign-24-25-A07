@@ -59,7 +59,8 @@ def engine_xpos(root_chord):
 
 
 def engine_shear(engine_mass, engine_zpos):
-    return (engine_zpos, engine_mass)
+    return (engine_zpos, engine_mass*9.81)
 
 
-def engine_torque(engine_thrust, consts.engine_y_offset_from_wing ):
+def engine_torque(engine_thrust, consts.engine_y_offset_from_wing, sweep_angle ):
+    torque = np.sin(np.radians(sweep_angle))*engine_thrust*consts.engine_y_offset_from_wing
