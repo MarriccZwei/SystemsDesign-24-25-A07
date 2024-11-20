@@ -48,12 +48,12 @@ def mass_distr_est(planform:pf.Planform, mWing:float, wingboxArea:float, ribsPer
 
     #the distr Weight is coming from the wingbox, the point loads are coming from the ribs
     return distrWeight, ribPtLoads
-def engine_zpos(span):
+def engine_zpos_func(span):
     L = span/2
     engine_zpos = 0.3*L
     return engine_zpos
 
-def engine_xpos(root_chord):
+def engine_xpos_func(root_chord):
     engine_xpos = (1/2)*root_chord
     return engine_xpos  
 
@@ -62,5 +62,6 @@ def engine_shear(engine_mass, engine_zpos):
     return (engine_zpos, engine_mass*9.81)
 
 
-def engine_torque(engine_thrust, consts.engine_y_offset_from_wing, sweep_angle ):
+def engine_torque(engine_thrust, consts.engine_y_offset_from_wing, sweep_angle, engine_zpos):
     torque = np.sin(np.radians(sweep_angle))*engine_thrust*consts.engine_y_offset_from_wing
+    return (engine_zpos , torque)
