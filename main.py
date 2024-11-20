@@ -341,21 +341,7 @@ for i in range(20): #later change to a while with a counter and convergence cond
     # else:
     print(f"OEM: {mOE}, old OEM: {oldOEM}; diff: {(mOE-oldOEM)/mOE}")
 
-'''Final HLDs, planform 'n stuff'''
-print("========================")
-print(f"wingS: {planform.S}, span:{planform.b}, Root Chord: {planform.cr}, Tip Chord: {planform.ct}, Quarter chord sweep [deg]: {np.degrees(planform.sweepC4)}")
-print(f"xLECRPlanform: {xLemac-planform.YMAC*np.tan(planform.sweepLE)}, Incidence angle:{consts.ALPHAZEROLIFT+np.degrees(CLdes/clAlph)}, Dihedral [deg]: {np.degrees(planform.dihedral)}, Taper Ratio: {planform.TR}, aspect ratio: {planform.AR}")
-print()
-print(f"TE flap spanwise location: [{hlds.flapStart(planform.b)}, {hlds.flapEnd(planform.b)}], Kruger spanwise loc: [{hlds.krugerStart(planform.b)}, {hlds.krugerEnd(planform.b)}], Aileron spanwise loc [{hlds.aileronStart(planform.b)}, {hlds.aileronEnd(planform.b)}]")
-print()
-print(f"Fuselage dimensions: D: {fuselage.D}m, L: {fuselage.L}, L_NC: {fuselage.L1}, L_UNCURVED: {fuselage.L2}, L_TC: {fuselage.L3}")
-print(f"Fuselage Dimensions L_N: {consts.LN}m, L_CABIN: {fuselage.L-consts.LN-consts.LT}m, L_T: {consts.LT}")
-print()
-print(f"horizontal Tail: S: {horizontalTail.S}, span:{horizontalTail.b}, Root Chord: {horizontalTail.cr}, Tip Chord: {horizontalTail.ct}, Quarter chord sweep [deg]: {np.degrees(horizontalTail.sweepC4)}, Dihedral [deg]: {np.degrees(horizontalTail.dihedral)}, Taper Ratio: {horizontalTail.TR}, aspect ratio: {horizontalTail.AR}, xPos: {consts.XH}")
-print()
-print(f"vertical Tail: S: {verticalTail.S}, span:{verticalTail.b}, Root Chord: {verticalTail.cr}, Tip Chord: {verticalTail.ct}, Quarter chord sweep [deg]: {np.degrees(verticalTail.sweepC4)}, Taper Ratio: {verticalTail.TR}, aspect ratio: {verticalTail.AR}, xPos: {consts.XV}")
-print("Next to that add: HLD deflections (at toff and landing), hldTypes, airfoils for all 3 planforms, landing gear dimensions")
-print(f"design point WS: {WSselected} N/m2, TWR: {TWselected} ")
+
 print(xOe)
 print(xF)
 print(xP)
@@ -367,3 +353,20 @@ print(mOE/mMTO)
 def fuel_volume( b, cr, tr, A2c2=0.038, safetyFactor=1.5):
     return A2c2*b/safetyFactor*cr*cr/3*(1+tr+tr*tr)
 print(f"Fuel Volume in the wing: {fuel_volume(planform.b, planform.cr, planform.TR)}, total fuel volume required: {Mfuel/consts.KEROSENEDENSITY}, fuel fraction: {Mfuel/mMTO}, payload fraction: {consts.DESIGNPAYLOAD/mMTO}")
+
+'''Final HLDs, planform 'n stuff'''
+print("========================")
+print(f"wingS: {planform.S}, span:{planform.b}, Root Chord: {planform.cr}, Tip Chord: {planform.ct}, Quarter chord sweep [deg]: {np.degrees(planform.sweepC4)}")
+print(f"xLECRPlanform: {xLemac-planform.YMAC*np.tan(planform.sweepLE)}, Incidence angle:{consts.ALPHAZEROLIFT+np.degrees(CLdes/clAlph)}, Dihedral [deg]: {np.degrees(planform.dihedral)}, Taper Ratio: {planform.TR}, aspect ratio: {planform.AR}")
+print(f"MAC: {planform.MAC}, xLEMAC: {planform.XLEMAC}, yLEMAC: {planform.YMAC}")
+print()
+print(f"TE flap spanwise location: [{hlds.flapStart(planform.b)}, {hlds.flapEnd(planform.b)}], Kruger spanwise loc: [{hlds.krugerStart(planform.b)}, {hlds.krugerEnd(planform.b)}], Aileron spanwise loc [{hlds.aileronStart(planform.b)}, {hlds.aileronEnd(planform.b)}]")
+print()
+print(f"Fuselage dimensions: D: {fuselage.D}m, L: {fuselage.L}, L_NC: {fuselage.L1}, L_UNCURVED: {fuselage.L2}, L_TC: {fuselage.L3}")
+print(f"Fuselage Dimensions L_N: {consts.LN}m, L_CABIN: {fuselage.L-consts.LN-consts.LT}m, L_T: {consts.LT}")
+print()
+print(f"horizontal Tail: S: {horizontalTail.S}, span:{horizontalTail.b}, Root Chord: {horizontalTail.cr}, Tip Chord: {horizontalTail.ct}, Quarter chord sweep [deg]: {np.degrees(horizontalTail.sweepC4)}, Dihedral [deg]: {np.degrees(horizontalTail.dihedral)}, Taper Ratio: {horizontalTail.TR}, aspect ratio: {horizontalTail.AR}, xPos: {consts.XH}")
+print()
+print(f"vertical Tail: S: {verticalTail.S}, span:{verticalTail.b}, Root Chord: {verticalTail.cr}, Tip Chord: {verticalTail.ct}, Quarter chord sweep [deg]: {np.degrees(verticalTail.sweepC4)}, Taper Ratio: {verticalTail.TR}, aspect ratio: {verticalTail.AR}, xPos: {consts.XV}")
+print("Next to that add: HLD deflections (at toff and landing), hldTypes, airfoils for all 3 planforms, landing gear dimensions")
+print(f"design point WS: {WSselected} N/m2, TWR: {TWselected} ")
