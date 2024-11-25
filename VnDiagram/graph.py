@@ -17,12 +17,15 @@ class LoadChart():
     def __init__(self, altitude,mass, planform:Planform, nmin=1):
         cltakeoff = Constants.TAKEOFFCL
         clclean = fw.CLClean(planform, onlymax=True)
+        print(clclean)
+        print("EEEEEEEEEEEEEEEEEEEEEEEEEE")
         S = planform.S
         self.altitude = altitude
         rho = ISA.density(altitude)
         mach = ISA.speedOfSound(altitude)
         self.weight = mass
-        self.nmax = 2.1 + 24000/(self.weight*2.204623+10000)
+        #self.nmax = 2.1 + 24000/(self.weight*2.204623+10000)
+        self.nmax = 2.5
         self.nmin = nmin
         
         g=9.81
@@ -141,25 +144,32 @@ class LoadChart():
         if plot:
             plt.show()
 
-otherpF = Planform(400, 10, 0.3, 0.3, 0)
-testPF = Planform(251,9.87,0.1,28.5, 2.15, radians = False)
+def runVNdiagram(plot = False):
+    testPF = Planform(251,9.87,0.1,28.5, 2.15, radians = False)
+    critList = []
+    massList = [66300,115742,185548]
+    i =1
 
-#OEW, OEW+maxPL, MTOM
-massList = [66300,115742,185548]
-i =1
-for m in massList:
-    altitude = 0
-    testCase = LoadChart(altitude,m, testPF)
-    testCase.plotVN(i, plot=False)
-    testCase.printCLL()
-    del testCase
-    i=i+1
+    for m in massList:
+        altitude = 0
+        testCase = LoadChart(altitude,m, testPF)
+        critList.append(testCase.criticalLoadCases())
+        if plot == True:
+            testCase.plotVN(i, plot=False)
+        #testCase.printCLL()
+        del testCase
+        i=i+1
 
-    altitude = Constants.CRUISEALTITUDE
-    testCase = LoadChart(altitude,m, testPF)
-    testCase.plotVN(i, plot=False)
-    testCase.printCLL()
-    del testCase
-    i=i+1
-plt.legend()
-plt.show()
+        altitude = Constants.CRUISEALTITUDE
+        testCase = LoadChart(altitude,m, testPF)
+        critList.append(testCase.criticalLoadCases())
+        if plot == True:
+            testCase.plotVN(i, plot=False)
+        del testCase
+        i=i+1
+    
+    if plot == True:
+        plt.legend()
+        plt.show()
+    
+    return critList
