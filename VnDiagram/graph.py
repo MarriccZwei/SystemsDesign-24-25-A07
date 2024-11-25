@@ -17,8 +17,6 @@ class LoadChart():
     def __init__(self, altitude,mass, planform:Planform, nmin=1):
         cltakeoff = Constants.TAKEOFFCL
         clclean = fw.CLClean(planform, onlymax=True)
-        print(clclean)
-        print("EEEEEEEEEEEEEEEEEEEEEEEEEE")
         S = planform.S
         self.altitude = altitude
         rho = ISA.density(altitude)
@@ -153,7 +151,7 @@ def runVNdiagram(plot = False):
     for m in massList:
         altitude = 0
         testCase = LoadChart(altitude,m, testPF)
-        critList.append(testCase.criticalLoadCases())
+        critList = critList + (testCase.criticalLoadCases())
         if plot == True:
             testCase.plotVN(i, plot=False)
         #testCase.printCLL()
@@ -162,7 +160,7 @@ def runVNdiagram(plot = False):
 
         altitude = Constants.CRUISEALTITUDE
         testCase = LoadChart(altitude,m, testPF)
-        critList.append(testCase.criticalLoadCases())
+        critList = critList + (testCase.criticalLoadCases())
         if plot == True:
             testCase.plotVN(i, plot=False)
         del testCase
@@ -171,5 +169,8 @@ def runVNdiagram(plot = False):
     if plot == True:
         plt.legend()
         plt.show()
-    
+    for k in critList:
+        print(k)
     return critList
+
+runVNdiagram()
