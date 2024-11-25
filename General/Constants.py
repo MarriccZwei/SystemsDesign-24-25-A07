@@ -149,3 +149,11 @@ LF = 0.90 # LOAD FACTOR MLG
 
 '''WP4'''
 engine_y_offset_from_wing = 1.1285
+
+'''MATERIAL PROPERTIES (AL2024-T81)'''
+DENSITY = 2780  #kg/m^3
+E_MODULUS = 72.4 * 10**9  # Pa
+G_MODULUS = 28. * 10**9  # Pa
+POISSON_RATIO = 0.33
+YIELD_SIGMA = 450 * 10**6 # Yield tensile strenght in Pa
+ULTIMATE_SIGMA = 485 * 10**6 # Ultimate tensile strenght in Pa
