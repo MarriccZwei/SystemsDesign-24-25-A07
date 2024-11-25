@@ -88,7 +88,7 @@ def engine_torque(engine_thrust, sweep_angle, engine_zpos, engine_mass, difsc):
     return (engine_zpos , torque)
 
 def engine_bending(engine_thrust, sweep_angle, engine_zpos):
-    bending_moment = np.cos(sweep_angle)*engine_thrust*consts.engine_y_offset_from_wing
+    bending_moment = -np.cos(sweep_angle)*engine_thrust*consts.engine_y_offset_from_wing
     return (engine_zpos , bending_moment)
 
 if __name__ == "__main__":
