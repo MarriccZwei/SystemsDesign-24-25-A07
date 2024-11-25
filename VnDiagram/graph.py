@@ -26,11 +26,9 @@ class LoadChart():
         self.nmin = nmin
         
         g=9.81
-        vso = (2*mass*g/rho/S/clclean)**0.5
-        self.vso = round(vso)
+        self.vs1 = round((2*mass*g/rho/S/clclean)**0.5)
         
-        vs1 = (2*mass*g/rho/S/cltakeoff)**0.5
-        self.vs1 = round(vs1)
+        self.vso = round((2*mass*g/rho/S/cltakeoff)**0.5)
         
         self.va = round(self.vs1 * (self.nmax)**0.5)
         
@@ -95,7 +93,8 @@ class LoadChart():
         return  line, speed, negLine
 
     def plotVN(self, number = 0, plot = True):
-        colourList = ["black", "xkcd:red", "xkcd:orange", 'xkcd:yellow', "xkcd:neon green", "xkcd:green", "xkcd:sky blue", "xkcd:bright blue", "xkcd:indigo", "xkcd:purple", "xkcd:violet", "xkcd:light purple", "xkcd:pink"]
+        #colourList = ["black", "xkcd:red", "xkcd:orange", 'xkcd:yellow', "xkcd:neon green", "xkcd:green", "xkcd:sky blue", "xkcd:bright blue", "xkcd:indigo", "xkcd:purple", "xkcd:violet", "xkcd:light purple", "xkcd:pink"]
+        colourList = ["black", "xkcd:red", "xkcd:pink", 'xkcd:green', "xkcd:neon green", "xkcd:blue", "xkcd:sky blue", "xkcd:purple", "xkcd:light purple", "xkcd:purple", "xkcd:violet", "xkcd:light purple", "xkcd:pink"]
         if number > len(colourList):
             number = 0
         colourChoice = colourList[number]
@@ -104,19 +103,34 @@ class LoadChart():
         x = self.negativeLoadCurve()
         y = self.oneGeeLines()
         
+        title = "Mass: "+str(self.weight) + "kg, altitude: "+ str(self.altitude) +"m"
+
         plt.plot(y[1],y[0], "xkcd:slate")
-        plt.plot(u[1],u[0], colourChoice)
+        plt.plot(y[1],y[2], "xkcd:slate")
+        plt.plot(u[1],u[0], colourChoice, label=title)
         plt.plot(w[1],w[0], colourChoice)
         plt.plot(x[1],x[0], colourChoice)
 
         if plot:
             plt.show()
 
-testPF = Planform(400, 10, 0.3, 0.3, 0)
+otherpF = Planform(400, 10, 0.3, 0.3, 0)
+testPF = Planform(251,9.87,0.1,28.5, 2.15, radians = False)
 
-for i in range(11):
-    altitude = i*1000
-    testCase = LoadChart(altitude,180000, testPF)
+#OEW, OEW+maxPL, MTOM
+massList = [66300,115742,185548]
+i =1
+for m in massList:
+    altitude = 0
+    testCase = LoadChart(altitude,m, testPF)
     testCase.plotVN(i, plot=False)
     del testCase
+    i=i+1
+
+    altitude = Constants.CRUISEALTITUDE
+    testCase = LoadChart(altitude,m, testPF)
+    testCase.plotVN(i, plot=False)
+    del testCase
+    i=i+1
+plt.legend()
 plt.show()
