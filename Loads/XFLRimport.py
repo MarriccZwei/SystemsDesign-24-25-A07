@@ -124,8 +124,8 @@ for i in range(24):
 # Plot
 plt.plot(ytab, cltab)
 
-plt.title('test')
+plt.title('Lift over Span')
 plt.xlabel('y')
-plt.ylabel('cnst')    
+plt.ylabel('cnst')    #  What is cnst???
 
 plt.show()
