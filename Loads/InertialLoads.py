@@ -61,10 +61,10 @@ def wingMassParabolic(planform:pf.Planform, mWing):
     dmassc2sb = 1.5*mWing*planform.b/planform.cr/(1-planform.TR)/(1-planform.TR**3)
     return lambda pos:planform.chord_spanwise(2*pos/planform.b)**2*dmassc2sb*consts.G
 
-def fuel_in_wing_weight_est(planform:pf.Planform, wingBoxA2c2:float=.038, safetyFactor=1.5):
+def fuel_in_wing_weight_est(planform:pf.Planform, fuelFraction, wingBoxA2c2:float=.038, safetyFactor=1.5):
     '''returns a weight distribution resulting from the presence of fuel in the wing'''
 
-    return lambda pos:planform.chord_spanwise(2*pos/planform.b)**2*wingBoxA2c2*consts.G*consts.KEROSENEDENSITY/safetyFactor
+    return lambda pos:planform.chord_spanwise(2*pos/planform.b)**2*wingBoxA2c2*consts.G*consts.KEROSENEDENSITY/safetyFactor*fuelFraction
 
 
 def engine_zpos(span):
@@ -81,8 +81,10 @@ def engine_shear(engine_mass, engine_zpos):
     return (engine_zpos, engine_mass*9.81)
 
 
-def engine_torque(engine_thrust, sweep_angle, engine_zpos):
+#difsc - distance in front of shear centre
+def engine_torque(engine_thrust, sweep_angle, engine_zpos, engine_mass, difsc):
     torque = np.sin(sweep_angle)*engine_thrust*consts.engine_y_offset_from_wing
+    torque += engine_mass*consts.G*difsc #contribution of the off-centre shear
     return (engine_zpos , torque)
 
 def engine_bending(engine_thrust, sweep_angle, engine_zpos):
