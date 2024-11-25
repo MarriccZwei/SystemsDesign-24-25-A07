@@ -36,10 +36,14 @@ def get_segments(L1, L2, L3, L4, x1, x2, x3, t):
 #Function to define the sringers of the cross-section
 'A is the point area of a stringer'
 def get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A):
+    #Assumed stringer spacing 6 inches or 0.1524 meters
+    #stringer_spacing = 0.1524 #m
+    #total_length = x1 + x2 + x3 #of wingbox
+    #i_values = np.arrange(0, total_length, stringer_spacing) #i-positions of stringers
     stringers ={
         #Express the position of a stringer with the wingbox dimensions in variable form
-        #Random fractions(not yet determined)
-        "stringer1": {"i": 1/10 * (x1 + x2 + x3), "j": 1/10 * (L1), "area": A}
+        #for i in i_values:
+        "stringer1": {"i": 1/10 * (x1 + x2 + x3), "j": 0, "area": A}
     }
     return stringers
 
@@ -146,5 +150,6 @@ x_bar, y_bar = centroid(segments, stringers)
 I_xx, I_yy, I_xy = MOI(segments, stringers, x_bar, y_bar, alpha)
 print(f"CG = {x_bar, y_bar}")
 print(f"I_xx, I_yy, I_xy = {I_xx, I_yy, I_xy}")
+print(x1, x2, x3)
 
 

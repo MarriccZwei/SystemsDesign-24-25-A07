@@ -44,7 +44,7 @@ def calculate_moments_of_inertia(chord_length, sparLocs, t, A):
     #Calculate the moments of inertia
     I_xx, I_yy, I_xy = MOI(segments, stringers, x_bar, y_bar, alpha)
     
-    return I_xx, I_yy, I_xy
+    return I_xx, I_yy, I_xy , x_bar, y_bar
 
 #Set the initial conditions for the wing
 c_r = 9.17  # Root chord length (in meters)
@@ -62,6 +62,8 @@ z_values = np.linspace(0, b / 2, num_points)  # Array of spanwise locations (z)
 I_xx_values = []
 I_yy_values = []
 I_xy_values = []
+x_bar_values = []
+y_bar_values = []
 
 # Loop over each spanwise location
 for z in z_values:
@@ -69,15 +71,17 @@ for z in z_values:
     current_chord = chord(z, c_r, tr, b)
     
     # Calculate the moments of inertia for the current spanwise location
-    I_xx, I_yy, I_xy = calculate_moments_of_inertia(current_chord, sparLocs, t, A)
+    I_xx, I_yy, I_xy, x_bar, y_bar = calculate_moments_of_inertia(current_chord, sparLocs, t, A)
     
     # Append the results to the lists
     I_xx_values.append(I_xx)
     I_yy_values.append(I_yy)
     I_xy_values.append(I_xy)
+    x_bar_values.append(I_xx)
+    y_bar_values.append(I_xx)
     
     # Optionally, print or plot the results for each z location
-    print(f"z = {z:.2f} m: I_xx = {I_xx:.3f}, I_yy = {I_yy:.3f}, I_xy = {I_xy:.3f}")
+    print(f"z = {z:.2f} m: I_xx = {I_xx:.3f}, I_yy = {I_yy:.3f}, I_xy = {I_xy:.3f}, x_bar = {x_bar:.3f}, y_bar = {y_bar:.3f}")
 
 # After the loop, you can analyze or plot the results
 # Example: Plot the moments of inertia along the span
