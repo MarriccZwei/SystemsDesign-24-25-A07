@@ -12,7 +12,7 @@ from Deflections.MoI import get_stringers
 from Deflections.MoI import centroid
 from Deflections.MoI import MOI
 
-#Function to calculate the chord at an arbitrary spanwise location z
+# Function to calculate the chord at an arbitrary spanwise location z
 'z - spanwise location'
 'c_r - root chord'
 'tr - taper ratio'
@@ -21,11 +21,11 @@ def chord(z, c_r, tr, b):
     c = c_r - c_r * (1 - tr) * (z / (b/2))
     return c 
 
-#Function to calculate the moments of inertia for the wingbox
+# Function to calculate the moments of inertia for the wingbox
 def calculate_moments_of_inertia(chord_length, sparLocs, t, A):
     upperCoords, lowerCoords = wingbox(chord_length, sparLocs=sparLocs, plot=False)
     
-    #Calculate segment dimensions based on the coordinates
+    # Calculate segment dimensions based on the coordinates
     L1 = upperCoords[1][0] - lowerCoords[1][0]  # m
     L2 = upperCoords[1][2] - lowerCoords[1][2]  # m
     L3 = upperCoords[1][3] - lowerCoords[1][3]  # m
@@ -34,24 +34,24 @@ def calculate_moments_of_inertia(chord_length, sparLocs, t, A):
     x2 = upperCoords[0][3] - upperCoords[0][2]  # m
     x3 = upperCoords[0][1] - upperCoords[0][3]  # m
 
-    #Calculate the segments and stringers based on the dimensions
+    # Calculate the segments and stringers based on the dimensions
     segments, alpha = get_segments(L1, L2, L3, L4, x1, x2, x3, t)
     stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A)
     
-    #Calculate the centroid of the cross-section
+    # Calculate the centroid of the cross-section
     x_bar, y_bar = centroid(segments, stringers)
     
-    #Calculate the moments of inertia
+    # Calculate the moments of inertia
     I_xx, I_yy, I_xy = MOI(segments, stringers, x_bar, y_bar, alpha)
     
     return I_xx, I_yy, I_xy , x_bar, y_bar
 
-#Set the initial conditions for the wing
+# Set the initial conditions for the wing
 c_r = 9.17  # Root chord length (in meters)
 tr = 0.1  # Taper ratio
 b = 49.81  # Wingspan (in meters)
-t = 0.002 #m
-A = 0.003 #m^2 
+t = 0.002 # m
+A = 0.003 # m^2 
 sparLocs = [0.3, 0.4]  # Spar locations (as fractions of the chord)
 
 # Loop through spanwise locations from 0 to b/2 and calculate moments of inertia
@@ -81,7 +81,7 @@ for z in z_values:
     y_bar_values.append(I_xx)
     
     # Optionally, print or plot the results for each z location
-    print(f"z = {z:.2f} m: I_xx = {I_xx:.3f}, I_yy = {I_yy:.3f}, I_xy = {I_xy:.3f}, x_bar = {x_bar:.3f}, y_bar = {y_bar:.3f}")
+    print(f"z = {z:.2f} m: I_xx = {I_xx:.3f}, I_yy = {I_yy:.3f}, I_xy = {I_xy:.3f}")
 
 # After the loop, you can analyze or plot the results
 # Example: Plot the moments of inertia along the span
