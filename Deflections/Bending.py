@@ -36,13 +36,13 @@ def calculate_moments_of_inertia(chord_length, sparLocs, t, A):
 
     # Calculate the segments and stringers based on the dimensions
     segments, alpha = get_segments(L1, L2, L3, L4, x1, x2, x3, t)
-    stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A)
+    stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A, alpha)
     
     # Calculate the centroid of the cross-section
-    x_bar, y_bar = centroid(segments, stringers)
+    x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
     
     # Calculate the moments of inertia
-    I_xx, I_yy, I_xy = MOI(segments, stringers, x_bar, y_bar, alpha)
+    I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, t, alpha)
     
     return I_xx, I_yy, I_xy , x_bar, y_bar
 
@@ -55,10 +55,10 @@ A = 0.003 # m^2
 sparLocs = [0.3, 0.4]  # Spar locations (as fractions of the chord)
 
 # Loop through spanwise locations from 0 to b/2 and calculate moments of inertia
-num_points = 50  # Number of points along the span to calculate moments of inertia
+num_points = 100  # Number of points along the span to calculate moments of inertia
 z_values = np.linspace(0, b / 2, num_points)  # Array of spanwise locations (z)
 
-# Prepare lists to store the moments of inertia
+# Prepare lists to store the moments of inertia and centroid coordinates
 I_xx_values = []
 I_yy_values = []
 I_xy_values = []
@@ -70,15 +70,15 @@ for z in z_values:
     # Calculate chord length at the current spanwise location
     current_chord = chord(z, c_r, tr, b)
     
-    # Calculate the moments of inertia for the current spanwise location
+    # Calculate the moments of inertia and centroid coordinates for the current spanwise location
     I_xx, I_yy, I_xy, x_bar, y_bar = calculate_moments_of_inertia(current_chord, sparLocs, t, A)
     
     # Append the results to the lists
     I_xx_values.append(I_xx)
     I_yy_values.append(I_yy)
     I_xy_values.append(I_xy)
-    x_bar_values.append(I_xx)
-    y_bar_values.append(I_xx)
+    x_bar_values.append(x_bar)
+    y_bar_values.append(y_bar)
     
     # Optionally, print or plot the results for each z location
     print(f"z = {z:.2f} m: I_xx = {I_xx:.3f}, I_yy = {I_yy:.3f}, I_xy = {I_xy:.3f}")
