@@ -38,7 +38,7 @@ class LoadChart():
         self.vf = round(min(1.8*self.vs1, 1.8*self.vso))
 
     def positiveLoadCurve(self):
-        curveLimit = int((self.nmax)**0.5 * self.vs1)
+        curveLimit = round((self.nmax)**0.5 * self.vs1)
         lowSpeed = np.linspace(0,curveLimit,curveLimit)
         curve = lowSpeed*lowSpeed/self.vs1/self.vs1
         highSpeed = np.linspace(curveLimit+1,self.vd, self.vd -curveLimit +1)
@@ -70,7 +70,7 @@ class LoadChart():
         return chart, speed
 
     def negativeLoadCurve(self):
-        curveLimit = int((self.nmin)**0.5 * self.vs1)
+        curveLimit = round((self.nmin)**0.5 * self.vs1)
         lowSpeed = np.linspace(0,curveLimit,curveLimit)
         curve = lowSpeed*lowSpeed/self.vs1/self.vs1*(-1)
 
@@ -91,6 +91,33 @@ class LoadChart():
         negLine = line*(-1)
 
         return  line, speed, negLine
+
+    def criticalLoadCases(self): #returns a list of critical load cases as: Speed (0), Weight (1), load factor (2), altitude (3)
+        maxFlaps = [round(min(int(2**0.5 * self.vso),self.vf)), self.weight, 2 , self.altitude]
+        maxVA = [round((self.nmax)**0.5 * self.vs1), self.weight, self.nmax, self.altitude]
+        maxVD = [self.vd, self.weight, self.nmax, self.altitude]
+        minVA = [round((self.nmin)**0.5 * self.vs1), self.weight, (-1)*self.nmin, self.altitude]
+        minVC = [self.vc, self.weight, (-1)*self.nmin, self.altitude]
+
+        cll = []
+        cll.append(maxFlaps)
+        cll.append(maxVA)
+        cll.append(maxVD)
+        cll.append(minVA)
+        cll.append(minVC)
+
+        return cll
+    
+    def printCLL(self):
+        x = self.criticalLoadCases()
+        for i in x:
+            print("---------------------------")
+            print("Critical Load Case:")
+            print("Speed: "+str(i[0])+"m/s")
+            print("Weight: "+str(i[1])+"kg")
+            print("Load Factor: "+str(i[2]))
+            print("Altitude: "+str(i[3])+"m")
+            print()
 
     def plotVN(self, number = 0, plot = True):
         #colourList = ["black", "xkcd:red", "xkcd:orange", 'xkcd:yellow', "xkcd:neon green", "xkcd:green", "xkcd:sky blue", "xkcd:bright blue", "xkcd:indigo", "xkcd:purple", "xkcd:violet", "xkcd:light purple", "xkcd:pink"]
@@ -124,12 +151,14 @@ for m in massList:
     altitude = 0
     testCase = LoadChart(altitude,m, testPF)
     testCase.plotVN(i, plot=False)
+    testCase.printCLL()
     del testCase
     i=i+1
 
     altitude = Constants.CRUISEALTITUDE
     testCase = LoadChart(altitude,m, testPF)
     testCase.plotVN(i, plot=False)
+    testCase.printCLL()
     del testCase
     i=i+1
 plt.legend()
