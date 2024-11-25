@@ -38,7 +38,7 @@ def get_segments(L1, L2, L3, L4, x1, x2, x3, t):
 'A is the point area of a stringer'
 def get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A, alpha):
     # Assumed stringer spacing
-    stringer_hor_spacing = 0.1524  # Horizontal spacing in meters
+    stringer_hor_spacing = 0.3  # Horizontal spacing in meters
     total_length = x1 + x2 + x3  # Total length of wingbox upper surface
 
     # Generate i-coordinates for stringers
@@ -63,7 +63,7 @@ def get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A, alpha):
     num_upper_stringers = len(stringersUS)
     num_lower_stringers = len(stringersLS)
 
-    return stringersUS, stringersLS, num_upper_stringers, num_lower_stringers
+    return stringersUS, stringersLS, num_upper_stringers, num_lower_stringers, i_values, j_values
 
 
 # Function to determine the centroid of the wingbox cross-section
@@ -173,12 +173,12 @@ x3 = upperCoords[0][1] - upperCoords[0][3] # m
 t = 0.002 # m, assumed
 A = 0.003 # m^2, assumed
 segments, alpha = get_segments(L1, L2, L3, L4, x1, x2, x3, t)
-stringersUS, stringersLS, num_upper, num_lower = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A, alpha)
+stringersUS, stringersLS, num_upper_stringers, num_lower_stringers, i_values, j_values = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A, alpha)
 x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
 I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, t, alpha)
 print(f"CG @ MAC = {x_bar, y_bar}")
 print(f"I_xx, I_yy, I_xy @ MAC = {I_xx, I_yy, I_xy}")
-print("Number of Upper Surface Stringers @ MAC:", num_upper)
-print("Number of Lower Surface Stringers @ MAC:", num_lower)
+print("Number of Upper Surface Stringers @ MAC:", num_upper_stringers)
+print("Number of Lower Surface Stringers @ MAC:", num_lower_stringers)
 
 

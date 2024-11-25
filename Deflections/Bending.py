@@ -36,7 +36,7 @@ def calculate_moments_of_inertia(chord_length, sparLocs, t, A):
 
     # Calculate the segments and stringers based on the dimensions
     segments, alpha = get_segments(L1, L2, L3, L4, x1, x2, x3, t)
-    stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A, alpha)
+    stringersUS, stringersLS, num_upper_stringers, num_lower_stringers, i_values, j_values = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A, alpha)
     
     # Calculate the centroid of the cross-section
     x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
@@ -44,7 +44,7 @@ def calculate_moments_of_inertia(chord_length, sparLocs, t, A):
     # Calculate the moments of inertia
     I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, t, alpha)
     
-    return I_xx, I_yy, I_xy , x_bar, y_bar
+    return I_xx, I_yy, I_xy , x_bar, y_bar, i_values, j_values
 
 # Set the initial conditions for the wing
 c_r = 9.17  # Root chord length (in meters)
@@ -71,7 +71,7 @@ for z in z_values:
     current_chord = chord(z, c_r, tr, b)
     
     # Calculate the moments of inertia and centroid coordinates for the current spanwise location
-    I_xx, I_yy, I_xy, x_bar, y_bar = calculate_moments_of_inertia(current_chord, sparLocs, t, A)
+    I_xx, I_yy, I_xy, x_bar, y_bar, i_values, j_values = calculate_moments_of_inertia(current_chord, sparLocs, t, A)
     
     # Append the results to the lists
     I_xx_values.append(I_xx)
@@ -81,7 +81,7 @@ for z in z_values:
     y_bar_values.append(y_bar)
     
     # Optionally, print or plot the results for each z location
-    print(f"z = {z:.2f} m: I_xx = {I_xx:.3f}, I_yy = {I_yy:.3f}, I_xy = {I_xy:.3f}")
+    print(f"z = {z:.2f} m: I_xx = {I_xx:.3f}, I_yy = {I_yy:.3f}, I_xy = {I_xy:.3f}, Lower surface stringer j-values: {j_values:.3f}")
 
 # After the loop, you can analyze or plot the results
 # Example: Plot the moments of inertia along the span
