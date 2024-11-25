@@ -157,3 +157,9 @@ G_MODULUS = 28. * 10**9  # Pa
 POISSON_RATIO = 0.33
 YIELD_SIGMA = 450 * 10**6 # Yield tensile strenght in Pa
 ULTIMATE_SIGMA = 485 * 10**6 # Ultimate tensile strenght in Pa
+HEAT_CAPACITY = 875  # Specific Heat Capacity in Joule/kg K
+CTE_293 = 2.322 * 10**(-5)  # Coefficient of Thermal Expansion at T = 293.15 K
+CTE_523 = 2.47 * 10**(-5)  # Coefficient of Thermal Expansion at T = 523.15 K
+CONDUTIVITY = 151.3  # Thermal conductivity in W/m K
+
+
