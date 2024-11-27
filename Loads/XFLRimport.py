@@ -21,37 +21,26 @@ Cr = 9.174
 Halfspan = 49.81384193430594/2
 S = 251.3429147793505
 
-lst = Vn.runVNdiagram()
-print(lst)
+transposed = list(zip(*Vn.runVNdiagram()))
+V, mass, loadf, altitude = [list(group) for group in transposed]
 
-def Vnimport(S, lst):
-    V = []
-    mass = []
-    loadf = []
-    altitude = []
+def C_Lcalc(S, V, mass, loadf, altitude):
+    CL_dlst = []
+    CheckMaxlst = []
+    qlst = []
+    for i in range(len(V)):
+        q = 0.5 * ISA.density(altitude[i]) * (V[i])**2
+        CL_dt = (loadf [i] * mass [i] *9.80665)/(q*S)
+        CheckMax = q * CL_dt
+        CL_dlst.append(CL_dt)
+        CheckMaxlst.append(CheckMax)
+        qlst.append(q)
+        i+=1
+    CL_d = CL_dlst[CheckMaxlst.index(max(CheckMaxlst))]
+    q_d = qlst[CheckMaxlst.index(max(CheckMaxlst))]
+    return(CL_d, q_d)
 
-    lsts = []
-
-
-    for i in lsts:
-        V.append(i)
-        mass.append(1)
-
-    # Rho = ISA.density(altitude)
-    # q = 0.5 * Rho * V^2
-    # CL_d = (n*W)/(q)
-    return(V)
-
-# print(Vnimport(S))
-
-
-
-# critical load cases: speed, mass, n, alt
-# print(Vn.runVNdiagram())
-
-
-# rho = ISA.density()
-
+print(C_Lcalc(S, V, mass, loadf, altitude))
 
 
 # File path
@@ -68,8 +57,8 @@ Cd_10 = 0.029426
 
 # --- certain load factor 𝑛, weight 𝑊, freestream velocity 𝑉 and density (dependent on altitude) ρ. The required lift coefficient 
 # then follows simply from these values. FILL IN THOSE VALUES HERE!
-q = 0.5 * 1.225 * 10**2 #add later dynamic pressure
-CL_d = 0.8 #later import CL_d
+q = C_Lcalc(S, V, mass, loadf, altitude)[1]
+CL_d = C_Lcalc(S, V, mass, loadf, altitude)[0]
 Cm_d = -0.5
 
 
