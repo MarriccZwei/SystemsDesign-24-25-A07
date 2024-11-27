@@ -158,8 +158,8 @@ for i in range(24):
 # Plot
 plt.plot(ytab, cltab)
 
-plt.title('Lift over Span')
+plt.title('Lift per Span')
 plt.xlabel('y')
-plt.ylabel('cnst')    #  What is cnst???
+plt.ylabel('N/m')  
 
 plt.show()
