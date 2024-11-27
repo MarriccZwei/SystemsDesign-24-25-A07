@@ -55,7 +55,7 @@ A = 0.003 # m^2
 sparLocs = [0.3, 0.4]  # Spar locations (as fractions of the chord)
 
 # Loop through spanwise locations from 0 to b/2 and calculate moments of inertia
-num_points = 100  # Number of points along the span to calculate moments of inertia
+num_points = 50  # Number of points along the span to calculate moments of inertia
 z_values = np.linspace(0, b / 2, num_points)  # Array of spanwise locations (z)
 
 # Prepare lists to store the moments of inertia and centroid coordinates

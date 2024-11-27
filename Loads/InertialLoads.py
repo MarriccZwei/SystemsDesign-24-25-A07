@@ -83,7 +83,7 @@ def engine_shear(engine_mass, engine_zpos):
 
 #difsc - distance in front of shear centre
 def engine_torque(engine_thrust, sweep_angle, engine_zpos, engine_mass, difsc):
-    torque = np.sin(sweep_angle)*engine_thrust*consts.engine_y_offset_from_wing
+    torque = -np.sin(sweep_angle)*engine_thrust*consts.engine_y_offset_from_wing
     torque += engine_mass*consts.G*difsc #contribution of the off-centre shear
     return (engine_zpos , torque)
 

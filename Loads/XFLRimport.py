@@ -1,12 +1,58 @@
+if __name__ == "__main__":
+    # ONLY FOR TESTING
+    import sys
+    import os
+    sys.path.insert(1, os.getcwd())
+    import unittest
+    # ONLY FOR TESTING
+
 import numpy as np
 import scipy as sp
 from scipy import interpolate
 import matplotlib.pyplot as plt
 
+from General import ISA
+import VnDiagram.graph as Vn
+from OOP.Planform import Planform
+
 # Constants
 TR = 0.1
 Cr = 9.174
 Halfspan = 49.81384193430594/2
+S = 251.3429147793505
+
+lst = Vn.runVNdiagram()
+print(lst)
+
+def Vnimport(S, lst):
+    V = []
+    mass = []
+    loadf = []
+    altitude = []
+
+    lsts = []
+
+
+    for i in lsts:
+        V.append(i)
+        mass.append(1)
+
+    # Rho = ISA.density(altitude)
+    # q = 0.5 * Rho * V^2
+    # CL_d = (n*W)/(q)
+    return(V)
+
+# print(Vnimport(S))
+
+
+
+# critical load cases: speed, mass, n, alt
+# print(Vn.runVNdiagram())
+
+
+# rho = ISA.density()
+
+
 
 # File path
 txt_a0 = "Loads\MainWing_a=0.00_v=10.00ms.txt"
