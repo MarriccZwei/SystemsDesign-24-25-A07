@@ -40,9 +40,6 @@ def C_Lcalc(S, V, mass, loadf, altitude):
     q_d = qlst[CheckMaxlst.index(max(CheckMaxlst))]
     return(CL_d, q_d)
 
-print(C_Lcalc(S, V, mass, loadf, altitude))
-
-
 # File path
 txt_a0 = "Loads\MainWing_a=0.00_v=10.00ms.txt"
 txt_a10 = "Loads\MainWing_a=10.00_v=10.00ms.txt"
@@ -153,10 +150,9 @@ cltab=[]
 
 for i in range(24):
     cl = LiftperSpan(i)
-    i = i + step
-
     ytab.append(i)
     cltab.append(cl)
+    i = i + step
 
 # Plot
 plt.plot(ytab, cltab)
