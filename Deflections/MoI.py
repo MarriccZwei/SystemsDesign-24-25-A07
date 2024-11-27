@@ -36,7 +36,7 @@ def get_segments(L1, L2, L3, L4, x1, x2, x3, t):
 
 # Function to define the sringers of the cross-section
 'A is the point area of a stringer'
-def get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A, alpha):
+def get_stringers(x1, x2, x3, t, A, alpha):
     # Assumed stringer spacing (m)
     stringer_hor_spacing = 0.3  # Horizontal spacing in meters
     total_length = x1 + x2 + x3  # Total length of wingbox upper surface
@@ -151,32 +151,32 @@ def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, t, alpha):
 
     return I_xx, I_yy, I_xy
 
-# Test
-# Call wingbox function
-chord = 6.17  #MAC value
-sparLocs = [0.3, 0.4]  # Reinforcement Spar locations
+# # Test
+# # Call wingbox function
+# chord = 6.17  #MAC value
+# sparLocs = [0.3, 0.4]  # Reinforcement Spar locations
 
-upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
-'W.r.t to LE, in order FS, RS, middle spars'
-print("Upper Wing Box Coordinates:", upperCoords)
-print("Lower Wing Box Coordinates:", lowerCoords)
+# upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
+# 'W.r.t to LE, in order FS, RS, middle spars'
+# print("Upper Wing Box Coordinates:", upperCoords)
+# print("Lower Wing Box Coordinates:", lowerCoords)
 
-L1 = upperCoords[1][0] - lowerCoords[1][0] # m
-L2 = upperCoords[1][2] - lowerCoords[1][2] # m
-L3 = upperCoords[1][3] - lowerCoords[1][3] # m
-L4 = upperCoords[1][1] - lowerCoords[1][1] # m
-x1 = upperCoords[0][2] - upperCoords[0][0] # m
-x2 = upperCoords[0][3] - upperCoords[0][2] # m
-x3 = upperCoords[0][1] - upperCoords[0][3] # m
-t = 0.002 # m, assumed
-A = 0.003 # m^2, assumed
-segments, alpha = get_segments(L1, L2, L3, L4, x1, x2, x3, t)
-stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, L2, L3, L4, x1, x2, x3, t, A, alpha)
-x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
-I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, t, alpha)
-print(f"CG @ MAC = {x_bar, y_bar}")
-print(f"I_xx, I_yy, I_xy @ MAC = {I_xx, I_yy, I_xy}")
-print("Number of Upper Surface Stringers @ MAC:", num_upper_stringers)
-print("Number of Lower Surface Stringers @ MAC:", num_lower_stringers)
+# L1 = upperCoords[1][0] - lowerCoords[1][0] # m
+# L2 = upperCoords[1][2] - lowerCoords[1][2] # m
+# L3 = upperCoords[1][3] - lowerCoords[1][3] # m
+# L4 = upperCoords[1][1] - lowerCoords[1][1] # m
+# x1 = upperCoords[0][2] - upperCoords[0][0] # m
+# x2 = upperCoords[0][3] - upperCoords[0][2] # m
+# x3 = upperCoords[0][1] - upperCoords[0][3] # m
+# t = 0.002 # m, assumed
+# A = 0.003 # m^2, assumed
+# segments, alpha = get_segments(L1, L2, L3, L4, x1, x2, x3, t)
+# stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(x1, x2, x3, t, A, alpha)
+# x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
+# I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, t, alpha)
+# print(f"CG @ MAC = {x_bar, y_bar}")
+# print(f"I_xx, I_yy, I_xy @ MAC = {I_xx, I_yy, I_xy}")
+# print("Number of Upper Surface Stringers @ MAC:", num_upper_stringers)
+# print("Number of Lower Surface Stringers @ MAC:", num_lower_stringers)
 
 
