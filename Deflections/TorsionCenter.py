@@ -1,2 +1,5 @@
-def ShearCenter(Moi, t, ):
-    tau = 
+def ShearCenter(I, t):
+    return None
+
+
+print(ShearCenter)
