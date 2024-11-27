@@ -54,10 +54,10 @@ Cd_0 = 0.000566
 Cd_10 = 0.029426
 
 # --- certain load factor 𝑛, weight 𝑊, freestream velocity 𝑉 and density (dependent on altitude) ρ. The required lift coefficient 
-# then follows simply from these values. FILL IN THOSE VALUES HERE!
+# then follows simply from these values.
 q = C_Lcalc(S, V, mass, loadf, altitude)[1]
 CL_d = C_Lcalc(S, V, mass, loadf, altitude)[0]
-Cm_d = -0.5
+Cm_d = -0.5 #TO BE DONE
 
 
 def filetolist(txt):
@@ -123,13 +123,15 @@ def LiftperSpan(y):
     Lprime = Cy(y) * LiftCoef(y)[0] * q
     return Lprime
 
-def DragperSpan(y):
-    Dprime = Cy(y) * interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[2]))(y) * q
-    return Dprime
+# def DragperSpan(y):
+#     Dprime = Cy(y) * interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[2]))(y) * q
+#     return Dprime
 
 def MomperSpan(y):
     Mprime = Cy(y)**2 * MomCoef(y) * q
     return Mprime
+
+
 
 
 #Lift coef distribution and Angle of attack degrees
@@ -145,18 +147,20 @@ def MomCoef(y):
     return Cm_dy
 
 
+
+#PLOTTING
 step = 0.05 
 ytab=[]
-cltab=[]
+ltab=[]
 
 for i in range(24):
-    cl = LiftperSpan(i)
+    l = LiftperSpan(i)
     ytab.append(i)
-    cltab.append(cl)
+    ltab.append(l)
     i = i + step
 
 # Plot
-plt.plot(ytab, cltab)
+plt.plot(ytab, ltab)
 
 plt.title('Lift per Span')
 plt.xlabel('y')
