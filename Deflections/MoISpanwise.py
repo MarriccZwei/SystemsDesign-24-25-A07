@@ -25,7 +25,7 @@ def chord(z, c_r, tr, b):
 def calculate_moments_of_inertia(chord_length, sparLocs, t, A):
     upperCoords, lowerCoords = wingbox(chord_length, sparLocs=sparLocs, plot=False)
     
-    # Calculate segment dimensions based on the coordinates
+    # Calculate segment dimensions based on the wingbox coordinates
     L1 = upperCoords[1][0] - lowerCoords[1][0]  # m
     L2 = upperCoords[1][2] - lowerCoords[1][2]  # m
     L3 = upperCoords[1][3] - lowerCoords[1][3]  # m
@@ -50,8 +50,8 @@ def calculate_moments_of_inertia(chord_length, sparLocs, t, A):
 c_r = 9.17  # Root chord length (in meters)
 tr = 0.1  # Taper ratio
 b = 49.81  # Wingspan (in meters)
-t = 0.002 # m
-A = 0.003 # m^2 
+t = 0.002 # m (assumed)
+A = 0.003 # m^2 (assumed)
 sparLocs = [0.3, 0.4]  # Spar locations (as fractions of the chord)
 
 # Loop through spanwise locations from 0 to b/2 and calculate moments of inertia
