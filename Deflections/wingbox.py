@@ -19,7 +19,7 @@ def sparHeight(upperCoords, lowerCoords, sparLoc) -> list:
     return coords
 
 def wingbox(chord: float, sparLocs: list = None, plot: bool = False) -> tuple[list, list]: #Returns in flipped coordinate axis
-    #data is for chord of 0.1m MAC 6.17m
+    #data is for chord of 0.1m MAC 8.17m
     spars = [FRONTSPARFRAC, BACKSPARFRAC]
     if sparLocs != None: spars.extend(sparLocs)
 
@@ -82,8 +82,8 @@ def wingbox(chord: float, sparLocs: list = None, plot: bool = False) -> tuple[li
 
         plt.axis('equal')
         plt.grid(True)
-        #plt.show()
+        plt.show()
     return upperWingBoxCoords, lowerWingBoxCoords
 
 if __name__ == '__main__':
-    print(wingbox(6.17))
+    print(wingbox(8.14))

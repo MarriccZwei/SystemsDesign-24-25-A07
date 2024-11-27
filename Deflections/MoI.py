@@ -38,7 +38,7 @@ def get_segments(L1, L2, L3, L4, x1, x2, x3, t):
 'A is the point area of a stringer'
 def get_stringers(x1, x2, x3, t, A, alpha):
     # Assumed stringer spacing (m)
-    stringer_hor_spacing = 0.3  # Horizontal spacing in meters
+    stringer_hor_spacing = 0.15  # Horizontal spacing in meters
     total_length = x1 + x2 + x3  # Total length of wingbox upper surface
 
     # Generate i-coordinates for stringers (equally spaced)
