@@ -50,8 +50,8 @@ CL_0 = 0.132396
 CL_10 = 0.964418
 Cm_0 = -0.179106
 Cm_10 = -1.13864
-Cd_0 = 0.000566
-Cd_10 = 0.029426
+# Cd_0 = 0.000566
+# Cd_10 = 0.029426
 
 # --- certain load factor 𝑛, weight 𝑊, freestream velocity 𝑉 and density (dependent on altitude) ρ. The required lift coefficient 
 # then follows simply from these values.
