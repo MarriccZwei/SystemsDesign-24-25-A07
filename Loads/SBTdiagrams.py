@@ -139,7 +139,7 @@ if __name__ == "__main__":
 
             length = 20 # to have sth easy to everse engineer, but affecting the result, in the right order of magnitude
             pointForces = [(15, 10)]
-            maker = SBTdiagramMaker(accuracy = 50, plot=True) #we want to plot
+            maker = SBTdiagramMaker(accuracy = 50, plot=False) #we want to plot
             lenPts, loadVals = maker.shear_diagram(appl_load, pointForces, length)
 
             #to see if there is no information distortion
@@ -147,5 +147,9 @@ if __name__ == "__main__":
             plt.show()
 
             lenPts, loadVals = maker.bending_diagram(appl_load, pointForces, appl_moment, [(10, -50)], length)
+
+        def test_torque_diagrams(self):
+            maker = SBTdiagramMaker(accuracy = 50, plot=True) #we want to plot
+            lenPts, loadVals = maker.torque_diagram(lambda x:0, [(.3, -15), (.5, 10)], 0.5)
 
     unittest.main()

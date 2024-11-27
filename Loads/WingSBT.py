@@ -38,8 +38,8 @@ def combined_shear_load(fuelFraction, planform:pf.Planform, mWing, engineMass, w
 
 
 def cumulated_torque(planform:pf.Planform, Tengine, mEngine):
-    pitchinMomentDistr = xfi.MomperSpan
-    engineTorque = il.engine_torque(Tengine, planform.sweepC4, consts.ENGINESPANWISEPOS*planform.b/2, mEngine, consts.ENGINEXWRTLEMAC+planform.MAC/4)
+    pitchinMomentDistr = lambda pos:-xfi.MomperSpan(pos)
+    engineTorque = il.engine_torque(Tengine, planform.sweepC4, consts.ENGINESPANWISEPOS*planform.b/2, mEngine, consts.ENGINEXWRTLEMAC+planform.MAC/4-consts.NACELLELEN/2)
 
     return pitchinMomentDistr, [engineTorque]
 
@@ -52,18 +52,18 @@ if __name__ == "__main__":
     thrust = 91964.80101516769
     wgboxArea = 123.969 #[m^2] measured in CATIA
 
-    '''The shear diagram'''
-    distrShear, pointShearLoads = combined_shear_load(0.7, planform, mWing, mEngine, wgboxArea)
+    # '''The shear diagram'''
+    # distrShear, pointShearLoads = combined_shear_load(0.7, planform, mWing, mEngine, wgboxArea)
     diagramMaker = sbt.SBTdiagramMaker(plot=True, accuracy=1000)
-    poses, loads =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
-    #interpolate the shear diagram
-    x = 10.2
-    loadx = np.interp(x, poses, loads)
-    print(loadx)
+    # poses, loads =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
+    # #interpolate the shear diagram
+    # x = 10.2
+    # loadx = np.interp(x, poses, loads)
+    # print(loadx)
 
-    '''The bending diagram'''
-    engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, consts.ENGINESPANWISEPOS*halfspan)
-    poses, loads =diagramMaker.bending_diagram(distrShear, pointShearLoads, lambda pos:0, [engineBendingMoment], halfspan)
+    # '''The bending diagram'''
+    # engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, consts.ENGINESPANWISEPOS*halfspan)
+    # poses, loads =diagramMaker.bending_diagram(distrShear, pointShearLoads, lambda pos:0, [engineBendingMoment], halfspan)
 
     '''The torque diagram'''
     distTorque, pointTorques = cumulated_torque(planform, thrust, mEngine)

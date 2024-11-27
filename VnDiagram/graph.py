@@ -13,6 +13,9 @@ from General import Constants
 from ClassIV import flappedWing as fw
 from OOP.Planform import Planform
 
+def Veas(v, rho):
+    return v*(rho/1.225)**0.5
+
 class LoadChart():
     def __init__(self, altitude,mass, planform:Planform, nmin=1):
         cltakeoff = Constants.TAKEOFFCL
@@ -22,23 +25,26 @@ class LoadChart():
         rho = ISA.density(altitude)
         mach = ISA.speedOfSound(altitude)
         self.weight = mass
-        self.nmax = 2.1 + 24000/(self.weight*2.204623+10000)
+        #self.nmax = 2.1 + 24000/(self.weight*2.204623+10000)
+        self.nmax = 2.5
         self.nmin = nmin
         
         g=9.81
-        self.vs1 = round((2*mass*g/rho/S/clclean)**0.5)
+        self.vs1 = round(Veas((2*mass*g/rho/S/clclean)**0.5,rho))
         
-        self.vso = round((2*mass*g/rho/S/cltakeoff)**0.5)
+        self.vso = round(Veas((2*mass*g/rho/S/cltakeoff)**0.5,rho))
         
-        self.va = round(self.vs1 * (self.nmax)**0.5)
+        self.va = round(Veas(self.vs1 * (self.nmax)**0.5, rho))
         
         vc=Constants.CRUISEVELOCITY
-        self.vc = round(vc)
-        self.vd = round(vc + 0.05*mach)
+        self.vc = round(Veas(vc,rho))
+        self.vd = round(Veas(vc + 0.05*mach, rho))
         self.vf = round(min(1.8*self.vs1, 1.8*self.vso))
 
     def positiveLoadCurve(self):
-        curveLimit = round((self.nmax)**0.5 * self.vs1)
+        curveLimit = int((self.nmax)**0.5 * self.vs1)
+        if curveLimit >self.vd:
+            curveLimit = self.vd-1
         lowSpeed = np.linspace(0,curveLimit,curveLimit)
         curve = lowSpeed*lowSpeed/self.vs1/self.vs1
         highSpeed = np.linspace(curveLimit+1,self.vd, self.vd -curveLimit +1)
@@ -51,7 +57,7 @@ class LoadChart():
         return chart, speed
     
     def flapsLoadCurve(self):
-        curveLimit = round(min(int(2**0.5 * self.vso),self.vf))
+        curveLimit = int(min(int(2**0.5 * self.vso),self.vf))
         lowSpeed = np.linspace(0,curveLimit,curveLimit)
         curve = lowSpeed*lowSpeed/self.vso/self.vso
         if curveLimit <= self.vf:
@@ -73,7 +79,8 @@ class LoadChart():
         curveLimit = round((self.nmin)**0.5 * self.vs1)
         lowSpeed = np.linspace(0,curveLimit,curveLimit)
         curve = lowSpeed*lowSpeed/self.vs1/self.vs1*(-1)
-
+        if curveLimit >self.vc:
+            curveLimit = self.vc-1
         highSpeed = np.linspace(curveLimit+1,self.vc, self.vc -curveLimit +1)
         flat = np.ones(self.vc - curveLimit +1)*self.nmin*(-1)
         
@@ -141,25 +148,35 @@ class LoadChart():
         if plot:
             plt.show()
 
-otherpF = Planform(400, 10, 0.3, 0.3, 0)
-testPF = Planform(251,9.87,0.1,28.5, 2.15, radians = False)
+def runVNdiagram(plot = False):
+    testPF = Planform(251,9.87,0.1,28.5, 2.15, radians = False)
+    critList = []
+    massList = [66300,115742,185548]
+    i =1
 
-#OEW, OEW+maxPL, MTOM
-massList = [66300,115742,185548]
-i =1
-for m in massList:
-    altitude = 0
-    testCase = LoadChart(altitude,m, testPF)
-    testCase.plotVN(i, plot=False)
-    testCase.printCLL()
-    del testCase
-    i=i+1
+    for m in massList:
+        altitude = 0
+        testCase = LoadChart(altitude,m, testPF)
+        critList = critList + (testCase.criticalLoadCases())
+        if plot == True:
+            testCase.plotVN(i, plot=False)
+        #testCase.printCLL()
+        del testCase
+        i=i+1
 
-    altitude = Constants.CRUISEALTITUDE
-    testCase = LoadChart(altitude,m, testPF)
-    testCase.plotVN(i, plot=False)
-    testCase.printCLL()
-    del testCase
-    i=i+1
-plt.legend()
-plt.show()
+        altitude = Constants.CRUISEALTITUDE
+        testCase = LoadChart(altitude,m, testPF)
+        critList = critList + (testCase.criticalLoadCases())
+        if plot == True:
+            testCase.plotVN(i, plot=False)
+        del testCase
+        i=i+1
+    
+    if plot == True:
+        plt.legend()
+        plt.show()
+    for k in critList:
+        print(k)
+    return critList
+
+runVNdiagram(plot = True)
