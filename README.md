@@ -7,6 +7,7 @@ Loads/:
     XFLRimport.py - a file imoprting data from XFLR 5
     InertialLoads.py - a file allowing for estimating inertial loads such as wing mass and bending relief
     CriticalLoads.py - a file finding the critical loads, using the other modules
+    WingSBT.py - a file containing functions that combine the loads applied to the wing for the urpose of creating the SBT diagram.
 Deflections/
     MoI.py - a file with moment of inertia estimations
         - centroid function returns centroid coordinates w.r.t the left upper corned of the wingbox
