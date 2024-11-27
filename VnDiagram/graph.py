@@ -25,8 +25,7 @@ class LoadChart():
         rho = ISA.density(altitude)
         mach = ISA.speedOfSound(altitude)
         self.weight = mass
-        #self.nmax = 2.1 + 24000/(self.weight*2.204623+10000)
-        self.nmax = 2.5
+        self.nmax = max(2.1 + 24000/(self.weight*2.204623+10000),2.5)
         self.nmin = nmin
         
         g=9.81
@@ -35,24 +34,30 @@ class LoadChart():
         self.vso = round(Veas((2*mass*g/rho/S/cltakeoff)**0.5,rho))
         
         self.va = round(Veas(self.vs1 * (self.nmax)**0.5, rho))
-        
-        vc=Constants.CRUISEVELOCITY
-        self.vc = round(Veas(vc,rho))
-        self.vd = round(Veas(vc + 0.05*mach, rho))
+        self.vc = round(Veas(Constants.CRUISEVELOCITY,rho))
+        self.vd = round(Veas(Constants.CRUISEVELOCITY + 0.05*mach, rho))
         self.vf = round(min(1.8*self.vs1, 1.8*self.vso))
 
     def positiveLoadCurve(self):
         curveLimit = int((self.nmax)**0.5 * self.vs1)
         if curveLimit >self.vd:
-            curveLimit = self.vd-1
-        lowSpeed = np.linspace(0,curveLimit,curveLimit)
-        curve = lowSpeed*lowSpeed/self.vs1/self.vs1
-        highSpeed = np.linspace(curveLimit+1,self.vd, self.vd -curveLimit +1)
-        flat = np.ones(self.vd - curveLimit +1)*self.nmax
-        flat[-1]=0
+            curveLimit = self.vd
+            lowSpeed = np.linspace(0,curveLimit,curveLimit)
+            curve = lowSpeed*lowSpeed/self.vs1/self.vs1
+            flat = np.zeros(1)
+            highSpeed =np.ones(1)*self.vd
+            endSpeed = np.ones(1)*self.vd
+            endN = np.zeros(1)
+        else: 
+            lowSpeed = np.linspace(0,curveLimit,curveLimit)
+            curve = lowSpeed*lowSpeed/self.vs1/self.vs1
+            highSpeed = np.linspace(curveLimit+1,self.vd, self.vd -curveLimit +1)
+            flat = np.ones(self.vd - curveLimit +1)*self.nmax
+            endSpeed = np.ones(1)*self.vd
+            endN = np.zeros(1)
 
-        chart = np.concatenate((curve,flat))
-        speed = np.concatenate((lowSpeed,highSpeed))
+        chart = np.concatenate((curve,flat,endN))
+        speed = np.concatenate((lowSpeed,highSpeed,endSpeed))
 
         return chart, speed
     
@@ -67,7 +72,7 @@ class LoadChart():
             print("FAIL")
             highSpeed = lowSpeed[-1]
             flat = np.zeros(1)
-        print(self.vf*self.vf/self.vs1/self.vs1)
+        #print(self.vf*self.vf/self.vs1/self.vs1)
         if self.vf*self.vf/self.vs1/self.vs1 <2:
             print("DROP")
             flat[-1] = self.vf*self.vf/self.vs1/self.vs1
@@ -128,7 +133,7 @@ class LoadChart():
 
     def plotVN(self, number = 0, plot = True):
         #colourList = ["black", "xkcd:red", "xkcd:orange", 'xkcd:yellow', "xkcd:neon green", "xkcd:green", "xkcd:sky blue", "xkcd:bright blue", "xkcd:indigo", "xkcd:purple", "xkcd:violet", "xkcd:light purple", "xkcd:pink"]
-        colourList = ["black", "xkcd:red", "xkcd:pink", 'xkcd:green', "xkcd:neon green", "xkcd:blue", "xkcd:sky blue", "xkcd:purple", "xkcd:light purple", "xkcd:purple", "xkcd:violet", "xkcd:light purple", "xkcd:pink"]
+        colourList = ["black", "xkcd:red", "xkcd:pink", 'xkcd:green', "xkcd:neon green", "xkcd:blue", "xkcd:sky blue", "xkcd:purple", "xkcd:light purple"]
         if number > len(colourList):
             number = 0
         colourChoice = colourList[number]
@@ -148,10 +153,9 @@ class LoadChart():
         if plot:
             plt.show()
 
-def runVNdiagram(plot = False):
+def runVNdiagram(plot = False, massList = [66300,115742,185548]):
     testPF = Planform(251,9.87,0.1,28.5, 2.15, radians = False)
     critList = []
-    massList = [66300,115742,185548]
     i =1
 
     for m in massList:
@@ -171,12 +175,28 @@ def runVNdiagram(plot = False):
             testCase.plotVN(i, plot=False)
         del testCase
         i=i+1
-    
+        
     if plot == True:
         plt.legend()
         plt.show()
+    
+    spdList = ["V-minFlaps", 'Va', 'Vd', 'V-minNim', 'Vc']
+    altList = ["sea level", "cruise altitude"]
+    weightList = ["OEW", "OEW + max payload", "MTOW"]
+    s = 0
+    a = 0
+    w = 0
+    c=0
+    print("<====== Begin critical load cases ======> ")
+    
     for k in critList:
-        print(k)
+        s = c%5
+        w=int(c/10)%3
+        a=int(c/5)%2
+        print(f"Case {c+1}: {k} \t {spdList[s]}, {weightList[w]}, {altList[a]}")
+        c=c+1
+    
+    print("<====== End critical load cases ======> ")
     return critList
 
 runVNdiagram(plot = True)
