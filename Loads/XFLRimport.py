@@ -31,11 +31,12 @@ def C_Lcalc(S, V, mass, loadf, altitude):
     for i in range(len(V)):
         q = 0.5 * ISA.density(altitude[i]) * (V[i])**2
         CL_dt = (loadf [i] * mass [i] *9.80665)/(q*S)
-        CheckMax = q * CL_dt
+        CheckMax = loadf [i] * mass [i] + q
         CL_dlst.append(CL_dt)
         CheckMaxlst.append(CheckMax)
         qlst.append(q)
         i+=1
+    print(f'The case for the max lift per span = {CheckMaxlst.index(max(CheckMaxlst))+1}')
     CL_d = CL_dlst[CheckMaxlst.index(max(CheckMaxlst))]
     q_d = qlst[CheckMaxlst.index(max(CheckMaxlst))]
     return(CL_d, q_d)
