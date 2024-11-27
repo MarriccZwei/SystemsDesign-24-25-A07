@@ -11,7 +11,7 @@ import numpy as np
 import scipy.integrate as integrate
 from scipy.interpolate import interp1d
 from OOP.Planform import Planform
-from Deflections import Bending as center
+from Deflections import MoISpanwise as center
 
 def length(point1: tuple, point2: tuple) -> int:
     dx = point1[0]-point2[0]
@@ -113,9 +113,11 @@ if __name__ == '__main__':
     spars = [0.3, 0.5]
     thicknesses = [(2,1,2,1), (2,1,2,1), (2,1,2,1)]
     #cent = (1.632, 0.35)
-    #chord = 8.13#wing.chord_spanwise(15/(wing.b/2))
-    #print(chord)
-    #J = calcJ(chord, thicknesses, cent, spars, True)
-    theta = twist(wing, thicknesses, 30, [1000, 0], [0, 30], center.x_bar_values, center.y_bar_values, center.z_values, spars)
+    # loc = 10
+    # chord = wing.chord_spanwise(loc/(wing.b/2))
+    # xfunc = interp1d(center.z_values, center.x_bar_values, bounds_error=False, fill_value="extrapolate")
+    # yfunc = interp1d(center.z_values, center.y_bar_values, bounds_error=False, fill_value="extrapolate")
+    # J = calcJ(chord, thicknesses, (xfunc(loc), yfunc(loc)), spars, True)
+    theta = twist(wing, thicknesses, 20, [1000, 0], [0, 30], center.x_bar_values, center.y_bar_values, center.z_values, spars)
     print(theta)
 
