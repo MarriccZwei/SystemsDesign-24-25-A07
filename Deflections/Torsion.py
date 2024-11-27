@@ -10,19 +10,21 @@ from General import Constants as c
 import numpy as np
 import scipy.integrate as integrate
 from scipy.interpolate import interp1d
+from OOP.Planform import Planform
+from Deflections import Bending as center
 
 def length(point1: tuple, point2: tuple) -> int:
     dx = point1[0]-point2[0]
     dy = point1[1]-point2[1]
     return np.sqrt(dx**2+dy**2)
 
-def calcJ(chord: float, thicknesses: list, spars: list = None, plot = False) -> int:
+def calcJ(chord: float, thicknesses: list, centroid: tuple, spars: list = None, plot = False) -> int:
     #Thicknesses list from Leftmost area to right areas start bottom t and then counterclockwise
     if spars == None: spars = []
     G = c.G_MODULUS
     T = 1
     upperCoords, lowerCoords = wingbox(chord, plot=False, sparLocs=spars)
-    xBar, yBar = (1.632, 0.35)
+    xBar, yBar = centroid #(1.632, 0.35)
     origin = (upperCoords[0][0]+xBar, upperCoords[1][0]-yBar)
     upperPoints = list(zip(upperCoords[0],upperCoords[1]))
     lowerPoints = list(zip(lowerCoords[0],lowerCoords[1]))
@@ -97,17 +99,23 @@ def calcJ(chord: float, thicknesses: list, spars: list = None, plot = False) -> 
         plt.show()
     return J
 
-def twist(j: float, z: int, torque: list, zCoord: list) -> float:
+def twist(planform: Planform, thicknesses: list, loc: int, torque: list, zCoordsForce: list, 
+          xBars: list, yBars: list, zCoordsCent: list, spars: list = None) -> float:
     G = c.G_MODULUS
-    tFunc = interp1d(zCoord, torque, bounds_error=False, fill_value="extrapolate")
-    twist, error = integrate.quad(lambda z: tFunc(z)/(G*j), 0, z)
+    tFunc = interp1d(zCoordsForce, torque, bounds_error=False, fill_value="extrapolate")
+    xfunc = interp1d(zCoordsCent, xBars, bounds_error=False, fill_value="extrapolate")
+    yfunc = interp1d(zCoordsCent, yBars, bounds_error=False, fill_value="extrapolate")
+    twist, error = integrate.quad(lambda z: tFunc(z)/(G*calcJ(planform.chord_spanwise(z/(planform.b/2)), thicknesses, (xfunc(z), yfunc(z)), spars)), 0, loc)
     return twist
 
 if __name__ == '__main__':
-    chord = 8.14
+    wing = Planform(251, 9.87,0.1,28.5,2.15,False)
     spars = [0.3, 0.5]
     thicknesses = [(2,1,2,1), (2,1,2,1), (2,1,2,1)]
-    res = calcJ(chord, thicknesses, spars)
-    theta = twist(res, 30, [1000, 0], [0, 30])
+    #cent = (1.632, 0.35)
+    #chord = 8.13#wing.chord_spanwise(15/(wing.b/2))
+    #print(chord)
+    #J = calcJ(chord, thicknesses, cent, spars, True)
+    theta = twist(wing, thicknesses, 30, [1000, 0], [0, 30], center.x_bar_values, center.y_bar_values, center.z_values, spars)
     print(theta)
 
