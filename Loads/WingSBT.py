@@ -10,10 +10,11 @@ import Loads.InertialLoads as il
 import Loads.XFLRimport as xfi
 import OOP.Planform as pf
 import numpy as np
+import Deflections.MoISpanwise as ms
 
 def combined_shear_load(fuelFraction, planform:pf.Planform, mWing, engineMass, wgboxArea):
     #aerodynamics loads imported from xflr
-    aerodynamicShear = xfi.LiftperSpan
+    aerodynamicShear = lambda pos: -xfi.LiftperSpan(pos) #to account for the fact that lift is negative in our coord system
 
     #wing structure self-weight
     distrWeightShear, ribPtLoads = il.wing_weight_distr_est(planform, mWing, wgboxArea)
@@ -36,12 +37,24 @@ def combined_shear_load(fuelFraction, planform:pf.Planform, mWing, engineMass, w
 
     return distrShear, pointShearLoads
 
+def interpolatedI(I, halfspan):
+    return lambda pos:np.interp(pos, np.linspace(0, halfspan, len(I)), I)
 
 def cumulated_torque(planform:pf.Planform, Tengine, mEngine):
-    pitchinMomentDistr = lambda pos:-xfi.MomperSpan(pos)
-    engineTorque = il.engine_torque(Tengine, planform.sweepC4, consts.ENGINESPANWISEPOS*planform.b/2, mEngine, consts.ENGINEXWRTLEMAC+planform.MAC/4-consts.NACELLELEN/2)
+    pitchinMomentDistr = lambda pos:-xfi.MomperSpan(pos)*np.cos(planform.sweepC4)
+    intXbar = interpolatedI(ms.x_bar_values, planform.b/2)
+    CgdistEngStruct = consts.ENGINEXWRTLEMAC+np.tan(planform.sweepLE)*(consts.ENGINESPANWISEPOS-planform.YMAC)+intXbar(consts.ENGINESPANWISEPOS)-consts.NACELLELEN/2
+    engineTorque = il.engine_torque(Tengine, planform.sweepC4, consts.ENGINESPANWISEPOS*planform.b/2, mEngine, CgdistEngStruct)
 
-    return pitchinMomentDistr, [engineTorque]
+    #torque due to shear offset
+    intXbar = interpolatedI(ms.x_bar_values, planform.b/2)
+    def liftShearTorque(pos):
+        chord = planform.chord_spanwise(pos/planform.b*2)
+        CgC4dist = 0.2*chord+intXbar(pos)-0.25*chord
+        return -CgC4dist*xfi.LiftperSpan(pos)
+
+    torqueDistr = lambda pos:liftShearTorque(pos)+pitchinMomentDistr(pos)
+    return torqueDistr, [engineTorque]
 
 if __name__ == "__main__":
     #wp3 values
@@ -63,7 +76,7 @@ if __name__ == "__main__":
 
     '''The bending diagram'''
     engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, consts.ENGINESPANWISEPOS*halfspan)
-    poses, loads =diagramMaker.bending_diagram(distrShear, pointShearLoads, lambda pos:0, [engineBendingMoment], halfspan)
+    poses, loads =diagramMaker.bending_diagram(distrShear, pointShearLoads, lambda pos:xfi.MomperSpan(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
 
     '''The torque diagram'''
     distTorque, pointTorques = cumulated_torque(planform, thrust, mEngine)
