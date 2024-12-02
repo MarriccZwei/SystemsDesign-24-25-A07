@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from General import ISA
 import VnDiagram.graph as Vn
 from OOP.Planform import Planform
+from math import cos,sin,pi
 
 # Constants
 TR = 0.1
@@ -122,9 +123,13 @@ def LiftperSpan(y):
     Lprime = Cy(y) * LiftCoef(y)[0] * q
     return Lprime
 
-# def DragperSpan(y):
-#     Dprime = Cy(y) * interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[2]))(y) * q
-#     return Dprime
+def DragperSpan(y):
+    Dprime = Cy(y) * DragCoef(y) * q
+    return Dprime
+
+def NormalperSpan(y):
+    Nprime = cos(LiftCoef(10)[1]*(pi/180))*LiftperSpan(y) + sin(LiftCoef(10)[1]*(pi/180))*DragperSpan(y)
+    return Nprime
 
 def MomperSpan(y):
     Mprime = Cy(y)**2 * MomCoef(y) * q
@@ -146,23 +151,29 @@ def MomCoef(y):
     return Cm_dy
 
 
+def DragCoef(y):
+    Cd_dy = interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[2]))(y) + ((CL_d**2 - CL_0**2)/(CL_10**2 - CL_0**2)) * (interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[2]))(y) - interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[2]))(y))
+    return Cd_dy
+
+
+print(LiftCoef(3)[1])
 
 #PLOTTING to test
-# step = 0.05
-# ytab=[]
-# ltab=[]
+step = 0.05
+ytab=[]
+ltab=[]
 
-# for i in range(24):
-#     l = MomperSpan(i)
-#     ytab.append(i)
-#     ltab.append(l)
-#     i = i + step
+for i in range(24):
+    l = NormalperSpan(i)
+    ytab.append(i)
+    ltab.append(l)
+    i = i + step
 
-# # Plot
-# plt.plot(ytab, ltab)
+# Plot
+plt.plot(ytab, ltab)
 
-# plt.title('Lift per Span')
-# plt.xlabel('y')
-# plt.ylabel('N/m')  
+plt.title('Lift per Span')
+plt.xlabel('y')
+plt.ylabel('N/m')  
 
-# plt.show()
+plt.show()
