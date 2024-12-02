@@ -147,22 +147,22 @@ def MomCoef(y):
 
 
 
-#PLOTTING
-step = 0.05 
-ytab=[]
-ltab=[]
+#PLOTTING to test
+# step = 0.05
+# ytab=[]
+# ltab=[]
 
-for i in range(24):
-    l = MomperSpan(i)
-    ytab.append(i)
-    ltab.append(l)
-    i = i + step
+# for i in range(24):
+#     l = MomperSpan(i)
+#     ytab.append(i)
+#     ltab.append(l)
+#     i = i + step
 
-# Plot
-plt.plot(ytab, ltab)
+# # Plot
+# plt.plot(ytab, ltab)
 
-plt.title('Lift per Span')
-plt.xlabel('y')
-plt.ylabel('N/m')  
+# plt.title('Lift per Span')
+# plt.xlabel('y')
+# plt.ylabel('N/m')  
 
-plt.show()
+# plt.show()
