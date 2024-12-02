@@ -6,6 +6,7 @@ from scipy.interpolate import interp1d
 
 FRONTSPARFRAC = 0.2
 BACKSPARFRAC = 0.6
+sparLocs = [0.4]
 
 def readCSVFile(name) -> pd.DataFrame:
     path = os.path.join(os.getcwd(), name)
@@ -18,7 +19,7 @@ def sparHeight(upperCoords, lowerCoords, sparLoc) -> list:
     coords = [[sparLoc, sparLoc], [float(interpUpper(sparLoc)), float(interpLower(sparLoc))]]
     return coords
 
-def wingbox(chord: float, sparLocs: list = None, plot: bool = False) -> tuple[list, list]: #Returns in flipped coordinate axis
+def wingbox(chord: float, sparLocs=sparLocs , plot: bool = False) -> tuple[list, list]: #Returns in flipped coordinate axis
     #data is for chord of 0.1m MAC 8.17m
     spars = [FRONTSPARFRAC, BACKSPARFRAC]
     if sparLocs != None: spars.extend(sparLocs)
