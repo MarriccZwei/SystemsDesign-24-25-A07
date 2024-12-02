@@ -207,4 +207,4 @@ def runVNdiagram(plot = False, massList = [66300,115742,185548]):
     print("<====== End critical load cases ======> ")
     return critList
 
-runVNdiagram(plot = True)
+#runVNdiagram(plot = True)
