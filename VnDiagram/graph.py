@@ -25,7 +25,8 @@ class LoadChart():
         rho = ISA.density(altitude)
         mach = ISA.speedOfSound(altitude)
         self.weight = mass
-        self.nmax = max(2.1 + 24000/(self.weight*2.204623+10000),2.5)
+        #self.nmax = min(max(2.1 + 24000/(self.weight*2.204623+10000),2.5),3.8)
+        self.nmax = min(max(4.2,2.5),3.8)
         self.nmin = nmin
         
         g=9.81
