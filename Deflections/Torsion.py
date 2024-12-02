@@ -37,8 +37,9 @@ def calcJ(chord: float, thicknesses: list, centroid: tuple, spars: list = None, 
     #transformedPoints = np.array(transformedPoints)
     angles = [np.arctan2(p[1], p[0]) for p in transformedPoints]
     angles, transformedPoints = zip(*sorted(zip(angles, transformedPoints)))
-    for i, point in enumerate(transformedPoints):
-        plt.text(point[0], point[1], i+1)
+    if plot:
+        for i, point in enumerate(transformedPoints):
+            plt.text(point[0], point[1], i+1)
     xCoor, yCoor = zip(*transformedPoints)
 
     areas = []
@@ -108,6 +109,42 @@ def deltatwist(planform: Planform, thicknesses: list, range: tuple, torque: list
     twist, error = integrate.quad(lambda z: tFunc(z)/(G*calcJ(planform.chord_spanwise(z/(planform.b/2)), thicknesses, (xfunc(z), yfunc(z)), spars)), range[0], range[1])
     return twist
 
+def twist(planform: Planform, thicknesses: list, loc: float, torque: list, zCoordsForce: list, 
+          xBars: list, yBars: list, zCoordsCent: list, cutoff: float = None, spars: list = None) -> float:
+    if cutoff != None and loc > cutoff:
+        left = tuple(0, cutoff)
+        right = tuple(cutoff, planform.b/2)
+        deltaBase = deltatwist(planform, thicknesses, left, torque, zCoordsForce, xBars, yBars, zCoordsCent, spars)
+        deltaRight = deltatwist(planform, thicknesses, right, torque, zCoordsForce, xBars, yBars, zCoordsCent)
+        return deltaBase+deltaRight
+    delta = deltatwist(planform, thicknesses, (0, loc), torque, zCoordsForce, xBars, yBars, zCoordsCent, spars)
+    return delta
+
+def jGraph(planform: Planform, thicknesses: list, xBars: list, yBars: list, zCoordsCent: list, zAxis: list, spars: list = None) -> list:
+    xfunc = interp1d(zCoordsCent, xBars, bounds_error=False, fill_value="extrapolate")
+    yfunc = interp1d(zCoordsCent, yBars, bounds_error=False, fill_value="extrapolate")
+    jlist = []
+    for z in zAxis:
+        chord = planform.chord_spanwise(z/(planform.b/2))
+        j = calcJ(chord, thicknesses, (xfunc(z), yfunc(z)), spars)
+        jlist.append(j)
+    return jlist
+
+def graphs(planform: Planform, thicknesses: list, torque: list, zCoordsForce: list, 
+           xBars: list, yBars: list, zCoordsCent: list, zAxis: list, cutoff: float = None, spars: list = None) -> list:
+    twistList = []
+    jList =[]
+    xfunc = interp1d(zCoordsCent, xBars, bounds_error=False, fill_value="extrapolate")
+    yfunc = interp1d(zCoordsCent, yBars, bounds_error=False, fill_value="extrapolate")
+    for z in zAxis:
+        chord = planform.chord_spanwise(z/(planform.b/2))
+        j = calcJ(chord, thicknesses, (xfunc(z), yfunc(z)), spars)
+        theta = twist(planform, thicknesses, z, torque, zCoordsForce, xBars, yBars, zCoordsCent, cutoff, spars)
+        jList.append(j)
+        twistList.append(np.rad2deg(theta))
+    return jList, twistList
+
+
 if __name__ == '__main__':
     wing = Planform(251, 9.87,0.1,28.5,2.15,False)
     spars = [0.3, 0.5]
@@ -119,5 +156,13 @@ if __name__ == '__main__':
     # yfunc = interp1d(center.z_values, center.y_bar_values, bounds_error=False, fill_value="extrapolate")
     # J = calcJ(chord, thicknesses, (xfunc(loc), yfunc(loc)), spars, True)
     deltatheta = deltatwist(wing, thicknesses, (0, 10), [1000, 0], [0, 30], center.x_bar_values, center.y_bar_values, center.z_values, spars)
-    print(deltatheta)
+    #print(deltatheta)
+    zAxis = np.linspace(0, wing.b/2)
+    js, thetas = graphs(wing, thicknesses,[1000, 0], [0, 30], center.x_bar_values, center.y_bar_values, center.z_values, zAxis, spars=spars)
+    
+    fig, (ax1, ax2) = plt.subplots(2)
+    fig.suptitle('Torsion Graphs')
+    ax1.plot(zAxis, js)
+    ax2.plot(zAxis, thetas)
+    plt.show()
 

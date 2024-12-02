@@ -30,7 +30,7 @@ def interpolated_intBendMoment(poses, intBendMoment):
 def integrate_bending_defl(poses, intBendMoment, IxxValues, span):
     intBendFun = interpolated_intBendMoment(poses, intBendMoment) #interpolate internal bending moment
     IxxFun = lambda pos:np.interp(pos, np.linspace(0, span/2, len(IxxValues)), IxxValues) #interpolate Ixx
-    secondDeriv = lambda pos:intBendFun(pos)/c.E_MODULUS/IxxFun(pos)
+    secondDeriv = lambda pos:-intBendFun(pos)/c.E_MODULUS/IxxFun(pos)
     firstDeriv = lambda pos:itg.quad(secondDeriv, 0, pos)[0]
 
     return lambda pos:itg.quad(firstDeriv, 0, pos)[0]

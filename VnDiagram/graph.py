@@ -25,7 +25,8 @@ class LoadChart():
         rho = ISA.density(altitude)
         mach = ISA.speedOfSound(altitude)
         self.weight = mass
-        self.nmax = max(2.1 + 24000/(self.weight*2.204623+10000),2.5)
+        #self.nmax = min(max(2.1 + 24000/(self.weight*2.204623+10000),2.5),3.8)
+        self.nmax = min(max(4.2,2.5),3.8)
         self.nmin = nmin
         
         g=9.81
@@ -133,7 +134,7 @@ class LoadChart():
 
     def plotVN(self, number = 0, plot = True):
         #colourList = ["black", "xkcd:red", "xkcd:orange", 'xkcd:yellow', "xkcd:neon green", "xkcd:green", "xkcd:sky blue", "xkcd:bright blue", "xkcd:indigo", "xkcd:purple", "xkcd:violet", "xkcd:light purple", "xkcd:pink"]
-        colourList = ["black", "xkcd:red", "xkcd:pink", 'xkcd:green', "xkcd:neon green", "xkcd:blue", "xkcd:sky blue", "xkcd:purple", "xkcd:light purple"]
+        colourList = ["black", "xkcd:red", "xkcd:pink", 'xkcd:green', "xkcd:spring green", "xkcd:blue", "xkcd:cerulean", "xkcd:purple", "xkcd:hot pink"]
         if number > len(colourList):
             number = 0
         colourChoice = colourList[number]
@@ -143,9 +144,9 @@ class LoadChart():
         y = self.oneGeeLines()
         
         title = "Mass: "+str(self.weight) + "kg, altitude: "+ str(self.altitude) +"m"
-
-        plt.plot(y[1],y[0], "xkcd:slate")
-        plt.plot(y[1],y[2], "xkcd:slate")
+        
+        #plt.plot(y[1],y[0], "xkcd:slate")
+        #plt.plot(y[1],y[2], "xkcd:slate")
         plt.plot(u[1],u[0], colourChoice, label=title)
         plt.plot(w[1],w[0], colourChoice)
         plt.plot(x[1],x[0], colourChoice)
@@ -159,6 +160,7 @@ def runVNdiagram(plot = False, massList = [66300,115742,185548]):
     i =1
 
     for m in massList:
+        
         altitude = 0
         testCase = LoadChart(altitude,m, testPF)
         critList = critList + (testCase.criticalLoadCases())
@@ -168,6 +170,9 @@ def runVNdiagram(plot = False, massList = [66300,115742,185548]):
         del testCase
         i=i+1
 
+        #plt.legend()
+        #plt.show()
+
         altitude = Constants.CRUISEALTITUDE
         testCase = LoadChart(altitude,m, testPF)
         critList = critList + (testCase.criticalLoadCases())
@@ -175,6 +180,9 @@ def runVNdiagram(plot = False, massList = [66300,115742,185548]):
             testCase.plotVN(i, plot=False)
         del testCase
         i=i+1
+
+        #plt.legend()
+        #plt.show()
         
     if plot == True:
         plt.legend()
@@ -199,4 +207,4 @@ def runVNdiagram(plot = False, massList = [66300,115742,185548]):
     print("<====== End critical load cases ======> ")
     return critList
 
-runVNdiagram(plot = True)
+#runVNdiagram(plot = True)
