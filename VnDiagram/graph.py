@@ -93,7 +93,7 @@ class LoadChart():
         reallyHighSpeed = np.linspace(self.vc+1, self.vd, self.vd - self.vc + 1)
         linear = np.linspace(-1*self.nmin, 0, self.vd - self.vc + 1)
 
-        chart = np.concatenate((curve,flat, linear))
+        chart =    np.concatenate((curve,flat, linear))
         speed = np.concatenate((lowSpeed,highSpeed, reallyHighSpeed))
 
         return chart, speed
@@ -135,7 +135,7 @@ class LoadChart():
     def plotVN(self, number = 0, plot = True):
         #colourList = ["black", "xkcd:red", "xkcd:orange", 'xkcd:yellow', "xkcd:neon green", "xkcd:green", "xkcd:sky blue", "xkcd:bright blue", "xkcd:indigo", "xkcd:purple", "xkcd:violet", "xkcd:light purple", "xkcd:pink"]
         colourList = ["black", "xkcd:red", "xkcd:pink", 'xkcd:green', "xkcd:spring green", "xkcd:blue", "xkcd:cerulean", "xkcd:purple", "xkcd:hot pink"]
-        if number > len(colourList):
+        if number >= len(colourList):
             number = 0
         colourChoice = colourList[number]
         u = self.flapsLoadCurve()
