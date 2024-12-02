@@ -48,8 +48,8 @@ txt_a10 = "Loads\MainWing_a=10.00_v=10.00ms.txt"
 #FROM TXT FILES
 CL_0 = 0.132396
 CL_10 = 0.964418
-Cm_0 = -0.179106
-Cm_10 = -1.13864
+# Cm_0 = -0.179106
+# Cm_10 = -1.13864
 # Cd_0 = 0.000566
 # Cd_10 = 0.029426
 
@@ -57,7 +57,6 @@ Cm_10 = -1.13864
 # then follows simply from these values.
 q = C_Lcalc(S, V, mass, loadf, altitude)[1]
 CL_d = C_Lcalc(S, V, mass, loadf, altitude)[0]
-Cm_d = -0.5 #TO BE DONE
 
 
 def filetolist(txt):
@@ -143,7 +142,7 @@ def LiftCoef(y):
 #pitching moment coef distribution and Angle of attack degrees
 
 def MomCoef(y):
-    Cm_dy = interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[3]))(y) + ((Cm_d - Cm_0)/(Cm_10 - Cm_0)) * (interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[3]))(y) - interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[3]))(y))
+    Cm_dy = interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[3]))(y) + ((CL_d - CL_0)/(CL_10 - CL_0)) * (interpolate((filetolist(txt_a10)[0]),(filetolist(txt_a10)[3]))(y) - interpolate((filetolist(txt_a0)[0]),(filetolist(txt_a0)[3]))(y))
     return Cm_dy
 
 
@@ -154,7 +153,7 @@ ytab=[]
 ltab=[]
 
 for i in range(24):
-    l = LiftperSpan(i)
+    l = MomperSpan(i)
     ytab.append(i)
     ltab.append(l)
     i = i + step
