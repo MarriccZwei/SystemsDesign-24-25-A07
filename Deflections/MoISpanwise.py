@@ -51,7 +51,7 @@ c_r = 9.17  # Root chord length (in meters)
 tr = 0.1  # Taper ratio
 b = 49.81  # Wingspan (in meters)
 t = 0.002 # m (assumed)
-A = 0.003 # m^2 (assumed)
+A = 0.0006 # m^2 (assumed)
 sparLocs = [0.3, 0.4]  # Spar locations (as fractions of the chord)
 
 # Loop through spanwise locations from 0 to b/2 and calculate moments of inertia
