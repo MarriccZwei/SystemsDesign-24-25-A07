@@ -14,7 +14,7 @@ import Deflections.MoISpanwise as ms
 
 def combined_shear_load(fuelFraction, planform:pf.Planform, mWing, engineMass, wgboxArea):
     #aerodynamics loads imported from xflr
-    aerodynamicShear = lambda pos: -xfi.LiftperSpan(pos) #to account for the fact that lift is negative in our coord system
+    aerodynamicShear = lambda pos: -xfi.NormalperSpan(pos) #to account for the fact that lift is negative in our coord system
 
     #wing structure self-weight
     distrWeightShear, ribPtLoads = il.wing_weight_distr_est(planform, mWing, wgboxArea)
