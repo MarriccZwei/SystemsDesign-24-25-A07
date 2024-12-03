@@ -147,7 +147,7 @@ def graphs(planform: Planform, thicknesses: list, torque: list, zCoordsForce: li
 
 if __name__ == '__main__':
     wing = Planform(251, 9.87,0.1,28.5,2.15,False)
-    spars = [0.3, 0.5]
+    spars = [0.3]
     thicknesses = [(2,1,2,1), (2,1,2,1), (2,1,2,1)]
     #cent = (1.632, 0.35)
     # loc = 10
