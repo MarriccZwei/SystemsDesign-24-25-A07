@@ -108,7 +108,7 @@ def deltatwist(planform: Planform, thicknesses: list, range: tuple, torque: list
     yfunc = interp1d(zCoordsCent, yBars, bounds_error=False, fill_value="extrapolate")
     twist, error = integrate.quad(lambda z: tFunc(z)/(G*calcJ(planform.chord_spanwise(z/(planform.b/2)), thicknesses, (xfunc(z), yfunc(z)), spars)), range[0], range[1])
     return twist
-
+ 
 def twist(planform: Planform, thicknesses: list, loc: float, torque: list, zCoordsForce: list, 
           xBars: list, yBars: list, zCoordsCent: list, cutoff: float = None, spars: list = None) -> float:
     if cutoff != None and loc > cutoff:

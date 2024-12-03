@@ -8,38 +8,31 @@ import numpy as np
 from Deflections.wingbox import wingbox
 
 # Function to define the segments of the cross-section
-'L_i variables are vertical segments of the wingbox'
-'x_i variables are horizontal segments of the wingbox'
-'d_i variables are angled segments of the wingbox'
-'t is the thickness of the segments'
+'L_i spars of the wingbox'
+'x upper segment of the wingbox'
+'d bottom segment of the wingbox'
+'t_f, t_s, t_m are the thicknesses of the different segments'
 
-def get_segments(L1, L2, L3, L4, x1, x2, x3, t):
-    alpha = np.arctan((L1 - L4)  / (x1 + x2 + x3))
-    d1 = x1 / np.cos(alpha)
-    d2 = x2 / np.cos(alpha)
-    d3 = x3 / np.cos(alpha)
+def get_segments(L1, L2, L3, x, t_f, t_s, t_m):
+    alpha = np.arctan((L1 - L3) / x)
+    d = x / np.cos(alpha)
 
     segments = {
         # Express the position of a segment with the wingbox dimensions in variable form
-        "x1": {"i": x1/2, "j": t/2, "length": x1, "thickness": t},
-        "x2": {"i": (x1 + x2/2), "j": t/2, "length": x2, "thickness": t},
-        "x3": {"i": (x1 + x2 + x3/2), "j": t/2, "length": x3, "thickness": t},
-        "L1": {"i": t/2, "j": L1/2, "length": L1, "thickness": t},
-        "L2": {"i": x1, "j": L2/2, "length": L2, "thickness": t},
-        "L3": {"i": (x1 + x2), "j": L3/2, "length": L3, "thickness": t},
-        "L4": {"i": (x1 + x2 + x3), "j": L4/2, "length": L4, "thickness": t},
-        "d1": {"i": x1/2, "j": (L1 - ((d1/2) * np.sin(alpha))), "length": d1, "thickness": t},
-        "d2": {"i": (x1 + x2/2), "j": (L2 - ((d2/2) * np.sin(alpha))), "length": d2, "thickness": t},
-        "d3": {"i": (x1 + x2 + x3/2), "j": (L3 - ((d3/2) * np.sin(alpha))), "length": d3, "thickness": t}
+        "x": {"i": x/2, "j": t_f/2, "length": x, "thickness": t_f},
+        "L1": {"i": t_s/2, "j": L1/2, "length": L1, "thickness": t_s},
+        "L2": {"i": x/2, "j": L2/2, "length": L2, "thickness": t_m},
+        "L3": {"i": x, "j": L3/2, "length": L3, "thickness": t_s},
+        "d": {"i": x/2, "j": (L1 - ((d/2) * np.sin(alpha))), "length": d, "thickness": t_f},
     }
     return segments, alpha
 
 # Function to define the sringers of the cross-section
 'A is the point area of a stringer'
-def get_stringers(L1, x1, x2, x3, t, A, alpha):
+def get_stringers(L1, x, t_str, A_str, alpha):
     # Assumed stringer spacing (m)
     stringer_hor_spacing = 0.15  # Horizontal spacing in meters
-    total_length = x1 + x2 + x3  # Total length of wingbox upper surface
+    total_length = x  # Total length of wingbox upper surface
 
     # Generate i-coordinates for stringers (equally spaced)
     i_values = np.arange(0, total_length, stringer_hor_spacing)  # i-positions of stringers
@@ -49,12 +42,12 @@ def get_stringers(L1, x1, x2, x3, t, A, alpha):
 
     # Create dictionaries for upper and lower surface stringers
     stringersUS = {
-        f"stringer{i+1}": {"i": i_value, "j": t, "area": A}  # Upper surface stringers, at height t
+        f"stringer{i+1}": {"i": i_value, "j": t_str, "area": A_str}  # Upper surface stringers, at height t
         for i, i_value in enumerate(i_values)
     }
 
     stringersLS = {
-        f"stringer{i+1}": {"i": i_value, "j": j_value, "area": A}
+        f"stringer{i+1}": {"i": i_value, "j": j_value, "area": A_str}
         for i, (i_value, j_value) in enumerate(zip(i_values, j_values))
     }
 
@@ -79,7 +72,7 @@ def centroid(segments, stringersUS, stringersLS):
 
 # Function to calculate the MOI of the wingbox
 'About the centroid of the wingbox'
-def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, t, alpha):
+def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha):
     # Initialize moments of inertia (about the centroidal axes)
     I_xx = 0  # Moment of inertia about the x-axis (centroidal)
     I_yy = 0  # Moment of inertia about the y-axis (centroidal)
@@ -87,28 +80,28 @@ def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, t, alpha):
     'I_xy is assumed 0 since the horizontal axis going through the centroid is a principal axis'
 
     # Calculate distance from wall centroid to section centroid
-    'Horizontal segments'
-    for segment in list(segments.values())[:3]:
+    'Upper segment'
+    for segment in list(segments.values())[:1]:
         dx = segment["i"] - x_bar
         dy = segment["j"] - y_bar
 
         # Moment of inertia of each segment about its own centroid
         'The higher order contributions of the thickness t are neglected'
         I_xx_segment = 0
-        I_yy_segment = (t * segment["length"]**3) / 12
+        I_yy_segment = (segment["thickness"] * segment["length"]**3) / 12
 
         # Parallel Axis Theorem contribution
         I_xx += I_xx_segment + segment["length"] * segment["thickness"] * dy**2
         I_yy += I_yy_segment + segment["length"] * segment["thickness"] * dx**2
 
-    'Vertical segments'
-    for segment in list(segments.values())[3:7]:
+    'Spars'
+    for segment in list(segments.values())[1:4]:
         dx = segment["i"] - x_bar
         dy = segment["j"] - y_bar
 
         # Moment of inertia of each segment about its own centroid
         'The higher order contributions of the thickness t are neglected'
-        I_xx_segment = (t * segment["length"]**3) / 12
+        I_xx_segment = (segment["thickness"] * segment["length"]**3) / 12
         I_yy_segment = 0
 
         # Parallel Axis Theorem contribution
@@ -116,15 +109,15 @@ def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, t, alpha):
         I_yy += I_yy_segment + segment["length"] * segment["thickness"] * dx**2
 
     
-    'Angled segments'
-    for segment in list(segments.values())[7:]:
+    'Lower segment'
+    for segment in list(segments.values())[4:]:
         dx = segment["i"] - x_bar
         dy = segment["j"] - y_bar
 
         # Moment of inertia of each segment about its own centroid
         'The higher order contributions of the thickness t are neglected'
-        I_xx_segment = (t * segment["length"]**3 * (np.sin(alpha))**2) / 12
-        I_yy_segment = (t * segment["length"]**3 * (np.cos(alpha))**2) / 12
+        I_xx_segment = (segment["thickness"] * segment["length"]**3 * (np.sin(alpha))**2) / 12
+        I_yy_segment = (segment["thickness"] * segment["length"]**3 * (np.cos(alpha))**2) / 12
 
         # Parallel Axis Theorem contribution
         I_xx += I_xx_segment + segment["length"] * segment["thickness"] * dy**2
@@ -158,28 +151,27 @@ sparLocs = [0.3, 0.4]  # Reinforcement Spar locations
 
 upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
 'W.r.t to LE, in order FS, RS, middle spars'
-#print("Upper Wing Box Coordinates:", upperCoords)
-#print("Lower Wing Box Coordinates:", lowerCoords)
+print("Upper Wing Box Coordinates:", upperCoords)
+print("Lower Wing Box Coordinates:", lowerCoords)
 
 L1 = upperCoords[1][0] - lowerCoords[1][0] # m
 L2 = upperCoords[1][2] - lowerCoords[1][2] # m
-L3 = upperCoords[1][3] - lowerCoords[1][3] # m
-L4 = upperCoords[1][1] - lowerCoords[1][1] # m
-x1 = upperCoords[0][2] - upperCoords[0][0] # m
-x2 = upperCoords[0][3] - upperCoords[0][2] # m
-x3 = upperCoords[0][1] - upperCoords[0][3] # m
-t = 0.002 # m, assumed
-A = 0.003 # m^2, assumed
+L3 = upperCoords[1][1] - lowerCoords[1][1] # m
+x = upperCoords[0][1] - upperCoords[0][0] # m
+t_f = 0.005 # m 
+t_s = 0.005 # m 
+t_m = 0.005 # m 
+t_str = 0.001 # m
+A_str = 0.0006 # m^2 (assumed)
+#print(L1, L2, L3, x)
 
-print(L1, L2, L3, x1, x2, x3)
-
-# segments, alpha = get_segments(L1, L2, L3, L4, x1, x2, x3, t)
-# stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(x1, x2, x3, t, A, alpha)
-# x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
-# I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, t, alpha)
-# print(f"CG @ MAC = {x_bar, y_bar}")
-# print(f"I_xx, I_yy, I_xy @ MAC = {I_xx, I_yy, I_xy}")
-# print("Number of Upper Surface Stringers @ MAC:", num_upper_stringers)
-# print("Number of Lower Surface Stringers @ MAC:", num_lower_stringers)
+segments, alpha = get_segments(L1, L2, L3, x, t_f, t_s, t_m)
+stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, x, t_str, A_str, alpha)
+x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
+I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha)
+print(f"CG @ MAC = {x_bar, y_bar}")
+print(f"I_xx, I_yy, I_xy @ MAC = {I_xx, I_yy, I_xy}")
+print("Number of Upper Surface Stringers @ MAC:", num_upper_stringers)
+print("Number of Lower Surface Stringers @ MAC:", num_lower_stringers)
 
 
