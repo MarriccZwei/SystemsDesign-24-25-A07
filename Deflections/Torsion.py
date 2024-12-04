@@ -115,6 +115,7 @@ def twist(planform: Planform, thicknesses: list, loc: float, torque: list, zCoor
         left = tuple(0, cutoff)
         right = tuple(cutoff, planform.b/2)
         deltaBase = deltatwist(planform, thicknesses, left, torque, zCoordsForce, xBars, yBars, zCoordsCent, spars)
+        thicknesses = [(thicknesses[0][0], thicknesses[1][1], thicknesses[0][2], thicknesses[0][3])]
         deltaRight = deltatwist(planform, thicknesses, right, torque, zCoordsForce, xBars, yBars, zCoordsCent)
         return deltaBase+deltaRight
     delta = deltatwist(planform, thicknesses, (0, loc), torque, zCoordsForce, xBars, yBars, zCoordsCent, spars)
