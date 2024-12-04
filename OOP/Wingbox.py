@@ -110,6 +110,7 @@ class Wingbox():
             h3 = upperCoords[1][2] - lowerCoords[1][2]
             spar3vol = self.tSpar * h3 * self.b / 2 / np.cos(self.planform.sweep_at_c_fraction(self.posMidSpar))#mid spar
         skinVol = (skinTop+skinBottom)*self.b/4*self.tSkin
-        stiffVol = (self.nStiffBot+self.nStiffTop)*self.stiffArea *self.b / 2 / np.cos(self.planform.sweep_at_c_fraction(self.rearSparPos))
+        #stiffVol = (self.nStiffBot+self.nStiffTop)*self.stiffArea *self.b / 2 / np.cos(self.planform.sweep_at_c_fraction(self.rearSparPos))
+        stiffVol=0
         volume = spar1vol+spar2vol+spar3vol+skinVol+stiffVol
         return volume
