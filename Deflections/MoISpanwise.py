@@ -22,8 +22,8 @@ def chord(z, c_r, tr, b):
     return c 
 
 # Function to calculate the moments of inertia for the wingbox
-def calculate_moments_of_inertia(chord_length, sparLocs):
-    upperCoords, lowerCoords = wingbox(chord_length, sparLocs=sparLocs, plot=False)
+def calculate_moments_of_inertia(chord_length, sparLocs, t_f, t_s, t_m, t_str, A_str):
+    upperCoords, lowerCoords = wingbox(chord_length, sparLocs, plot=False)
     
     # Calculate segment dimensions based on the wingbox coordinates
     L1 = upperCoords[1][0] - lowerCoords[1][0]  # m
@@ -49,10 +49,13 @@ tr = 0.1  # Taper ratio
 b = 49.81  # Wingspan (in meters)
 t_f = 0.005 # thickness flanges (in meters) 
 t_s = 0.005 # thickness front and back spars (in meters) 
-t_m = 0.005 # thickness reinforcement spar(s) (in meters) 
+t_m = 100 # thickness reinforcement spar(s) (in meters) 
 t_str = 0.001 # thickness stringers (in meters)
 A_str = 0.0006 # area stringers (in m^2)
 sparLocs = [0.4]  # Reinforcement spar location(s) 
+
+# Specify the z value where sparLocs changes to None
+z_spar_change = b / 4  # Middle of b/2 (in meters)
 
 
 # Loop through spanwise locations from 0 to b/2 and calculate moments of inertia
@@ -71,12 +74,35 @@ for z in z_values:
     # Calculate chord length at the current spanwise location
     current_chord = chord(z, c_r, tr, b)
     
-    # Calculate the moments of inertia and centroid coordinates for the current spanwise location
-    I_xx, I_yy, I_xy, x_bar, y_bar, num_upper_stringers, num_lower_stringers = calculate_moments_of_inertia(current_chord, sparLocs)
+    # Determine the sparLocs for the current z value
+    current_sparLocs = None if z >= z_spar_change else sparLocs
     
-    # Calculate minimum thickness required
-
-
+    # Call wingbox to get coordinates
+    upperCoords, lowerCoords = wingbox(current_chord, sparLocs=current_sparLocs, plot=False)
+    
+    # Calculate segment dimensions based on the wingbox coordinates
+    L1 = upperCoords[1][0] - lowerCoords[1][0]  # Always included
+    x = upperCoords[0][1] - upperCoords[0][0]  # Always included
+    
+    # Eliminate L2 if z >= z_spar_change
+    if z >= z_spar_change:
+        L2 = 0
+    else:
+        L2 = upperCoords[1][2] - lowerCoords[1][2]  # Include L2 if z < z_spar_change
+    
+    # Always calculate L3
+    L3 = upperCoords[1][1] - lowerCoords[1][1]
+    
+    # Calculate the segments and stringers based on the dimensions
+    segments, alpha = get_segments(L1, L2, L3, x, t_f, t_s, t_m)
+    stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, x, t_str, A_str, alpha)
+    
+    # Calculate the centroid of the cross-section
+    x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
+    
+    # Calculate the moments of inertia
+    I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha)
+    
     # Append the results to the lists
     I_xx_values.append(I_xx)
     I_yy_values.append(I_yy)

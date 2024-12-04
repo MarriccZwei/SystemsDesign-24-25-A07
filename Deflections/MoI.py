@@ -144,34 +144,34 @@ def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha):
 
     return I_xx, I_yy, I_xy
 
-# Test
-# Call wingbox function
-chord = 6.17  #MAC value
-sparLocs = [0.3, 0.4]  # Reinforcement Spar locations
+# # Test
+# # Call wingbox function
+# chord = 6.17  #MAC value
+# sparLocs = [0.3, 0.4]  # Reinforcement Spar locations
 
-upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
-'W.r.t to LE, in order FS, RS, middle spars'
-print("Upper Wing Box Coordinates:", upperCoords)
-print("Lower Wing Box Coordinates:", lowerCoords)
+# upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
+# 'W.r.t to LE, in order FS, RS, middle spars'
+# print("Upper Wing Box Coordinates:", upperCoords)
+# print("Lower Wing Box Coordinates:", lowerCoords)
 
-L1 = upperCoords[1][0] - lowerCoords[1][0] # m
-L2 = upperCoords[1][2] - lowerCoords[1][2] # m
-L3 = upperCoords[1][1] - lowerCoords[1][1] # m
-x = upperCoords[0][1] - upperCoords[0][0] # m
-t_f = 0.005 # m 
-t_s = 0.005 # m 
-t_m = 0.005 # m 
-t_str = 0.001 # m
-A_str = 0.0006 # m^2 (assumed)
-print(L1, L2, L3, x)
+# L1 = upperCoords[1][0] - lowerCoords[1][0] # m
+# L2 = upperCoords[1][2] - lowerCoords[1][2] # m
+# L3 = upperCoords[1][1] - lowerCoords[1][1] # m
+# x = upperCoords[0][1] - upperCoords[0][0] # m
+# t_f = 0.005 # m 
+# t_s = 0.005 # m 
+# t_m = 0.005 # m 
+# t_str = 0.001 # m
+# A_str = 0.0006 # m^2 (assumed)
+# print(L1, L2, L3, x)
 
-segments, alpha = get_segments(L1, L2, L3, x, t_f, t_s, t_m)
-stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, x, t_str, A_str, alpha)
-x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
-I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha)
-print(f"CG @ MAC = {x_bar, y_bar}")
-print(f"I_xx, I_yy, I_xy @ MAC = {I_xx, I_yy, I_xy}")
-print("Number of Upper Surface Stringers @ MAC:", num_upper_stringers)
-print("Number of Lower Surface Stringers @ MAC:", num_lower_stringers)
+# segments, alpha = get_segments(L1, L2, L3, x, t_f, t_s, t_m)
+# stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, x, t_str, A_str, alpha)
+# x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
+# I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha)
+# print(f"CG @ MAC = {x_bar, y_bar}")
+# print(f"I_xx, I_yy, I_xy @ MAC = {I_xx, I_yy, I_xy}")
+# print("Number of Upper Surface Stringers @ MAC:", num_upper_stringers)
+# print("Number of Lower Surface Stringers @ MAC:", num_lower_stringers)
 
 
