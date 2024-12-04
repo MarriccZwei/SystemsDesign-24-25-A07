@@ -8,11 +8,12 @@ import Loads.XFLRimport as xfi
 import numpy as np
 import Deflections.BendingDeflection as bd
 import Deflections.Torsion as tr
+from OOP import Wingbox as wb
 
-def calculate_deformations(wgBox, fuelFraction:float, planform:pf.Planform, mWing:float, mEngine:float, wgboxArea:float, thrust:float):
+def calculate_deformations(wgBox:wb.Wingbox, fuelFraction:float, planform:pf.Planform, mWing:float, mEngine:float, wgboxArea:float, thrust:float):
     '''The shear diagram'''
     halfspan = planform.b/2
-    distrShear, pointShearLoads = wsbt.combined_shear_load(0.7, planform, mWing, mEngine, wgboxArea)
+    distrShear, pointShearLoads = wsbt.combined_shear_load(fuelFraction, planform, mWing, mEngine, wgboxArea)
     diagramMaker = sbt.SBTdiagramMaker(plot=False, accuracy=wgBox.accuracy)
     #posesV, loadsV =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
 
@@ -25,7 +26,8 @@ def calculate_deformations(wgBox, fuelFraction:float, planform:pf.Planform, mWin
     posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
 
     '''Bending Deflection'''
-    maxBendDefl = bd.integrate_bending_defl(posesM, loadsM, wgBox.Ixx, planform.b)
+    ixx, xbar, ybar = wgBox.sectio_properties()
+    maxBendDefl = bd.integrate_bending_defl(posesM, loadsM, ixx, planform.b)
 
     '''Twisting'''
     maxTorsionalDefl = tr.twist(planform, wgBox.thicknesses(), halfspan, loadsT, posesT, wgBox.xBars, wgBox.yBars, posesT, wgBox.cutoff)
@@ -45,7 +47,7 @@ def size_constbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, planf
                 wgBox4givenCutout.append(wgBox)
                 break
             else:
-                '''Increment the flange , midspar and spar thicknesses'''
+                wgBox = wb.Wingbox(wgBox.thicknesses(), )
             if j==19:
                 wgBox4givenCutout.append(None) #to mark it has not been calculated
     masses = [box.Volume for box in wgBox4givenCutout] #obtainingWingBox masses
