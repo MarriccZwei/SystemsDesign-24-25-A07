@@ -69,3 +69,18 @@ def size_rectbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, planfo
             '''!Re create the wingBox with a flange thickness greater by dthickness!'''
 
     raise ValueError("Couldn't size the wingbox for this load!")
+
+def size_complexbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, planform:pf.Planform, mWing:float, mEngine:float, wgboxArea:float, thrust:float):
+    wgBox = wgBoxInitial #creating the wingbox that will be altered in the process
+    for i in range(20):
+        maxBendDefl, maxTorsionalDefl = calculate_deformations(wgBox, 0, planform, mWing, mEngine, wgboxArea, thrust)
+        bendingSatisfied = maxBendDefl<reqBendDefl
+        torsionSatisfied = maxTorsionalDefl<reqTorsionalDefl
+        if bendingSatisfied and torsionSatisfied: #when the wingbox meets the requirements
+            return wgBox
+        if not torsionSatisfied: #when the torsion req is not met
+            '''!Re create the wingBox with a spar thickness greater by dthickness!'''
+        if not bendingSatisfied: #when the bending req is not met
+            '''!Re create the wingBox with a flange thickness greater by dthickness, we will need to size the thickness between the mid and the side spars!'''
+
+    raise ValueError("Couldn't size the wingbox for this load!")
