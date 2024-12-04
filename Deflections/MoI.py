@@ -163,7 +163,7 @@ t_s = 0.005 # m
 t_m = 0.005 # m 
 t_str = 0.001 # m
 A_str = 0.0006 # m^2 (assumed)
-#print(L1, L2, L3, x)
+print(L1, L2, L3, x)
 
 segments, alpha = get_segments(L1, L2, L3, x, t_f, t_s, t_m)
 stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, x, t_str, A_str, alpha)
