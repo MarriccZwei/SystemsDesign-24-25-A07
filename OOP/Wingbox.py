@@ -11,11 +11,14 @@ from Deflections import MoI as moi
 from Deflections import MoISpanwise as moispan
 from Deflections import Torsion as torsion
 import Planform as pf
+from Deflections.wingbox import wingbox
+
 class Wingbox():
-    def __init__(self, tFlange, tSpar, tMids, nStiffTop:int, nStiffBot:int, stiffArea, planform:pf.Planform,  accuracy:int = 256, midSpar:bool = False, midSparPos = 0.5, cutMidSpar = 10):
+    def __init__(self, tFlange, tSpar, tMids, nStiffTop:int, nStiffBot:int, stiffArea, planform:pf.Planform,  accuracy:int = 256, midSpar:bool = False, midSparPos = 0.4, cutMidSpar = 10):
         self.tSkin = tFlange
         self.tSpar = tSpar
-        
+        self.midSpar = midSpar
+
         if midSpar:
             self.tRearSpar = tSpar
             self.tMidSpar = tMids
@@ -75,3 +78,38 @@ class Wingbox():
 
     def yBars(self):
         pass
+
+    def sparHeight(self,z):
+        if self.midspar and self.cutoff>=z:
+            sparLocs = [self.posMidSpar]
+        
+        upperCoords, lowerCoords = wingbox(self.planform.chord_spanwise(z), sparLocs, plot=False)
+        h1 = upperCoords
+        L1 = upperCoords[1][0] - lowerCoords[1][0]
+        L2 = upperCoords[1][2] - lowerCoords[1][2]
+        x = upperCoords[0][1] - upperCoords[0][0]
+        pass
+   
+    def volume(self):
+        if self.midSpar:
+            sparLocs = [self.posMidSpar]
+        else:
+            sparLocs = []
+        
+        upperCoords, lowerCoords = wingbox(self.chord(self.b/4), sparLocs, plot=False)#uses cross-section at b/4
+        h1 = upperCoords[1][0] - lowerCoords[1][0]
+        h2 = upperCoords[1][1] - lowerCoords[1][1]
+
+        skinTop= np.sqrt( (upperCoords[0][1] - upperCoords[0][0])**2 + (upperCoords[1][1] - upperCoords[1][0])**2 )#upper skin length
+        skinBottom = np.sqrt( (lowerCoords[0][1] - lowerCoords[0][0])**2 + (lowerCoords[1][1] - lowerCoords[1][0])**2 )#upper skin length
+
+        spar1vol = self.tSpar * h1 * self.b / 2 / np.cos(self.planform.sweep_at_c_fraction(self.frontSparPos))#front spar
+        spar2vol = self.tSpar * h2 * self.b / 2 / np.cos(self.planform.sweep_at_c_fraction(self.rearSparPos))#aft spar
+        spar3vol = 0
+        if self.midSpar:
+            h3 = upperCoords[1][2] - lowerCoords[1][2]
+            spar3vol = self.tSpar * h3 * self.b / 2 / np.cos(self.planform.sweep_at_c_fraction(self.posMidSpar))#mid spar
+        skinVol = (skinTop+skinBottom)*self.b/4*self.tSkin
+        stiffVol = (self.nStiffBot+self.nStiffTop)*self.stiffArea *self.b / 2 / np.cos(self.planform.sweep_at_c_fraction(self.rearSparPos))
+        volume = spar1vol+spar2vol+spar3vol+skinVol+stiffVol
+        return volume
