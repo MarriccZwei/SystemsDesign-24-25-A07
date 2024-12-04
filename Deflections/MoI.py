@@ -28,7 +28,7 @@ def get_segments(L1, L2, L3, x, t_f, t_s, t_m):
     return segments, alpha
 
 # Function to define the sringers of the cross-section
-'A is the point area of a stringer'
+'A_str is the point area of a stringer'
 def get_stringers(L1, x, t_str, A_str, alpha):
     # Assumed stringer spacing (m)
     stringer_hor_spacing = 0.15  # Horizontal spacing in meters
@@ -146,8 +146,8 @@ def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha):
 
 # # Test
 # # Call wingbox function
-# chord = 6.17  #MAC value
-# sparLocs = [0.3, 0.4]  # Reinforcement Spar locations
+# chord = 0.917  #tip chord
+# sparLocs = [0.4]  # Reinforcement Spar locations
 
 # upperCoords, lowerCoords = wingbox(chord, sparLocs=sparLocs, plot=False)
 # 'W.r.t to LE, in order FS, RS, middle spars'
@@ -155,7 +155,8 @@ def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha):
 # print("Lower Wing Box Coordinates:", lowerCoords)
 
 # L1 = upperCoords[1][0] - lowerCoords[1][0] # m
-# L2 = upperCoords[1][2] - lowerCoords[1][2] # m
+# #L2 = upperCoords[1][2] - lowerCoords[1][2] # m
+# L2 = 0 #m
 # L3 = upperCoords[1][1] - lowerCoords[1][1] # m
 # x = upperCoords[0][1] - upperCoords[0][0] # m
 # t_f = 0.005 # m 
@@ -169,7 +170,7 @@ def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha):
 # stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, x, t_str, A_str, alpha)
 # x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
 # I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha)
-# print(f"CG @ MAC = {x_bar, y_bar}")
+# print(f"CG @ tip = {x_bar, y_bar}")
 # print(f"I_xx, I_yy, I_xy @ MAC = {I_xx, I_yy, I_xy}")
 # print("Number of Upper Surface Stringers @ MAC:", num_upper_stringers)
 # print("Number of Lower Surface Stringers @ MAC:", num_lower_stringers)
