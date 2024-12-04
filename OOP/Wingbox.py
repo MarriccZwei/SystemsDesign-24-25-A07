@@ -10,32 +10,37 @@ import numpy as np
 from Deflections import MoI as moi
 from Deflections import MoISpanwise as moispan
 from Deflections import Torsion as torsion
-
+import Planform as pf
 class Wingbox():
-    def __init__(self, tSkin, tSpar, nStiffTop, nStiffBot, stiffArea, tMidSpar, posMidSpar, cutMidSpar, cr, tr, b, accuracy:int = 256):
-        self.tSkin = tSkin
-        self.tSpar = tSpar
+    def __init__(self, thicknessList:list, nStiffTop:int, nStiffBot:int, stiffArea, planform:pf.Planform,  accuracy:int = 256, midSpar:bool = False, midSparPos = 0.5, cutMidSpar = 10):
+        self.tSkin = thicknessList[0]
+        self.tFrontSpar = thicknessList[3]
+        
+        if midSpar:
+            self.tRearSpar = thicknessList[5]
+            self.tMidSpar =thicknessList[1]
+            self.posMidSpar = midSparPos
+            self.cutoff = cutMidSpar
+        else:
+            self.tRearSpar = thicknessList[1]
+        
         self.nStiffTop = nStiffTop
         self.nStiffBot = nStiffBot
         self.stiffArea = stiffArea
-        self.tMidSpar = tMidSpar
-        self.posMidSpar = posMidSpar
-        self.cutoff = cutMidSpar
         self. accuracy = accuracy
-        self.b = b
-        self.cr = cr
-        self.tr = tr
+        self.b = planform.b
+        self.cr = planform.cr
+        self.tr = planform.TR
         self.frontSparPos = 0.2
         self.rearSparPos = 0.6
         self.positions = np.linspace(0,self.b/2, accuracy)
     
-    def chord(z, c_r, tr, b):
-        c = c_r - c_r * (1 - tr) * (z / (b/2))
+    def chord(self,z):
+        c = self.cr - self.tr * (1 - self.tr) * (z / (self.b/2))
         return c 
 
     def centroid(self, z):
-        coords1 =(0,0)
-        coords2 = ()
+        pass
 
     def ixx(self):
         m = moispan.calculate_moments_of_inertia()
