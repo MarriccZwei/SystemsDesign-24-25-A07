@@ -10,6 +10,7 @@ import numpy as np
 from Deflections import MoI as moi
 from Deflections import MoISpanwise as moispan
 from Deflections import Torsion as torsion
+from Deflections.wingbox import wingbox
 import OOP.Planform as pf
 class Wingbox():
     def __init__(self, tFlange, tSpar, tMids, stiffArea, planform:pf.Planform,  accuracy:int = 256, midSpar:bool = False, midSparPos = 0.5, cutMidSpar = 10):
