@@ -14,7 +14,7 @@ def calculate_deformations(wgBox:wb.Wingbox, fuelFraction:float, planform:pf.Pla
     '''The shear diagram'''
     halfspan = planform.b/2
     distrShear, pointShearLoads = wsbt.combined_shear_load(fuelFraction, planform, mWing, mEngine, wgboxArea)
-    diagramMaker = sbt.SBTdiagramMaker(plot=False, accuracy=wgBox.accuracy)
+    diagramMaker = sbt.SBTdiagramMaker(plot=False, accuracy=wgBox.accuracy-1)
     #posesV, loadsV =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
 
     '''The bending diagram'''
@@ -26,18 +26,19 @@ def calculate_deformations(wgBox:wb.Wingbox, fuelFraction:float, planform:pf.Pla
     posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
 
     '''Bending Deflection'''
-    ixx, xbar, ybar = wgBox.sectio_properties()
+    ixx, xbar, ybar = wgBox.section_properties()
     maxBendDefl = bd.integrate_bending_defl(posesM, loadsM, ixx, planform.b)
 
     '''Twisting'''
-    maxTorsionalDefl = tr.twist(planform, wgBox.thicknesses(), halfspan, loadsT, posesT, wgBox.xBars, wgBox.yBars, posesT, wgBox.cutoff)
+    maxTorsionalDefl = tr.twist(planform, wgBox.thicknesses(0), halfspan, loadsT, posesT, xbar, ybar, posesT)
 
     return maxBendDefl, maxTorsionalDefl
     
 
-def size_constbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, planform:pf.Planform, mWing:float, mEngine:float, wgboxArea:float, thrust:float):
+def size_constbox(wgBoxInitial:wb.Wingbox, reqBendDefl, reqTorsionalDefl, dthickness, planform:pf.Planform, mWing:float, mEngine:float, wgboxArea:float, thrust:float):
     wgBox = wgBoxInitial #creating the wingbox that will be altered in the process
     wgBox4givenCutout = list() #list of wing boxes for different spar cutout locations, index+1 means cutout pos
+    # i is the cutout position
     for i in range(1, 20):
         for j in range(20):
             maxBendDefl, maxTorsionalDefl = calculate_deformations(wgBox, 0, planform, mWing, mEngine, wgboxArea, thrust)
@@ -47,7 +48,7 @@ def size_constbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, planf
                 wgBox4givenCutout.append(wgBox)
                 break
             else:
-                wgBox = wb.Wingbox(wgBox.thicknesses(), )
+                wgBox = wb.Wingbox(wgBox.tSkin+dthickness, wgBox.tSpar+dthickness, wgBox.tMidSpar+dthickness, wgBox.stiffArea, planform, wgBox.accuracy, True, 0.4)
             if j==19:
                 wgBox4givenCutout.append(None) #to mark it has not been calculated
     masses = [box.Volume for box in wgBox4givenCutout] #obtainingWingBox masses
@@ -66,9 +67,9 @@ def size_rectbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, planfo
         if bendingSatisfied and torsionSatisfied: #when the wingbox meets the requirements
             return wgBox
         if not torsionSatisfied: #when the torsion req is not met
-            '''!Re create the wingBox with a spar thickness greater by dthickness!'''
+            wgBox = wb.Wingbox(wgBox.tSkin, wgBox.tSpar+dthickness, 0, wgBox.stiffArea, planform, wgBox.accuracy, False, 0.4)
         if not bendingSatisfied: #when the bending req is not met
-            '''!Re create the wingBox with a flange thickness greater by dthickness!'''
+            wgBox = wb.Wingbox(wgBox.tSkin+dthickness, wgBox.tSpar, 0, wgBox.stiffArea, planform, wgBox.accuracy, False, 0.4)
 
     raise ValueError("Couldn't size the wingbox for this load!")
 

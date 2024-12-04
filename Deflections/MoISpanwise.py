@@ -29,7 +29,7 @@ def calculate_moments_of_inertia(chord_length, sparLocs, t_f, t_s, t_m, t_str, A
     L1 = upperCoords[1][0] - lowerCoords[1][0]  # m
     L2 = upperCoords[1][2] - lowerCoords[1][2]  # m
     L3 = upperCoords[1][1] - lowerCoords[1][1]  # m
-    x = upperCoords[0][1] - upperCoords[0][0]
+    x = upperCoords[0][1] - upperCoords[0][0] # m
 
     # Calculate the segments and stringers based on the dimensions
     segments, alpha = get_segments(L1, L2, L3, x, t_f, t_s, t_m)
@@ -41,7 +41,7 @@ def calculate_moments_of_inertia(chord_length, sparLocs, t_f, t_s, t_m, t_str, A
     # Calculate the moments of inertia
     I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha)
     
-    return I_xx, I_yy, I_xy , x_bar, y_bar, num_upper_stringers, num_lower_stringers
+    return I_xx, I_yy, I_xy , x_bar, y_bar, num_upper_stringers, num_lower_stringers, L2
 
 # Set the initial conditions for the wing
 c_r = 9.17  # Root chord length (in meters)
@@ -49,17 +49,17 @@ tr = 0.1  # Taper ratio
 b = 49.81  # Wingspan (in meters)
 t_f = 0.005 # thickness flanges (in meters) 
 t_s = 0.005 # thickness front and back spars (in meters) 
-t_m = 100 # thickness reinforcement spar(s) (in meters) 
+t_m = 0.005 # thickness reinforcement spar(s) (in meters) 
 t_str = 0.001 # thickness stringers (in meters)
 A_str = 0.0006 # area stringers (in m^2)
 sparLocs = [0.4]  # Reinforcement spar location(s) 
 
 # Specify the z value where sparLocs changes to None
-z_spar_change = b / 4  # Middle of b/2 (in meters)
+z_spar_change = b / 4  # Middle of half wingspan (in meters)
 
 
 # Loop through spanwise locations from 0 to b/2 and calculate moments of inertia
-num_points = 100  # Number of points along the span to calculate moments of inertia
+num_points = 256  # Number of points along the span to calculate moments of inertia
 z_values = np.linspace(0, b / 2, num_points)  # Array of spanwise locations (z)
 
 # Prepare lists to store the moments of inertia and centroid coordinates
@@ -68,6 +68,7 @@ I_yy_values = []
 I_xy_values = []
 x_bar_values = []
 y_bar_values = []
+L2_values = []
 
 # Loop over each spanwise location
 for z in z_values:
@@ -109,18 +110,18 @@ for z in z_values:
     I_xy_values.append(I_xy)
     x_bar_values.append(x_bar)
     y_bar_values.append(y_bar)
+    L2_values.append(L2)
 
-    # Optionally, print or plot the results for each z location
-    print(f"z = {z:.2f} m: I_xx = {I_xx:.3f}, I_yy = {I_yy:.3f}, I_xy = {I_xy:.3f}, x centroid = {x_bar:.3f}, y centroid = {y_bar:.3f}")
+    # Print results for each z location
+    print(f"z = {z:.2f} m: I_xx = {I_xx:.6f}, I_yy = {I_yy:.6f}, I_xy = {I_xy:.1f}, x centroid = {x_bar:.3f}, y centroid = {y_bar:.3f}, L2 = {L2:.3f}")
 
-# After the loop, you can analyze or plot the results
-# Example: Plot the moments of inertia along the span
+# Plot the moments of inertia along the span
 plt.figure(figsize=(10, 6))
 plt.plot(z_values, I_xx_values, label="I_xx", color='r')
 plt.plot(z_values, I_yy_values, label="I_yy", color='g')
 plt.plot(z_values, I_xy_values, label="I_xy", color='b')
 plt.xlabel("Spanwise Location (z) [m]")
-plt.ylabel("Moments of Inertia")
+plt.ylabel("Moments of Inertia [m^2]")
 plt.title("Moments of Inertia along the Wing Span")
 plt.legend()
 plt.grid(True)
