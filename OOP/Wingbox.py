@@ -10,20 +10,21 @@ import numpy as np
 from Deflections import MoI as moi
 from Deflections import MoISpanwise as moispan
 from Deflections import Torsion as torsion
-import Planform as pf
+import OOP.Planform as pf
 class Wingbox():
-    def __init__(self, tFlange, tSpar, tMids, nStiffTop:int, nStiffBot:int, stiffArea, planform:pf.Planform,  accuracy:int = 256, midSpar:bool = False, midSparPos = 0.5, cutMidSpar = 10):
+    def __init__(self, tFlange, tSpar, tMids, stiffArea, planform:pf.Planform,  accuracy:int = 256, midSpar:bool = False, midSparPos = 0.5, cutMidSpar = 10):
         self.tSkin = tFlange
         self.tSpar = tSpar
         
         if midSpar:
-            self.tRearSpar = tSpar
             self.tMidSpar = tMids
             self.posMidSpar = midSparPos
             self.cutoff = cutMidSpar
+        else:
+            self.tMidSpar = 0
+            self.posMidSpar = 0
+            self.cutoff = 0
         
-        self.nStiffTop = nStiffTop
-        self.nStiffBot = nStiffBot
         self.stiffArea = stiffArea
         self. accuracy = accuracy
         self.b = planform.b
@@ -41,7 +42,7 @@ class Wingbox():
     def centroid(self, z):
         pass
 
-    def sectio_properties(self):
+    def section_properties(self):
         #m = moispan.calculate_moments_of_inertia()
 
         #chords = np.linspace(0, self.b/2, self.accuracy)
@@ -54,11 +55,11 @@ class Wingbox():
         xBars = list()
         yBars = list()
         for pos in self.positions:
-            I_xx, I_yy, I_xy , x_bar, y_bar, num_upper_stringers, num_lower_stringers = moispan.calculate_moments_of_inertia(self.planform.chord_spanwise(pos), [0.4], self.tSkin, self.tFrontSpar, self.tMidSpar, 0.005, 0.0006)
+            I_xx, I_yy, I_xy , x_bar, y_bar, num_upper_stringers, num_lower_stringers = moispan.calculate_moments_of_inertia(self.planform.chord_spanwise(pos), [0.4], self.tSkin, self.tSpar, self.tMidSpar, 0.005, 0.0006)
             mois.append(I_xx)
             xBars.append(x_bar)
             yBars.append(y_bar)
-        return np.array(mois), np.array(x_bar), np.array(y_bar)
+        return np.array(mois), np.array(xBars), np.array(yBars)
 
     def torstiff(self):
         
