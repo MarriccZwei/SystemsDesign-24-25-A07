@@ -57,7 +57,7 @@ class Wingbox():
         xBars = list()
         yBars = list()
         for pos in self.positions:
-            I_xx, I_yy, I_xy , x_bar, y_bar, num_upper_stringers, num_lower_stringers = moispan.calculate_moments_of_inertia(self.planform.chord_spanwise(pos), [0.4], self.tSkin, self.tSpar, self.tMidSpar, 0.005, 0.0006)
+            I_xx, I_yy, I_xy , x_bar, y_bar, num_upper_stringers, num_lower_stringers, l2 = moispan.calculate_moments_of_inertia(self.planform.chord_spanwise(pos*2/self.planform.b), [0.4], self.tSkin, self.tSpar, self.tMidSpar, 0.005, 0.0006)
             mois.append(I_xx)
             xBars.append(x_bar)
             yBars.append(y_bar)
@@ -68,7 +68,7 @@ class Wingbox():
         pass
 
     def thicknesses(self, pos):
-        if pos>self.cutoff:
+        if pos>=self.cutoff:
             return [(self.tSkin, self.tSpar, self.tSkin, self.tSpar)]
         else:
             return [(self.tSkin, self.tMidSpar, self.tSkin, self.tSpar), (self.tSkin, self.tSpar, self.tSkin, self.tMidSpar)]
