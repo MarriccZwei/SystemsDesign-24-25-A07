@@ -59,7 +59,7 @@ z_spar_change = b / 4  # Middle of half wingspan (in meters)
 
 
 # Loop through spanwise locations from 0 to b/2 and calculate moments of inertia
-num_points = 100  # Number of points along the span to calculate moments of inertia
+num_points = 256  # Number of points along the span to calculate moments of inertia
 z_values = np.linspace(0, b / 2, num_points)  # Array of spanwise locations (z)
 
 # Prepare lists to store the moments of inertia and centroid coordinates
@@ -121,7 +121,7 @@ plt.plot(z_values, I_xx_values, label="I_xx", color='r')
 plt.plot(z_values, I_yy_values, label="I_yy", color='g')
 plt.plot(z_values, I_xy_values, label="I_xy", color='b')
 plt.xlabel("Spanwise Location (z) [m]")
-plt.ylabel("Moments of Inertia")
+plt.ylabel("Moments of Inertia [m^2]")
 plt.title("Moments of Inertia along the Wing Span")
 plt.legend()
 plt.grid(True)
