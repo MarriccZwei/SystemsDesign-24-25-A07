@@ -15,7 +15,7 @@ def calculate_deformations(wgBox:wb.Wingbox, fuelFraction:float, planform:pf.Pla
     halfspan = planform.b/2
     distrShear, pointShearLoads = wsbt.combined_shear_load(fuelFraction, planform, mWing, mEngine, wgboxArea)
     diagramMaker = sbt.SBTdiagramMaker(plot=False, accuracy=wgBox.accuracy-1)
-    #posesV, loadsV =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
+    posesV, loadsV =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
 
     '''The bending diagram'''
     engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, consts.ENGINESPANWISEPOS*halfspan)

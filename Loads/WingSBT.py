@@ -23,7 +23,7 @@ def combined_shear_load(fuelFraction, planform:pf.Planform, mWing, engineMass, w
     fuelWeightshear = il.fuel_in_wing_weight_est(planform, fuelFraction)
     
     #engine weight
-    engineWeighShear = il.engine_shear(engineMass, consts.ENGINESPANWISEPOS*planform.b/2)
+    engineWeightShear = il.engine_shear(engineMass, consts.ENGINESPANWISEPOS*planform.b/2)
 
     #the complete distributed shear load
     def distrShear(pos):
@@ -33,7 +33,7 @@ def combined_shear_load(fuelFraction, planform:pf.Planform, mWing, engineMass, w
         return valWgWeight+valFuWeight+valAeWeight
 
     #the complete list of point forces
-    pointShearLoads = ribPtLoads+[engineWeighShear]
+    pointShearLoads = ribPtLoads+[engineWeightShear]
 
     return distrShear, pointShearLoads
 
@@ -64,5 +64,7 @@ if __name__ == "__main__":
     mEngine = 3554.759960907367/2 #divide by two as we are looking at the half-span only
     thrust = 91964.80101516769
     wgboxArea = 123.969 #[m^2] measured in CATIA
+
+    
 
 

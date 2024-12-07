@@ -166,5 +166,5 @@ if __name__ == '__main__':
     ax1.plot(zAxis, js)
     ax2.plot(zAxis, thetas)
     plt.show()
-    print(f"Total twist: {twist(wing, thicknesses, wing.b/2, [1000000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, 10, spars)}")
+    print(f"Total twist: {twist(wing, thicknesses, wing.b/2, [2.e5, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, 10, spars)}")
 
