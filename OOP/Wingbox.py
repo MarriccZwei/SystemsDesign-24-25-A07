@@ -69,9 +69,9 @@ class Wingbox():
 
     def thicknesses(self, pos):
         if pos>=self.cutoff:
-            return [(self.tSkin, self.tSpar, self.tSkin, self.tSpar)]
+            return [(1000*self.tSkin, 1000*self.tSpar, 1000*self.tSkin, 1000*self.tSpar)]
         else:
-            return [(self.tSkin, self.tMidSpar, self.tSkin, self.tSpar), (self.tSkin, self.tSpar, self.tSkin, self.tMidSpar)]
+            return [(1000*self.tSkin, 1000*self.tMidSpar, 1000*self.tSkin, 1000*self.tSpar), (1000*self.tSkin, 1000*self.tSpar, 1000*self.tSkin, 1000*self.tMidSpar)]
     
     def xBars(self):
         return moi.centroid()

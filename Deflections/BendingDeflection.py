@@ -32,6 +32,8 @@ def integrate_bending_defl(poses, intBendMoment, IxxValues, span):
     IxxFun = lambda pos:np.interp(pos, np.linspace(0, span/2, len(IxxValues)), IxxValues) #interpolate Ixx
     secondDeriv = lambda pos:-intBendFun(pos)/c.E_MODULUS/IxxFun(pos)
     firstDeriv = lambda pos:itg.quad(secondDeriv, 0, pos)[0]
+    # print(f"I_xx fun of {4}, {IxxFun(4)}")
+    # print(f"M fun of {4}, {intBendFun(4)}")
 
     return lambda pos:itg.quad(firstDeriv, 0, pos)[0]
 
@@ -42,10 +44,11 @@ if __name__ == "__main__":
     poses, loads =diagramMaker.bending_diagram(shearFun, shearPts, lambda pos:0, [engineBendingMoment], halfspan)
 
     deflfun = integrate_bending_defl(poses, loads, ms.I_xx_values, planform.b)
-    defls = list()
-    for pos in poses:
-        defls.append(deflfun(pos))
-        print(pos)
+    print(f"deflection at {halfspan}: {deflfun(halfspan)}")
+    # defls = list()
+    # for pos in poses:
+    #     defls.append(deflfun(pos))
+    #     print(pos)
 
-    plt.plot(poses, defls)
-    plt.show()
+    # plt.plot(poses, defls)
+    # plt.show()

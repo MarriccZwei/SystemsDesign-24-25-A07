@@ -149,7 +149,7 @@ def graphs(planform: Planform, thicknesses: list, torque: list, zCoordsForce: li
 if __name__ == '__main__':
     wing = Planform(251, 9.87,0.1,28.5,2.15,False)
     spars = [0.3]
-    thicknesses = [(2,1,2,1), (2,1,2,1), (2,1,2,1)]
+    thicknesses = [(20,10,20,10), (20,10,20,10), (20,10,20,10)]
     #cent = (1.632, 0.35)
     # loc = 10
     # chord = wing.chord_spanwise(loc/(wing.b/2))
@@ -166,4 +166,5 @@ if __name__ == '__main__':
     ax1.plot(zAxis, js)
     ax2.plot(zAxis, thetas)
     plt.show()
+    print(f"Total twist: {twist(wing, thicknesses, wing.b/2, [1000000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, 10, spars)}")
 
