@@ -66,7 +66,7 @@ def filetolist(txt):
     txt,
     skip_header=40,  # Skip the first 40 
     max_rows=19,     # max rows
-    usecols=(0, 3, 5, 6, 1)  # Columns: y, Cl, Cd, Cm
+    usecols=(0, 3, 5, 7, 1)  # Columns: y, Cl, Cd, Cm
     )
     ylst = data[:, 0].tolist()
     Cllst = data[:, 1].tolist()
@@ -157,6 +157,7 @@ def DragCoef(y):
 
 
 print(LiftCoef(3)[1])
+print(MomCoef(5))
 
 #PLOTTING to test
 step = 0.05
@@ -164,7 +165,7 @@ ytab=[]
 ltab=[]
 
 for i in range(24):
-    l = NormalperSpan(i)
+    l = MomperSpan(i)
     ytab.append(i)
     ltab.append(l)
     i = i + step
