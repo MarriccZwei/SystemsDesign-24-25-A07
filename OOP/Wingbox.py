@@ -6,9 +6,11 @@ if __name__ == "__main__":
     # ONLY FOR TESTING
 
 import unittest
+from Deflections.MoI import get_stringers
 import numpy as np
 from Deflections import MoI as moi
 from Deflections import MoISpanwise as moispan
+from Deflections.MoI import get_segments
 from Deflections import Torsion as torsion
 from Deflections.wingbox import wingbox
 import OOP.Planform as pf
@@ -96,6 +98,20 @@ class Wingbox():
         else:
             sparLocs = []
         
+        stiffVol = 0
+        stiffIntervals = 200
+        for i in range(stiffIntervals+1):
+            crd = self.planform.chord_spanwise(i/stiffIntervals)
+            upperCoords, lowerCoords = wingbox(crd, sparLocs, plot=False)
+            # Calculate segment dimensions based on the wingbox coordinates
+            L1 = upperCoords[1][0] - lowerCoords[1][0]  # m
+            L2 = upperCoords[1][2] - lowerCoords[1][2]  # m
+            L3 = upperCoords[1][1] - lowerCoords[1][1]  # m
+            x = upperCoords[0][1] - upperCoords[0][0] # m
+            alpha = get_segments(L1, L2, L3, x, self.tSkin, self.tSpar, self.tMidSpar)
+            stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, x, 0.01, self.stiffArea, alpha)
+            stiffVol = stiffVol + (num_upper_stringers + num_lower_stringers)*self.planform.b/stiffIntervals*self.stiffArea
+        
         upperCoords, lowerCoords = wingbox(self.chord(self.b/4), sparLocs, plot=False)#uses cross-section at b/4
         h1 = upperCoords[1][0] - lowerCoords[1][0]
         h2 = upperCoords[1][1] - lowerCoords[1][1]
@@ -111,6 +127,6 @@ class Wingbox():
             spar3vol = self.tSpar * h3 * self.b / 2 / np.cos(self.planform.sweep_at_c_fraction(self.posMidSpar))#mid spar
         skinVol = (skinTop+skinBottom)*self.b/4*self.tSkin
         #stiffVol = (self.nStiffBot+self.nStiffTop)*self.stiffArea *self.b / 2 / np.cos(self.planform.sweep_at_c_fraction(self.rearSparPos))
-        stiffVol=0
+        #stiffVol=0
         volume = spar1vol+spar2vol+spar3vol+skinVol+stiffVol
         return volume
