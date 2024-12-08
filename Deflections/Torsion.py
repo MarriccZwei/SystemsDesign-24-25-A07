@@ -103,7 +103,7 @@ def calcJ(chord: float, thicknesses: list, centroid: tuple, spars: list = None, 
 def deltatwist(planform: Planform, thicknesses: list, range: tuple, torque: list, zCoordsForce: list, 
           xBars: list, yBars: list, zCoordsCent: list, spars: list = None) -> float:
     G = c.G_MODULUS
-    tFunc = interp1d(zCoordsForce, torque, bounds_error=False, fill_value="extrapolate")
+    tFunc = interp1d(zCoordsForce, torque, bounds_error=False, fill_value=0)
     xfunc = interp1d(zCoordsCent, xBars, bounds_error=False, fill_value="extrapolate")
     yfunc = interp1d(zCoordsCent, yBars, bounds_error=False, fill_value="extrapolate")
     twist, error = integrate.quad(lambda z: tFunc(z)/(G*calcJ(planform.chord_spanwise(z/(planform.b/2)), thicknesses, (xfunc(z), yfunc(z)), spars)), range[0], range[1])
@@ -113,7 +113,7 @@ def twist(planform: Planform, thicknesses: list, loc: float, torque: list, zCoor
           xBars: list, yBars: list, zCoordsCent: list, cutoff: float = None, spars: list = None) -> float:
     if cutoff != None and loc > cutoff:
         left = (0, cutoff)
-        right = (cutoff, planform.b/2)
+        right = (cutoff, loc)
         deltaBase = deltatwist(planform, thicknesses, left, torque, zCoordsForce, xBars, yBars, zCoordsCent, spars)
         thicknesses = [(thicknesses[0][0], thicknesses[-1][1], thicknesses[0][2], thicknesses[0][3])]
         deltaRight = deltatwist(planform, thicknesses, right, torque, zCoordsForce, xBars, yBars, zCoordsCent)
@@ -149,22 +149,30 @@ def graphs(planform: Planform, thicknesses: list, torque: list, zCoordsForce: li
 if __name__ == '__main__':
     wing = Planform(251, 9.87,0.1,28.5,2.15,False)
     spars = [0.3]
-    thicknesses = [(20,10,20,10), (20,10,20,10), (20,10,20,10)]
-    #cent = (1.632, 0.35)
+    thicknessesExtra = [(20,10,20,10), (20,10,20,10), (20,10,20,10)]
+    thicknesses = [(20,10,20,10)]
+    cent = (1.632, 0.35)
     # loc = 10
     # chord = wing.chord_spanwise(loc/(wing.b/2))
     # xfunc = interp1d(center.z_values, center.x_bar_values, bounds_error=False, fill_value="extrapolate")
     # yfunc = interp1d(center.z_values, center.y_bar_values, bounds_error=False, fill_value="extrapolate")
     # J = calcJ(chord, thicknesses, (xfunc(loc), yfunc(loc)), spars, True)
-    deltatheta = deltatwist(wing, thicknesses, (0, 10), [1000, 0], [0, 30], center.x_bar_values, center.y_bar_values, center.z_values, spars)
+    deltatheta = deltatwist(wing, thicknessesExtra, (0, 10), [1000, 0], [0, 30], center.x_bar_values, center.y_bar_values, center.z_values, spars)
     #print(deltatheta)
     zAxis = np.linspace(0, wing.b/2)
-    js, thetas = graphs(wing, thicknesses,[1000, 0], [0, 30], center.x_bar_values, center.y_bar_values, center.z_values, zAxis, spars=spars)
+    jsE, thetasE = graphs(wing, thicknessesExtra,[200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, zAxis,12.5, spars=spars)
+    js, thetas = graphs(wing, thicknesses,[200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, zAxis)
     
-    fig, (ax1, ax2) = plt.subplots(2)
+    fig, (ax1, ax2, ax3) = plt.subplots(3)
     fig.suptitle('Torsion Graphs')
-    ax1.plot(zAxis, js)
+    ax1.plot(zAxis, thetasE)
     ax2.plot(zAxis, thetas)
+    ax3.plot(zAxis, abs(np.array(thetasE))-abs(np.array(thetas)))
     plt.show()
-    print(f"Total twist: {twist(wing, thicknesses, wing.b/2, [2.e5, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, 10, spars)}")
+    print(f"Total twist: {twist(wing, thicknessesExtra, wing.b/2, [200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, 12.5, spars)}")
+    print(f"Total twist: {twist(wing, thicknesses, wing.b/2, [200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values)}")
+    #print(f"delta twist: {deltatwist(wing, thicknessesExtra, (0, 10), [200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values,spars)}")
+    #print(f"delta twist: {deltatwist(wing, thicknesses, (0,10), [200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values)}")
+    #print(calcJ(8, thicknessesExtra, cent, spars))
+    #print(calcJ(8, thicknesses, cent))
 
