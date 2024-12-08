@@ -165,7 +165,7 @@ ytab=[]
 ltab=[]
 
 for i in range(24):
-    l = MomperSpan(i)
+    l = NormalperSpan(i)
     ytab.append(i)
     ltab.append(l)
     i = i + step
