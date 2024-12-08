@@ -86,8 +86,8 @@ def size_complexbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, pla
         if bendingSatisfied and torsionSatisfied: #when the wingbox meets the requirements
             return wgBox
         if not torsionSatisfied: #when the torsion req is not met
-            wgBox = wb.Wingbox(wgBox.tSkin, wgBox.tSpar+dthickness, wgBox.tMidSpar+dthickness, wgBox.stiffArea, planform, wgBox.accuracy, False, 0.4, 30)
+            wgBox = wb.Wingbox(wgBox.tSkin, wgBox.tSpar+dthickness, wgBox.tMidSpar+dthickness, wgBox.stiffArea, planform, wgBox.accuracy, True, 0.4, 30)
         if not bendingSatisfied: #when the bending req is not met
-            wgBox = wb.Wingbox(wgBox.tSkin+dthickness, wgBox.tSpar, wgBox.tMidSpar, wgBox.stiffArea, planform, wgBox.accuracy, False, 0.4, 30)
+            wgBox = wb.Wingbox(wgBox.tSkin+dthickness, wgBox.tSpar, wgBox.tMidSpar, wgBox.stiffArea, planform, wgBox.accuracy, True, 0.4, 30)
 
     raise ValueError("Couldn't size the wingbox for this load!")
