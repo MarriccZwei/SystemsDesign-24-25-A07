@@ -172,7 +172,7 @@ for i in range(24):
 # Plot
 plt.plot(ytab, ltab)
 
-plt.title('Lift per Span')
+plt.title('Normal Force per Span')
 plt.xlabel('y')
 plt.ylabel('N/m')  
 
