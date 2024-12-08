@@ -17,6 +17,6 @@ mEngine = 3554.759960907367/2 #divide by two as we are looking at the half-span 
 thrust = 91964.80101516769
 wgboxArea = 123.969 #[m^2] measured in CATIA
 
-wgBoxInitial = wb.Wingbox(0.02, 0.02, 0.03, 0.002, planform)
+wgBoxInitial = wb.Wingbox(0.001, 0.001, 0.01, 0.002, planform)
 wgBoxFinal = iterfuns.size_rectbox(wgBoxInitial, 0.15*planform.b, np.radians(10), 0.01, planform, mWing, mEngine, wgboxArea, thrust)
-
+print(f"No reinf. Spars wingbox, stiffener area: {wgBoxFinal.stiffArea}, spar thickness: {wgBoxFinal.tSpar}, skin thickness: {wgBoxFinal.tSkin}")
