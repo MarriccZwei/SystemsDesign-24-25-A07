@@ -43,8 +43,8 @@ def size_constbox(wgBoxInitial:wb.Wingbox, reqBendDefl, reqTorsionalDefl, dthick
     for i in range(1, 20):
         for j in range(20):
             maxBendDefl, maxTorsionalDefl = calculate_deformations(wgBox, 0, planform, mWing, mEngine, wgboxArea, thrust)
-            bendingSatisfied = maxBendDefl>reqBendDefl #bending deflection is negative in our coord system
-            torsionSatisfied = maxTorsionalDefl<reqTorsionalDefl
+            bendingSatisfied = abs(maxBendDefl)<abs(reqBendDefl) #bending deflection is negative in our coord system
+            torsionSatisfied = abs(maxTorsionalDefl)<abs(reqTorsionalDefl) #torque can be pos or neg dep on which terms dominate
             if bendingSatisfied and torsionSatisfied:
                 wgBox4givenCutout.append(wgBox)
                 break
@@ -61,10 +61,10 @@ def size_constbox(wgBoxInitial:wb.Wingbox, reqBendDefl, reqTorsionalDefl, dthick
 #wing box initial should not have middle spars, the same thickness on top and bottom, same thickness of the 2 spars, wgBox initial shouldn't meet the reqs
 def size_rectbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, planform:pf.Planform, mWing:float, mEngine:float, wgboxArea:float, thrust:float):
     wgBox = wgBoxInitial #creating the wingbox that will be altered in the process
-    for i in range(19, 20):
+    for i in range(0, 20):
         maxBendDefl, maxTorsionalDefl = calculate_deformations(wgBox, 0, planform, mWing, mEngine, wgboxArea, thrust)
-        bendingSatisfied = maxBendDefl>reqBendDefl #bending deflection is negative in our coord system
-        torsionSatisfied = maxTorsionalDefl<reqTorsionalDefl
+        bendingSatisfied = abs(maxBendDefl)<abs(reqBendDefl) #bending deflection is negative in our coord system
+        torsionSatisfied = abs(maxTorsionalDefl)<abs(reqTorsionalDefl) #torque can be pos or neg dep on which terms dominate
         if bendingSatisfied and torsionSatisfied: #when the wingbox meets the requirements
             return wgBox
         if not torsionSatisfied: #when the torsion req is not met
@@ -78,8 +78,8 @@ def size_complexbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, pla
     wgBox = wgBoxInitial #creating the wingbox that will be altered in the process
     for i in range(20):
         maxBendDefl, maxTorsionalDefl = calculate_deformations(wgBox, 0, planform, mWing, mEngine, wgboxArea, thrust)
-        bendingSatisfied = maxBendDefl>reqBendDefl #bending deflection is negative in our coord system
-        torsionSatisfied = maxTorsionalDefl<reqTorsionalDefl
+        bendingSatisfied = abs(maxBendDefl)<abs(reqBendDefl) #bending deflection is negative in our coord system
+        torsionSatisfied = abs(maxTorsionalDefl)<abs(reqTorsionalDefl) #torque can be pos or neg dep on which terms dominate
         if bendingSatisfied and torsionSatisfied: #when the wingbox meets the requirements
             return wgBox
         if not torsionSatisfied: #when the torsion req is not met
