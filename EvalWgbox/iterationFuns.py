@@ -34,9 +34,11 @@ def calculate_deformations(wgBox:wb.Wingbox, fuelFraction:float, planform:pf.Pla
     thicknesses = wgBox.thicknesses(1)
     if wgBox.midSpar:
         spars = [wgBox.posMidSpar]
+        cutoff = wgBox.cutoff
     else:
         spars = None
-    maxTorsionalDefl = tr.twist(planform, thicknesses, halfspan, loadsT, posesT, xbar, ybar, posesT, wgBox.cutoff, spars)
+        cutoff=None
+    maxTorsionalDefl = tr.twist(planform, thicknesses, halfspan, loadsT, posesT, xbar, ybar, posesT, cutoff, spars)
 
     return maxBendDefl, maxTorsionalDefl
     
