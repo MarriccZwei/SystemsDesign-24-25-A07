@@ -66,5 +66,18 @@ if __name__ == "__main__":
     wgboxArea = 123.969 #[m^2] measured in CATIA
 
     
+    '''The shear diagram'''
+    halfspan = planform.b/2
+    distrShear, pointShearLoads = combined_shear_load(1, planform, mWing, mEngine, wgboxArea)
+    diagramMaker = sbt.SBTdiagramMaker(plot=True, accuracy=1000)
+    posesV, loadsV =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
 
+    '''The bending diagram'''
+    engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, consts.ENGINESPANWISEPOS*halfspan)
+    posesM, loadsM =diagramMaker.bending_diagram(distrShear, pointShearLoads, lambda pos:xfi.MomperSpan(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
 
+    '''The torque diagram'''
+    distTorque, pointTorques = cumulated_torque(planform, thrust, mEngine)
+    posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
+
+    
