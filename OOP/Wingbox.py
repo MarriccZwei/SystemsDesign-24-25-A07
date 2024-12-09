@@ -30,7 +30,7 @@ class Wingbox():
             self.cutoff = 0
         
         self.stiffArea = stiffArea
-        self. accuracy = accuracy
+        self.accuracy = accuracy
         self.b = planform.b
         self.cr = planform.cr
         self.tr = planform.TR
@@ -130,3 +130,26 @@ class Wingbox():
         #stiffVol=0
         volume = spar1vol+spar2vol+spar3vol+skinVol+stiffVol
         return volume
+    
+
+if __name__ == "__main__":
+    #sizing the mid spar less wingbox
+    planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
+    halfspan = planform.b/2
+    mWing = 22962.839350654576
+    mEngine = 3554.759960907367/2 #divide by two as we are looking at the half-span only
+    thrust = 91964.80101516769
+    wgboxArea = 123.969 #[m^2] measured in CATIA
+
+    wgboxMidSpar = Wingbox(0.01, 0.02, 0.02, 0.002, planform, midSpar=True, midSparPos=0.4, cutMidSpar=15)
+    ixx, xbar, ybar = wgboxMidSpar.section_properties()
+    thicknesses = wgboxMidSpar.thicknesses(1)
+    twist = torsion.twist(planform, thicknesses, 24, [1e5, 1e5, 5e4, 0], [0, 10, 20, 25], xbar, ybar, np.linspace(0, 25, len(xbar)), wgboxMidSpar.cutoff, [wgboxMidSpar.posMidSpar])
+
+    print(f"twist mids: {twist}")
+
+    wgboxNoSpar = Wingbox(0.01, 0.02, 0.02, 0.002, planform, midSpar=False, midSparPos=0.4, cutMidSpar=15)
+    ixx, xbar, ybar = wgboxNoSpar.section_properties()
+    thicknesses = wgboxNoSpar.thicknesses(1)
+    twist = torsion.twist(planform, thicknesses, 24, [1e5, 1e5, 5e4, 0], [0, 10, 20, 25], xbar, ybar, np.linspace(0, 25, len(xbar)), None, None)
+    print(f"twist no s: {twist}")
