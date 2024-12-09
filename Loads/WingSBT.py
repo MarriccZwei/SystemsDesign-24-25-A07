@@ -107,28 +107,33 @@ if __name__ == "__main__":
     wgboxArea = 123.969 #[m^2] measured in CATIA
 
     
-    '''The shear diagram'''
-    halfspan = planform.b/2
-    distrShear, pointShearLoads = combined_shear_load(1, planform, mWing, mEngine, wgboxArea)
-    diagramMaker = sbt.SBTdiagramMaker(plot=True, accuracy=1000)
-    posesV, loadsV =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
+    # '''The shear diagram'''
+    # halfspan = planform.b/2
+    # distrShear, pointShearLoads = combined_shear_load(1, planform, mWing, mEngine, wgboxArea)
+    # diagramMaker = sbt.SBTdiagramMaker(plot=True, accuracy=1000)
+    # posesV, loadsV =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
 
-    '''The bending diagram'''
-    engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, consts.ENGINESPANWISEPOS*halfspan)
-    posesM, loadsM =diagramMaker.bending_diagram(distrShear, pointShearLoads, lambda pos:xfi.MomperSpan(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
+    # '''The bending diagram'''
+    # engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, consts.ENGINESPANWISEPOS*halfspan)
+    # posesM, loadsM =diagramMaker.bending_diagram(distrShear, pointShearLoads, lambda pos:xfi.MomperSpan(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
 
-    '''The torque diagram'''
-    distTorque, pointTorques = cumulated_torque(planform, thrust, mEngine)
-    posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
+    # '''The torque diagram'''
+    # distTorque, pointTorques = cumulated_torque(planform, thrust, mEngine)
+    # posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
 
-    '''The shear diagram for negative n'''
-    distrShear, pointShearLoads = combined_shear_load_negative(1, planform, mWing, mEngine, wgboxArea)
-    posesV, loadsV =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
+    # '''The shear diagram for negative n'''
+    # distrShear, pointShearLoads = combined_shear_load_negative(1, planform, mWing, mEngine, wgboxArea)
+    # posesV, loadsV =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
 
-    '''The bending for negative n'''
-    engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, consts.ENGINESPANWISEPOS*halfspan)
-    posesM, loadsM =diagramMaker.bending_diagram(distrShear, pointShearLoads, lambda pos:xfi.MomperSpanNeg(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
+    # '''The bending for negative n'''
+    # engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, consts.ENGINESPANWISEPOS*halfspan)
+    # posesM, loadsM =diagramMaker.bending_diagram(distrShear, pointShearLoads, lambda pos:xfi.MomperSpanNeg(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
     
-    '''The torque for negative n'''
-    distTorque, pointTorques = cumulated_torque_neg(planform, thrust, mEngine)
-    posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
+    # '''The torque for negative n'''
+    # distTorque, pointTorques = cumulated_torque_neg(planform, thrust, mEngine)
+    # posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
+
+
+    '''Engine Moment Arm'''
+    intXbar = interpolatedI(ms.x_bar_values, planform.b/2)
+    print(consts.ENGINEXWRTLEMAC+np.tan(planform.sweepLE)*(consts.ENGINESPANWISEPOS-planform.YMAC)+intXbar(consts.ENGINESPANWISEPOS)-consts.NACELLELEN/2)

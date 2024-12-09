@@ -14,6 +14,8 @@ import scipy.integrate as itg
 from General import Constants as c
 import matplotlib.pyplot as plt
 import Loads.InertialLoads as il
+import OOP.Wingbox as wb
+import Loads.XFLRimport as xfi
 
 #wp3 values - to be updated later
 planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
@@ -38,12 +40,26 @@ def integrate_bending_defl(poses, intBendMoment, IxxValues, span):
     return lambda pos:itg.quad(firstDeriv, 0, pos)[0]
 
 if __name__ == "__main__":
-    shearFun, shearPts = wsbt.combined_shear_load(0.9, planform, mWing, mEngine, wgboxArea)
-    diagramMaker = sbt.SBTdiagramMaker(10)
+    shearFun, shearPts = wsbt.combined_shear_load(1, planform, mWing, mEngine, wgboxArea)
+    diagramMaker = sbt.SBTdiagramMaker(256)
     engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, c.ENGINESPANWISEPOS*halfspan)
-    poses, loads =diagramMaker.bending_diagram(shearFun, shearPts, lambda pos:0, [engineBendingMoment], halfspan)
+    poses, loads =diagramMaker.bending_diagram(shearFun, shearPts, lambda pos:xfi.MomperSpan(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
+    engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, c.ENGINESPANWISEPOS*halfspan)
+    poses, loads =diagramMaker.bending_diagram(shearFun, shearPts, lambda pos:xfi.MomperSpan(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
 
-    deflfun = integrate_bending_defl(poses, loads, ms.I_xx_values, planform.b)
+    '''Constant thickness, big stiffeners wingbox'''
+    wingbox1 = wb.Wingbox(0.007, 0.007, 0, 0.002, planform)
+    ixx1, ibars1, ybars1 = wingbox1.section_properties()
+
+    '''Fat Flange, small stiffeners'''
+    wingbox2 = wb.Wingbox(0.012, 0.006, 0, 0.001, planform)
+    ixx2, ibars2, ybars2 = wingbox2.section_properties()
+
+    '''Reinforcement Spar'''
+    wingbox3 = wb.Wingbox(0.011, 0.004, 0.004, 0.0011, planform)
+    ixx3, ibars3, ybars3 = wingbox3.section_properties()
+
+    deflfun = integrate_bending_defl(poses, loads, ixx2, planform.b)
     print(f"deflection at {halfspan}: {deflfun(halfspan)}")
     # defls = list()
     # for pos in poses:
