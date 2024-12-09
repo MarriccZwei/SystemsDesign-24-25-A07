@@ -15,6 +15,7 @@ from General import Constants as c
 import matplotlib.pyplot as plt
 import Loads.InertialLoads as il
 import OOP.Wingbox as wb
+import Loads.XFLRimport as xfi
 
 #wp3 values - to be updated later
 planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
@@ -39,10 +40,12 @@ def integrate_bending_defl(poses, intBendMoment, IxxValues, span):
     return lambda pos:itg.quad(firstDeriv, 0, pos)[0]
 
 if __name__ == "__main__":
-    shearFun, shearPts = wsbt.combined_shear_load(0.9, planform, mWing, mEngine, wgboxArea)
-    diagramMaker = sbt.SBTdiagramMaker(10)
+    shearFun, shearPts = wsbt.combined_shear_load(1, planform, mWing, mEngine, wgboxArea)
+    diagramMaker = sbt.SBTdiagramMaker(256)
     engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, c.ENGINESPANWISEPOS*halfspan)
-    poses, loads =diagramMaker.bending_diagram(shearFun, shearPts, lambda pos:0, [engineBendingMoment], halfspan)
+    poses, loads =diagramMaker.bending_diagram(shearFun, shearPts, lambda pos:xfi.MomperSpan(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
+    engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, c.ENGINESPANWISEPOS*halfspan)
+    poses, loads =diagramMaker.bending_diagram(shearFun, shearPts, lambda pos:xfi.MomperSpan(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
 
     '''Constant thickness, big stiffeners wingbox'''
     wingbox1 = wb.Wingbox(0.007, 0.007, 0, 0.002, planform)
