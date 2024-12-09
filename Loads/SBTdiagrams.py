@@ -59,7 +59,7 @@ class SBTdiagramMaker(object):
             loadVals[i] += intBdueToDistrS
 
         #auto_plotting afterwards
-        self._general_plot(lenPts, loadVals, "Internal Bending Moment (Upwards/Downwards)", "M_x [Nm]")
+        self._general_plot(lenPts, loadVals, "Internal Bending Moment (Positive in Flight Direction)", "M_x [Nm]")
         return lenPts, loadVals
 
     #distrLoads is a function of position, pointLoads are stored in a list of tuples (position, magnitude)
@@ -114,7 +114,7 @@ class SBTdiagramMaker(object):
         '''A plotting subfunctioon that allows to visualize the diagram when the settings indicate that'''
         if self.plot:
             plt.plot(lenPts, loadVals)
-            plt.xlabel("Spanwise Posistion [m] (0 @ root)")
+            plt.xlabel("Spanwise Position [m] (0 at the wing root)")
             plt.ylabel(intForceLabel)
             plt.title(intForceTitle)
             plt.show()
