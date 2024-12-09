@@ -99,6 +99,21 @@ def size_enginesparbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, 
         
     raise ValueError("Couldn't size the wingbox for this load!")
 
+def size_stiffenerbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, planform:pf.Planform, mWing:float, mEngine:float, wgboxArea:float, thrust:float):
+    wgBox = wgBoxInitial #creating the wingbox that will be altered in the process
+    for i in range(0, 20):
+        maxBendDefl, maxTorsionalDefl = calculate_deformations(wgBox, 0, planform, mWing, mEngine, wgboxArea, thrust)
+        bendingSatisfied = abs(maxBendDefl)<abs(reqBendDefl) #bending deflection is negative in our coord system
+        torsionSatisfied = abs(maxTorsionalDefl)<abs(reqTorsionalDefl) #torque can be pos or neg dep on which terms dominate
+        if bendingSatisfied and torsionSatisfied: #when the wingbox meets the requirements
+            return wgBox
+        if not torsionSatisfied: #when the torsion req is not met
+            wgBox = wb.Wingbox(wgBox.tSkin+dthickness, wgBox.tSpar+dthickness, 0, wgBox.stiffArea, planform, wgBox.accuracy, False, 0.4)
+        elif not bendingSatisfied: #when the bending req is not met
+            wgBox = wb.Wingbox(wgBox.tSkin, wgBox.tSpar, 0, wgBox.stiffArea+dthickness/5, planform, wgBox.accuracy, False, 0.4)
+
+    raise ValueError("Couldn't size the wingbox for this load!")
+
 def size_complexbox(wgBoxInitial, reqBendDefl, reqTorsionalDefl, dthickness, planform:pf.Planform, mWing:float, mEngine:float, wgboxArea:float, thrust:float):
     wgBox = wgBoxInitial #creating the wingbox that will be altered in the process
     for i in range(20):
