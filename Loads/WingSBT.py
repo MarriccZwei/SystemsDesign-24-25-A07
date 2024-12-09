@@ -12,6 +12,31 @@ import OOP.Planform as pf
 import numpy as np
 import Deflections.MoISpanwise as ms
 
+def combined_shear_load_negative(fuelFraction, planform:pf.Planform, mWing, engineMass, wgboxArea):
+    #aerodynamics loads imported from xflr
+    aerodynamicShear = lambda pos: -xfi.NormalperSpanNeg(pos) #to account for the fact that lift is negative in our coord system
+
+    #wing structure self-weight
+    distrWeightShear, ribPtLoads = il.wing_weight_distr_est(planform, mWing, wgboxArea)
+
+    #fuel weight
+    fuelWeightshear = il.fuel_in_wing_weight_est(planform, fuelFraction)
+    
+    #engine weight
+    engineWeightShear = il.engine_shear(engineMass, consts.ENGINESPANWISEPOS*planform.b/2)
+
+    #the complete distributed shear load
+    def distrShear(pos):
+        valWgWeight = distrWeightShear(pos)
+        valFuWeight = fuelWeightshear(pos)
+        valAeWeight = aerodynamicShear(pos)
+        return valWgWeight+valFuWeight+valAeWeight
+
+    #the complete list of point forces
+    pointShearLoads = ribPtLoads+[engineWeightShear]
+
+    return distrShear, pointShearLoads
+
 def combined_shear_load(fuelFraction, planform:pf.Planform, mWing, engineMass, wgboxArea):
     #aerodynamics loads imported from xflr
     aerodynamicShear = lambda pos: -xfi.NormalperSpan(pos) #to account for the fact that lift is negative in our coord system
@@ -51,7 +76,23 @@ def cumulated_torque(planform:pf.Planform, Tengine, mEngine):
     def liftShearTorque(pos):
         chord = planform.chord_spanwise(pos/planform.b*2)
         CgC4dist = 0.2*chord+intXbar(pos)-0.25*chord
-        return -CgC4dist*xfi.LiftperSpan(pos)
+        return -CgC4dist*xfi.NormalperSpan(pos)
+
+    torqueDistr = lambda pos:liftShearTorque(pos)+pitchinMomentDistr(pos)
+    return torqueDistr, [engineTorque]
+
+def cumulated_torque_neg(planform:pf.Planform, Tengine, mEngine):
+    pitchinMomentDistr = lambda pos:-xfi.MomperSpanNeg(pos)*np.cos(planform.sweepC4)
+    intXbar = interpolatedI(ms.x_bar_values, planform.b/2)
+    CgdistEngStruct = consts.ENGINEXWRTLEMAC+np.tan(planform.sweepLE)*(consts.ENGINESPANWISEPOS-planform.YMAC)+intXbar(consts.ENGINESPANWISEPOS)-consts.NACELLELEN/2
+    engineTorque = il.engine_torque(Tengine, planform.sweepC4, consts.ENGINESPANWISEPOS*planform.b/2, mEngine, CgdistEngStruct)
+
+    #torque due to shear offset
+    intXbar = interpolatedI(ms.x_bar_values, planform.b/2)
+    def liftShearTorque(pos):
+        chord = planform.chord_spanwise(pos/planform.b*2)
+        CgC4dist = 0.2*chord+intXbar(pos)-0.25*chord
+        return -CgC4dist*xfi.NormalperSpanNeg(pos)
 
     torqueDistr = lambda pos:liftShearTorque(pos)+pitchinMomentDistr(pos)
     return torqueDistr, [engineTorque]
@@ -80,4 +121,14 @@ if __name__ == "__main__":
     distTorque, pointTorques = cumulated_torque(planform, thrust, mEngine)
     posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
 
+    '''The shear diagram for negative n'''
+    distrShear, pointShearLoads = combined_shear_load_negative(1, planform, mWing, mEngine, wgboxArea)
+    posesV, loadsV =diagramMaker.shear_diagram(distrShear, pointShearLoads, halfspan)
+
+    '''The bending for negative n'''
+    engineBendingMoment = il.engine_bending(thrust, planform.sweepC4, consts.ENGINESPANWISEPOS*halfspan)
+    posesM, loadsM =diagramMaker.bending_diagram(distrShear, pointShearLoads, lambda pos:xfi.MomperSpanNeg(pos)*(-np.sin(planform.sweepC4)), [engineBendingMoment], halfspan)
     
+    '''The torque for negative n'''
+    distTorque, pointTorques = cumulated_torque_neg(planform, thrust, mEngine)
+    posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
