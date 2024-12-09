@@ -33,6 +33,6 @@ wgboxArea = 123.969 #[m^2] measured in CATIA
 # print(f"No reinf. Spars wingbox, stiffener area: {wgBoxFinal.stiffArea}, spar thickness: {wgBoxFinal.tSpar}, skin thickness: {wgBoxFinal.tSkin}, cutoff pos: {wgBoxFinal.cutoff}")
 
 #no reinforcement spar wingbox
-wgBoxInitial = wb.Wingbox(0.001, 0.001, 0.01, 0.001, planform)
-wgBoxFinal = iterfuns.size_rectbox(wgBoxInitial, 0.15*planform.b, np.radians(10), 0.001, planform, mWing, mEngine, wgboxArea, thrust)
+wgBoxInitial = wb.Wingbox(0.007, 0.007, 0.0006, 0.001, planform)
+wgBoxFinal = iterfuns.size_stiffenerbox(wgBoxInitial, 0.15*planform.b, np.radians(10), 0.001, planform, mWing, mEngine, wgboxArea, thrust)
 print(f"No reinf. Spars wingbox, stiffener area: {wgBoxFinal.stiffArea}, spar thickness: {wgBoxFinal.tSpar}, skin thickness: {wgBoxFinal.tSkin}")
