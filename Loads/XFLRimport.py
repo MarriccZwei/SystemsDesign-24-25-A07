@@ -54,6 +54,8 @@ print(CL_dneg)
 txt_a0 = "Loads\MainWing_a=0.00_v=10.00ms.txt"
 txt_a10 = "Loads\MainWing_a=10.00_v=10.00ms.txt"
 
+txt_aneg4 = "Loads\MainWing_a=-4.02_v=10.00ms.txt"
+
 #FROM TXT FILES
 CL_0 = 0.132396
 CL_10 = 0.964418
@@ -163,8 +165,23 @@ def DragCoef(y):
     return Cd_dy
 
 
-Alpha_dneg = ((CL_dneg - CL_0)/(CL_10 - CL_0)) * 10
-print(Alpha_dneg)
+
+# THIS IS THE FORCES NEGATIVE WAY FOR ABOUT -4 degrees AOA
+CL_dneg
+q_dneg
+
+Alpha_dneg = ((CL_dneg - CL_0)/(CL_10 - CL_0)) * 10 # used to find the angle for the negative xflr analysis
+
+def NormalperSpanNeg(y):
+    LprimeNeg = interpolate((filetolist(txt_aneg4)[0]),(filetolist(txt_aneg4)[1]))(y) * Cy(y) * q_dneg
+    DprimeNeg = interpolate((filetolist(txt_aneg4)[0]),(filetolist(txt_aneg4)[2]))(y) * Cy(y) * q_dneg
+    NprimeNeg = cos(Alpha_dneg*(pi/180))*LprimeNeg + sin(Alpha_dneg*(pi/180))* DprimeNeg
+    return NprimeNeg
+
+def MomperSpanNeg(y):
+    MprimeNeg = interpolate((filetolist(txt_aneg4)[0]),(filetolist(txt_aneg4)[3]))(y) * Cy(y)**2 * q_dneg
+    return MprimeNeg
+
 
 # print(LiftCoef(3)[1])
 # print(MomCoef(5))
@@ -176,7 +193,7 @@ ytab=[]
 ltab=[]
 
 for i in range(25):
-    l = NormalperSpan(i)
+    l = MomperSpanNeg(i)
     ytab.append(i)
     ltab.append(l)
     i = i + step
