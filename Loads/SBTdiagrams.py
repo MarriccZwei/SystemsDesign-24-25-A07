@@ -29,7 +29,7 @@ class SBTdiagramMaker(object):
         one with the steps along the length of the element, 
         the other with the internal shear force value at those steps'''
         lenPts, loadVals = self._general_diagram(distrLoad, pointLoads, length)
-        self._general_plot(lenPts, loadVals, "Internal shear force (in the lift direction)", "V_y [N]")
+        self._general_plot(lenPts, loadVals, "Internal Shear Force (Upward Positive)", "V_y [N]")
         return lenPts, loadVals
 
     #distrLoads is a function of position, pointLoads are stored in a list of tuples (position, magnitude)
@@ -59,7 +59,7 @@ class SBTdiagramMaker(object):
             loadVals[i] += intBdueToDistrS
 
         #auto_plotting afterwards
-        self._general_plot(lenPts, loadVals, "Internal bending moment (upwards/downwards)", "M_x [Nm]")
+        self._general_plot(lenPts, loadVals, "Internal Bending Moment (Positive in Flight Direction)", "M_x [Nm]")
         return lenPts, loadVals
 
     #distrLoads is a function of position, pointLoads are stored in a list of tuples (position, magnitude)
@@ -68,7 +68,7 @@ class SBTdiagramMaker(object):
         one with the steps along the length of the element, 
         the other with the internal torque value at those steps'''
         lenPts, loadVals = self._general_diagram(distrTorque, pointTorques, length)
-        self._general_plot(lenPts, loadVals, "Internal torque (in the sweep direction)", "T_z [Nm]")
+        self._general_plot(lenPts, loadVals, "Internal Torque (Clockwise Positive)", "T_z [Nm]")
         return lenPts, loadVals
 
     #distr is a function of position, points are stored in a list of tuples (position, magnitude)
@@ -114,7 +114,7 @@ class SBTdiagramMaker(object):
         '''A plotting subfunctioon that allows to visualize the diagram when the settings indicate that'''
         if self.plot:
             plt.plot(lenPts, loadVals)
-            plt.xlabel("Spanwise Posistion [m] (0 @ root)")
+            plt.xlabel("Spanwise Position [m] (0 at the wing root)")
             plt.ylabel(intForceLabel)
             plt.title(intForceTitle)
             plt.show()
