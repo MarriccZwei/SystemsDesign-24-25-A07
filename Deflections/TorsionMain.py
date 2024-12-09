@@ -18,15 +18,18 @@ wing = Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2
 halfspan = wing.b/2
 zAxis = np.linspace(0, wing.b/2)
 diagramMaker = sbt.SBTdiagramMaker(plot=False, accuracy=256-1)
-distTorque, pointTorques = wsbt.cumulated_torque(wing, thrust, mEngine)
-distTorque, pointTorques = wsbt.cumulated_torque(wing, thrust, mEngine)
-posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
+
 xBars = center.x_bar_values
 yBars = center.y_bar_values
 zPos = center.z_values
 
 
-number = 2
+number = 3
+
+
+distTorque, pointTorques = wsbt.cumulated_torque(wing, thrust, mEngine)
+posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
+
 
 
 if number == 1:
@@ -54,21 +57,31 @@ plt.figure(figsize=(8, 8))
 
 plt.subplot(2,1, 1)
 plt.plot(zAxis, Js)
-plt.xlabel("Spanwize location: z [m]")
+plt.xlabel("Span wise location: z [m]")
 plt.ylabel("Torsional Stiffness: J [m^4]")
 plt.title("Stiffness distribution")
 plt.grid(True)
 
 plt.subplot(2,1,2)
 plt.plot(zAxis, thetas)
-plt.xlabel("Spanwize location: z [m]")
+plt.xlabel("Span wise location: z [m]")
 plt.ylabel("Angle of twist: θ [degrees]")
-plt.title("Twist distribution")
+plt.title("Twist distribution LC-23")
 plt.grid(True)
 
-plt.suptitle(f"Stiffness and twist diagram design {number}")
+distTorque, pointTorques = wsbt.cumulated_torque_neg(wing, thrust, mEngine)
+posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
+
+Js, thetas = graphs(wing, thicknesses,loadsT, posesT, xBars, yBars, zPos, zAxis, cutoff, spars)
+
+plt.subplot(3,1,3)
+plt.plot(zAxis, thetas)
+plt.xlabel("Span wise location: z [m]")
+plt.ylabel("Angle of twist: θ [degrees]")
+plt.title("Twist distribution LC-25")
+plt.grid(True)
+
+plt.suptitle(f"Stiffness and twist diagrams design {number}")
 plt.subplots_adjust(hspace=0.5)
-
-
 
 plt.show()
