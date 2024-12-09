@@ -38,9 +38,17 @@ def C_Lcalc(S, V, mass, loadf, altitude):
         qlst.append(q)
         i+=1
     print(f'The case for the max lift per span = {CheckMaxlst.index(max(CheckMaxlst))+1}')
+    #forcing code to pick case 25
+    print(f'The case for negative critical load = {24+1}')
+    CL_dneg = CL_dlst[24]
+    q_dneg = qlst[24]
     CL_d = CL_dlst[CheckMaxlst.index(max(CheckMaxlst))]
     q_d = qlst[CheckMaxlst.index(max(CheckMaxlst))]
-    return(CL_d, q_d)
+    return(CL_d, q_d, CL_dneg, q_dneg)
+
+CL_dneg = C_Lcalc(S, V, mass, loadf, altitude)[2]
+q_dneg = C_Lcalc(S, V, mass, loadf, altitude)[3]
+print(CL_dneg)
 
 # File path
 txt_a0 = "Loads\MainWing_a=0.00_v=10.00ms.txt"
@@ -137,7 +145,6 @@ def MomperSpan(y):
 
 
 
-
 #Lift coef distribution and Angle of attack degrees
 def LiftCoef(y):
     Alpha_d = ((CL_d - CL_0)/(CL_10 - CL_0)) * 10
@@ -156,15 +163,19 @@ def DragCoef(y):
     return Cd_dy
 
 
-print(LiftCoef(3)[1])
-print(MomCoef(5))
+Alpha_dneg = ((CL_dneg - CL_0)/(CL_10 - CL_0)) * 10
+print(Alpha_dneg)
+
+# print(LiftCoef(3)[1])
+# print(MomCoef(5))
+# print(CL_d)
 
 #PLOTTING to test
 step = 0.05
 ytab=[]
 ltab=[]
 
-for i in range(24):
+for i in range(25):
     l = NormalperSpan(i)
     ytab.append(i)
     ltab.append(l)
