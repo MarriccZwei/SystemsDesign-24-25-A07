@@ -171,6 +171,8 @@ CL_dneg
 q_dneg
 
 Alpha_dneg = ((CL_dneg - CL_0)/(CL_10 - CL_0)) * 10 # used to find the angle for the negative xflr analysis
+print(Alpha_dneg)
+
 
 def NormalperSpanNeg(y):
     LprimeNeg = interpolate((filetolist(txt_aneg4)[0]),(filetolist(txt_aneg4)[1]))(y) * Cy(y) * q_dneg
@@ -183,7 +185,7 @@ def MomperSpanNeg(y):
     return MprimeNeg
 
 
-# print(LiftCoef(3)[1])
+print(LiftCoef(3)[1])
 # print(MomCoef(5))
 # print(CL_d)
 
@@ -201,8 +203,9 @@ for i in range(25):
 # Plot
 plt.plot(ytab, ltab)
 
-plt.title('Normal Force per Span')
-plt.xlabel('y')
-plt.ylabel('N/m')  
+# plt.title('Normal Force per Span')
+plt.grid()
+plt.xlabel('Span in y-direction [m]')
+plt.ylabel('Pitching Moment per span [N]')  
 
 plt.show()
