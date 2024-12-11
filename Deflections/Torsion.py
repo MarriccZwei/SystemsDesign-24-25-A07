@@ -147,32 +147,38 @@ def graphs(planform: Planform, thicknesses: list, torque: list, zCoordsForce: li
 
 
 if __name__ == '__main__':
-    wing = Planform(251, 9.87,0.1,28.5,2.15,False)
-    spars = [0.3]
-    thicknessesExtra = [(20,10,20,10), (20,10,20,10), (20,10,20,10)]
-    thicknesses = [(20,10,20,10)]
-    cent = (1.632, 0.35)
+    #wing = Planform(251, 9.87,0.1,28.5,2.15,False)
+    #spars = [0.3]
+    #thicknessesExtra = [(20,10,20,10), (20,10,20,10), (20,10,20,10)]
+    #thicknesses = [(20,10,20,10)]
+    #cent = (1.632, 0.35)
     # loc = 10
     # chord = wing.chord_spanwise(loc/(wing.b/2))
     # xfunc = interp1d(center.z_values, center.x_bar_values, bounds_error=False, fill_value="extrapolate")
     # yfunc = interp1d(center.z_values, center.y_bar_values, bounds_error=False, fill_value="extrapolate")
     # J = calcJ(chord, thicknesses, (xfunc(loc), yfunc(loc)), spars, True)
-    deltatheta = deltatwist(wing, thicknessesExtra, (0, 10), [1000, 0], [0, 30], center.x_bar_values, center.y_bar_values, center.z_values, spars)
+    #deltatheta = deltatwist(wing, thicknessesExtra, (0, 10), [1000, 0], [0, 30], center.x_bar_values, center.y_bar_values, center.z_values, spars)
     #print(deltatheta)
-    zAxis = np.linspace(0, wing.b/2)
-    jsE, thetasE = graphs(wing, thicknessesExtra,[200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, zAxis,12.5, spars=spars)
-    js, thetas = graphs(wing, thicknesses,[200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, zAxis)
-    
-    fig, (ax1, ax2, ax3) = plt.subplots(3)
-    fig.suptitle('Torsion Graphs')
-    ax1.plot(zAxis, thetasE)
-    ax2.plot(zAxis, thetas)
-    ax3.plot(zAxis, abs(np.array(thetasE))-abs(np.array(thetas)))
-    plt.show()
-    print(f"Total twist: {twist(wing, thicknessesExtra, wing.b/2, [200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, 12.5, spars)}")
-    print(f"Total twist: {twist(wing, thicknesses, wing.b/2, [200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values)}")
+    #zAxis = np.linspace(0, wing.b/2)
+    #jsE, thetasE = graphs(wing, thicknessesExtra,[200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, zAxis,12.5, spars=spars)
+    #js, thetas = graphs(wing, thicknesses,[200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, zAxis) 
+    # fig, (ax1, ax2, ax3) = plt.subplots(3)
+    # fig.suptitle('Torsion Graphs')
+    # ax1.plot(zAxis, thetasE)
+    # ax2.plot(zAxis, thetas)
+    # ax3.plot(zAxis, abs(np.array(thetasE))-abs(np.array(thetas)))
+    # plt.show()
+    #print(f"Total twist: {twist(wing, thicknessesExtra, wing.b/2, [200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, 12.5, spars)}")
+    #print(f"Total twist: {twist(wing, thicknesses, wing.b/2, [200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values)}")
     #print(f"delta twist: {deltatwist(wing, thicknessesExtra, (0, 10), [200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values,spars)}")
     #print(f"delta twist: {deltatwist(wing, thicknesses, (0,10), [200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values)}")
     #print(calcJ(8, thicknessesExtra, cent, spars))
     #print(calcJ(8, thicknesses, cent))
+    wing = Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
+    zAxis = np.linspace(0, wing.b/2)
+    """Design one"""
+    thicknesses = [(7,7,7,7)]
+    spars = None
+    cutoff = None
+    Js, thetas = graphs(wing, thicknesses,[200000, 20000], [10, 15], center.x_bar_values, center.y_bar_values, center.z_values, zAxis, cutoff, spars)
 
