@@ -68,7 +68,7 @@ class SBTdiagramMaker(object):
         one with the steps along the length of the element, 
         the other with the internal torque value at those steps'''
         lenPts, loadVals = self._general_diagram(distrTorque, pointTorques, length)
-        self._general_plot(lenPts, loadVals, "Internal Torque (Clockwise Positive)", "T_z [Nm]")
+        self._general_plot(lenPts, loadVals, "Internal Torque (Pitch down positive)", "T_z [Nm]")
         return lenPts, loadVals
 
     #distr is a function of position, points are stored in a list of tuples (position, magnitude)
