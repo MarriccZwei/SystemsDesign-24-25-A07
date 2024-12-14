@@ -30,10 +30,12 @@ def pos_loadcase(spanwise_position):
     posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
 
     load_dict = {
-    "moment_x": [np.interp(spanwise_position,posesM,loadsM)],  
-    "shear": [np.interp(spanwise_position,posesV,loadsV)],     
-    "torque": [np.interp(spanwise_position,posesT,loadsT)]     
+    "Mx": [np.interp(spanwise_position,posesM,loadsM)],  
+    "Vy": [np.interp(spanwise_position,posesV,loadsV)],     
+    "Tz": [np.interp(spanwise_position,posesT,loadsT)]     
     }
+
+    return load_dict
 
 def neg_loadcase(spanwise_position):
     planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
@@ -57,7 +59,9 @@ def neg_loadcase(spanwise_position):
     posesnT, loadsnT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
 
     load_dict = {
-    "moment_x": [np.interp(spanwise_position,posesnM,loadsnM)],  
-    "shear": [np.interp(spanwise_position,posesnV,loadsnV)],     
-    "torque": [np.interp(spanwise_position,posesnT,loadsnT)]     
+    "Mx": [np.interp(spanwise_position,posesnM,loadsnM)],  
+    "Vy": [np.interp(spanwise_position,posesnV,loadsnV)],     
+    "Tz": [np.interp(spanwise_position,posesnT,loadsnT)]     
     }
+
+    return load_dict
