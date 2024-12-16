@@ -38,13 +38,23 @@ def C_Lcalc(S, V, mass, loadf, altitude):
         qlst.append(q)
         i+=1
     print(f'The case for the max lift per span = {CheckMaxlst.index(max(CheckMaxlst))+1}')
+    #forcing code to pick case 25
+    print(f'The case for negative critical load = {24+1}')
+    CL_dneg = CL_dlst[24]
+    q_dneg = qlst[24]
     CL_d = CL_dlst[CheckMaxlst.index(max(CheckMaxlst))]
     q_d = qlst[CheckMaxlst.index(max(CheckMaxlst))]
-    return(CL_d, q_d)
+    return(CL_d, q_d, CL_dneg, q_dneg)
+
+CL_dneg = C_Lcalc(S, V, mass, loadf, altitude)[2]
+q_dneg = C_Lcalc(S, V, mass, loadf, altitude)[3]
+print(CL_dneg)
 
 # File path
 txt_a0 = "Loads\MainWing_a=0.00_v=10.00ms.txt"
 txt_a10 = "Loads\MainWing_a=10.00_v=10.00ms.txt"
+
+txt_aneg4 = "Loads\MainWing_a=-4.02_v=10.00ms.txt"
 
 #FROM TXT FILES
 CL_0 = 0.132396
@@ -137,7 +147,6 @@ def MomperSpan(y):
 
 
 
-
 #Lift coef distribution and Angle of attack degrees
 def LiftCoef(y):
     Alpha_d = ((CL_d - CL_0)/(CL_10 - CL_0)) * 10
@@ -156,16 +165,37 @@ def DragCoef(y):
     return Cd_dy
 
 
+
+# THIS IS THE FORCES NEGATIVE WAY FOR ABOUT -4 degrees AOA
+CL_dneg
+q_dneg
+
+Alpha_dneg = ((CL_dneg - CL_0)/(CL_10 - CL_0)) * 10 # used to find the angle for the negative xflr analysis
+print(Alpha_dneg)
+
+
+def NormalperSpanNeg(y):
+    LprimeNeg = interpolate((filetolist(txt_aneg4)[0]),(filetolist(txt_aneg4)[1]))(y) * Cy(y) * q_dneg
+    DprimeNeg = interpolate((filetolist(txt_aneg4)[0]),(filetolist(txt_aneg4)[2]))(y) * Cy(y) * q_dneg
+    NprimeNeg = cos(Alpha_dneg*(pi/180))*LprimeNeg + sin(Alpha_dneg*(pi/180))* DprimeNeg
+    return NprimeNeg
+
+def MomperSpanNeg(y):
+    MprimeNeg = interpolate((filetolist(txt_aneg4)[0]),(filetolist(txt_aneg4)[3]))(y) * Cy(y)**2 * q_dneg
+    return MprimeNeg
+
+
 print(LiftCoef(3)[1])
-print(MomCoef(5))
+# print(MomCoef(5))
+# print(CL_d)
 
 #PLOTTING to test
 step = 0.05
 ytab=[]
 ltab=[]
 
-for i in range(24):
-    l = NormalperSpan(i)
+for i in range(25):
+    l = MomperSpanNeg(i)
     ytab.append(i)
     ltab.append(l)
     i = i + step
@@ -173,8 +203,9 @@ for i in range(24):
 # Plot
 plt.plot(ytab, ltab)
 
-plt.title('Normal Force per Span')
-plt.xlabel('y')
-plt.ylabel('N/m')  
+# plt.title('Normal Force per Span')
+plt.grid()
+plt.xlabel('Span in y-direction [m]')
+plt.ylabel('Pitching Moment per span [N]')  
 
 plt.show()

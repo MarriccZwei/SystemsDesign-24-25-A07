@@ -47,15 +47,15 @@ def calculate_moments_of_inertia(chord_length, sparLocs, t_f, t_s, t_m, t_str, A
 c_r = 9.17  # Root chord length (in meters)
 tr = 0.1  # Taper ratio
 b = 49.81  # Wingspan (in meters)
-t_f = 0.005 # thickness flanges (in meters) 
-t_s = 0.005 # thickness front and back spars (in meters) 
-t_m = 0.005 # thickness reinforcement spar(s) (in meters) 
+t_f = 0.011 # thickness flanges (in meters) 
+t_s = 0.004 # thickness front and back spars (in meters) 
+t_m = 0.004 # thickness reinforcement spar(s) (in meters) 
 t_str = 0.001 # thickness stringers (in meters)
-A_str = 0.0006 # area stringers (in m^2)
+A_str = 0.0012 # area stringers (in m^2)
 sparLocs = [0.4]  # Reinforcement spar location(s) 
 
 # Specify the z value where sparLocs changes to None
-z_spar_change = b / 4  # Middle of half wingspan (in meters)
+z_spar_change = 0.3 * (b / 2)  # Middle of half wingspan (in meters)
 
 
 # Loop through spanwise locations from 0 to b/2 and calculate moments of inertia
@@ -122,7 +122,7 @@ plt.plot(z_values, I_yy_values, label="I_yy", color='g')
 plt.plot(z_values, I_xy_values, label="I_xy", color='b')
 plt.xlabel("Spanwise Location (z) [m]")
 plt.ylabel("Moments of Inertia [m^2]")
-plt.title("Moments of Inertia along the Wing Span")
+plt.title("Moments of Inertia Design Option 3")
 plt.legend()
 plt.grid(True)
 plt.show()
