@@ -13,7 +13,7 @@ from OOP import FlexBox
 # Define constants
 #t_skin = 0.02  # Skin thickness in meters (example value)
 material_strength_tension = 485e6  # Ultimate tensile strength in Pa (example value)
-material_strength_compression = 485e6  # Ultimate compressive strength in Pa (example value) TODO change
+material_strength_compression = 485e6  # Ultimate compressive strength in Pa (example value) TODO change thios
 
 def calculateStress(Moments, Momentlocations, cell:Cell.Cell, z):
     Ixx, centroid = cell.sectionProperties(z)["ixx"], cell.sectionProperties(z)["centroid"] #Ixx and centroid
