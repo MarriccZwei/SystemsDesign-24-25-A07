@@ -13,35 +13,22 @@ from Deflections.MoI import centroid
 from Deflections.MoI import MOI
 
 # Function to calculate the chord at an arbitrary spanwise location z
-'z - spanwise location'
-'c_r - root chord'
-'tr - taper ratio'
-'b - wingspan'
 def chord(z, c_r, tr, b):
-    c = c_r - c_r * (1 - tr) * (z / (b/2))
-    return c 
+    return c_r - c_r * (1 - tr) * (z / (b / 2))
 
 # Function to calculate the moments of inertia for the wingbox
-def calculate_moments_of_inertia(chord_length, sparLocs, t_f, t_s, t_m, t_str, A_str):
-    upperCoords, lowerCoords = wingbox(chord_length, sparLocs, plot=False)
-    
-    # Calculate segment dimensions based on the wingbox coordinates
-    L1 = upperCoords[1][0] - lowerCoords[1][0]  # m
-    L2 = upperCoords[1][2] - lowerCoords[1][2]  # m
-    L3 = upperCoords[1][1] - lowerCoords[1][1]  # m
-    x = upperCoords[0][1] - upperCoords[0][0] # m
-
+def calculate_moments_of_inertia(L1, L2, L3, x, t_f, t_s, t_m, t_str, h_str, w_str, stringer_hor_spacing):
     # Calculate the segments and stringers based on the dimensions
     segments, alpha = get_segments(L1, L2, L3, x, t_f, t_s, t_m)
-    stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, x, t_str, A_str, alpha)
+    stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, x, t_str, h_str, w_str, alpha, stringer_hor_spacing)
     
     # Calculate the centroid of the cross-section
     x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
     
     # Calculate the moments of inertia
-    I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha)
+    I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha, t_str, h_str, w_str)
     
-    return I_xx, I_yy, I_xy , x_bar, y_bar, num_upper_stringers, num_lower_stringers, L2
+    return I_xx, I_yy, I_xy, x_bar, y_bar, num_upper_stringers, num_lower_stringers
 
 # Set the initial conditions for the wing
 c_r = 9.17  # Root chord length (in meters)
@@ -51,12 +38,13 @@ t_f = 0.011 # thickness flanges (in meters)
 t_s = 0.004 # thickness front and back spars (in meters) 
 t_m = 0.004 # thickness reinforcement spar(s) (in meters) 
 t_str = 0.001 # thickness stringers (in meters)
-A_str = 0.0012 # area stringers (in m^2)
+h_str = 0.04 # height stringer (in meters)
+w_str = 0.03 # width stringers (in meters)
+stringer_hor_spacing = 0.15 # horizontal spacing stringers (in meters)
 sparLocs = [0.4]  # Reinforcement spar location(s) 
 
 # Specify the z value where sparLocs changes to None
 z_spar_change = 0.3 * (b / 2)  # Middle of half wingspan (in meters)
-
 
 # Loop through spanwise locations from 0 to b/2 and calculate moments of inertia
 num_points = 256  # Number of points along the span to calculate moments of inertia
@@ -74,36 +62,26 @@ L2_values = []
 for z in z_values:
     # Calculate chord length at the current spanwise location
     current_chord = chord(z, c_r, tr, b)
-    
+
     # Determine the sparLocs for the current z value
     current_sparLocs = None if z >= z_spar_change else sparLocs
-    
-    # Call wingbox to get coordinates
+
+    # Call wingbox once to get coordinates
     upperCoords, lowerCoords = wingbox(current_chord, sparLocs=current_sparLocs, plot=False)
-    
+
     # Calculate segment dimensions based on the wingbox coordinates
     L1 = upperCoords[1][0] - lowerCoords[1][0]  # Always included
     x = upperCoords[0][1] - upperCoords[0][0]  # Always included
-    
-    # Eliminate L2 if z >= z_spar_change
-    if z >= z_spar_change:
-        L2 = 0
-    else:
-        L2 = upperCoords[1][2] - lowerCoords[1][2]  # Include L2 if z < z_spar_change
-    
+
+    # Adjust L2 based on z location
+    L2 = 0 if z >= z_spar_change else upperCoords[1][2] - lowerCoords[1][2]
+
     # Always calculate L3
     L3 = upperCoords[1][1] - lowerCoords[1][1]
-    
-    # Calculate the segments and stringers based on the dimensions
-    segments, alpha = get_segments(L1, L2, L3, x, t_f, t_s, t_m)
-    stringersUS, stringersLS, num_upper_stringers, num_lower_stringers = get_stringers(L1, x, t_str, A_str, alpha)
-    
-    # Calculate the centroid of the cross-section
-    x_bar, y_bar = centroid(segments, stringersUS, stringersLS)
-    
-    # Calculate the moments of inertia
-    I_xx, I_yy, I_xy = MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha)
-    
+
+    # Calculate moments of inertia and centroid for the current cross-section
+    I_xx, I_yy, I_xy, x_bar, y_bar, num_upper_stringers, num_lower_stringers = calculate_moments_of_inertia(L1, L2, L3, x, t_f, t_s, t_m, t_str, h_str, w_str, stringer_hor_spacing)
+
     # Append the results to the lists
     I_xx_values.append(I_xx)
     I_yy_values.append(I_yy)
