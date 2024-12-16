@@ -18,9 +18,22 @@ def ideal_Ixx(Bft,Bmt,Brt,Bfb,Bmb,Brb,yft,ymt,yrt,yfb,ymb,yrb):
     return Ixx
     
 def delta_q(V, Ixx, B, y):
-    q = (V*B*y)/Ixx
-    return q
+    dq = (V*B*y)/Ixx
+    return dq
 
 
 def shearcalc():
-    if 
+     if midspar == "none":
+         
+         q0 = 
+        
+        shearflow_dict = {
+        "shearflow_f": [],
+        "shearflow_m": [0],
+        "shearflow_r": [],  
+        "shearflow_ftm": [],   
+        "shearflow_mtr": [],
+        "shearflow_fbm": [],  
+        "shearflow_mbr": []       
+        }
+        return shearflow_dict
