@@ -4,7 +4,7 @@ import General.Constants as consts
 
 def crit_buckling_stress (cell:cell.Cell, tip = False):
 
-    #  Choosing the constant K depending on the cell we are evaluating
+    #  Choosing the constant depending on the cell we are evaluating
     if tip:
         K = 0.25
     else:
