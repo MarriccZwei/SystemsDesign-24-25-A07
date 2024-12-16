@@ -24,6 +24,7 @@ k_s = 10 #assumption for now
 def crit_shear_stress(t, b, k_s):
     v = 0.33 #poisson ratio
     E = 72.4e9 #young modulus
+
     tau_crit = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2)))
     return tau_crit
 
