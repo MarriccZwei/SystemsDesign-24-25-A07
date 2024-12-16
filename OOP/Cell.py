@@ -29,7 +29,7 @@ class Cell:
         self.outboardFrame = fb.FlexBox(endPos, planform, wingboxThicknesses, midSpar)
 
         #creation of the edges dictionary
-        def multipleDictsAddIB(dict, spar, skin):
+        def multipleDictsAdd(dict, spar, skin):
             dict[spar+'i'+skin]=self.inboardFrame.coords[spar+skin]
             dict[spar+skin+'i']=self.inboardFrame.coords[spar+skin]
             dict[skin+spar+'i']=self.inboardFrame.coords[spar+skin]
@@ -37,12 +37,44 @@ class Cell:
             dict['i'+skin+spar]=self.inboardFrame.coords[spar+skin]
             dict['i'+spar+skin]=self.inboardFrame.coords[spar+skin]
 
-        self.edges = dict()
-        multipleDictsAddIB(self.edges, 'f', 't')
-        multipleDictsAddIB(self.edges, 'f', 'b')
-        multipleDictsAddIB(self.edges, 'f', 't')
-        multipleDictsAddIB(self.edges, 'f', 't')
+            dict[spar+'o'+skin]=self.outboardFrame.coords[spar+skin]
+            dict[spar+skin+'o']=self.outboardFrame.coords[spar+skin]
+            dict[skin+spar+'o']=self.outboardFrame.coords[spar+skin]
+            dict[skin+'o'+spar]=self.outboardFrame.coords[spar+skin]
+            dict['o'+skin+spar]=self.outboardFrame.coords[spar+skin]
+            dict['o'+spar+skin]=self.outboardFrame.coords[spar+skin]
 
+        self.vertices = dict()
+        multipleDictsAdd(self.vertices, 'f', 't')
+        multipleDictsAdd(self.vertices, 'f', 'b')
+        multipleDictsAdd(self.vertices, 'm', 't')
+        multipleDictsAdd(self.vertices, 'm', 'b')
+        multipleDictsAdd(self.vertices, 'r', 't')
+        multipleDictsAdd(self.vertices, 'r', 'b')
+
+        #creation of the lengths dictionary
+        self.lengths = dict()
+
+        def lenAppend(dict, element):
+            dict['i'+element] = self.inboardFrame.lengths[element]
+            dict[element+'i'] = self.inboardFrame.lengths[element]
+            dict['o'+element] = self.outboardFrame.lengths[element]
+            dict[element+'o'] = self.outboardFrame.lengths[element]
+
+        lenAppend(self.lengths, 'f')
+        lenAppend(self.lengths, 'm')
+        lenAppend(self.lengths, 'r')
+        lenAppend(self.lengths, 't')
+        lenAppend(self.lengths, 'b')
+
+        #calculating the amount of stringers
+        averageLenTop = (self.lengths['it']+self.lengths['ot'])/2
+        averageLenBot = (self.lengths['ib']+self.lengths['ob'])/2
+        #obtained by dividing the length available for stringers by stringer spacing
+        self.stringerNumTop = int((averageLenTop-stringerDesign['w'])/stringerDesign['st'])
+        self.stringerNumBot = int((averageLenBot-stringerDesign['w'])/stringerDesign['sb'])
+        #since we only use one type of stringer, the area of 1 stringer is:
+        self.stringerArea = stringerDesign['t']*(stringerDesign['w']+stringerDesign['h']-stringerDesign['t'])
 
     def spanwisePos(self, position):
         return self.startPos+position*(self.endPos-self.startPos)
@@ -50,11 +82,39 @@ class Cell:
     def wingbox(self, position):
         return fb.FlexBox(self.spanwisePos(position), self.planform, self.wingboxThicknesses, self.midSpar)
     
-    def stringers(self, position):
+    #returns the lists of stringer positions on top and on the bottom of the wingbox
+    def _stringer_positions(self, position):
+        wingbox = self.wingbox(position)
+        wbpts = wingbox.coords
+        if self.midSpar==None:
+            stringerPosTop = self._stringers_along_a_line(wbpts['ft'], wbpts['rt'], self.stringerNumTop, self.stringerDesign['w'])
+            stringerPosBot = self._stringers_along_a_line(wbpts['fb'], wbpts['rb'], self.stringerNumBot, self.stringerDesign['w'])
+        else:
+            #we need to determin the nyumber of stringers to go before and after the mid spar
+            #we do it via a ratio of subcell top length to total top length
+            wblns = wingbox.lengths
+            nStrBefroreMTop = wblns['ft']/wblns['t']*self.stringerNumTop 
+            nStrAfterMTop = wblns['rt']/wblns['t']*self.stringerNumTop
+            nStrBefroreMBot = wblns['fb']/wblns['b']*self.stringerNumBot
+            nStrAfterMBot = wblns['rb']/wblns['b']*self.stringerNumBot
+            #creating the stringer position list assuming equally spaced stringers in each subcell
+            stringerPosTop = self._stringers_along_a_line(wbpts['ft'], wbpts['mt'], nStrBefroreMTop, self.stringerDesign['w'])
+            + self._stringers_along_a_line(wbpts['mt'], wbpts['rt'], nStrAfterMTop, self.stringerDesign['w'])
+            stringerPosBot = self._stringers_along_a_line(wbpts['fb'], wbpts['mb'], nStrBefroreMBot, self.stringerDesign['w'])
+            + self._stringers_along_a_line(wbpts['mb'], wbpts['rb'], nStrAfterMBot, self.stringerDesign['w'])
+        return stringerPosTop, stringerPosBot
+
+    def sectionProperties(self, position):
+        '''Returns a dictionary of section properties, such as moment of inertia "ixx" or centroid "xbar"/"ybar"
+        Taking into account the wingbox sheets and stringers'''
         wingbox = self.wingbox(position)
 
-    def sectionProperties(self):
-        pass
+        #getting positions
+        strPosesTop, strPosesBot = self._stringer_positions(position)
+        wbxbar = wingbox.centroidComponent[0]
+        wbybar = wingbox.centroidComponent[1]
+
+
 
     def _stringers_along_a_line(self, point1, point2, stringerN, stringerWidth):
         L = np.sqrt((point1[0]-point2[0])**2+(point1[1]-point2[1])**2) #point to point distance
