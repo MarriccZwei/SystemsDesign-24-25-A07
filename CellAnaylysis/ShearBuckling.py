@@ -33,7 +33,7 @@ def crit_shear_stress(t, b, k_s):
 
 
 
-def max_shear_stress(V, A, k_v):
+def max_shear_stress(V, A):
     k_v = 1.5
     V = SBT.combined_shear_load()
     tau_avg_shear = V/sum(A)
