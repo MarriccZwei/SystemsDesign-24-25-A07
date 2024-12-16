@@ -22,13 +22,27 @@ class Cell:
         self.stringerDesign = stringerDesign
         self.wingboxThicknesses = wingboxThicknesses
         self.midSpar = midSpar
+        self.zLen = endPos-startPos
         
         #creation of inboard and outboard flex boxes
         self.inboardFrame = fb.FlexBox(startPos, planform, wingboxThicknesses, midSpar)
         self.outboardFrame = fb.FlexBox(endPos, planform, wingboxThicknesses, midSpar)
 
         #creation of the edges dictionary
-        self.vertices = dict()
+        def multipleDictsAddIB(dict, spar, skin):
+            dict[spar+'i'+skin]=self.inboardFrame.coords[spar+skin]
+            dict[spar+skin+'i']=self.inboardFrame.coords[spar+skin]
+            dict[skin+spar+'i']=self.inboardFrame.coords[spar+skin]
+            dict[skin+'i'+spar]=self.inboardFrame.coords[spar+skin]
+            dict['i'+skin+spar]=self.inboardFrame.coords[spar+skin]
+            dict['i'+spar+skin]=self.inboardFrame.coords[spar+skin]
+
+        self.edges = dict()
+        multipleDictsAddIB(self.edges, 'f', 't')
+        multipleDictsAddIB(self.edges, 'f', 'b')
+        multipleDictsAddIB(self.edges, 'f', 't')
+        multipleDictsAddIB(self.edges, 'f', 't')
+
 
     def spanwisePos(self, position):
         return self.startPos+position*(self.endPos-self.startPos)
@@ -68,3 +82,4 @@ if __name__ == "__main__": #tests
 
     cell1 = Cell(planform, 10, 11, {}, {})
     print(cell1._stringers_along_a_line((1, 1), (-1, -1), 10, 0.01))
+    print(cell1.edges)
