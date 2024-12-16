@@ -9,7 +9,7 @@ def crit_buckling_stress (cell:cell.Cell, tip = False):
     else:
         K = 4.
 
-    sigma_buckling = K * np.pi**2 * consts.E_MODULUS * 
+    sigma_buckling = K * np.pi**2 * consts.E_MODULUS * cell.sectionProperties[ixx]
     #TODO Find out how to put I in here, how to handle constant K and finish the formula
     return(sigma_buckling)
     
