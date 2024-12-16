@@ -1,4 +1,5 @@
 from math import pi
+from ShearBuckling import E, v
 #import matplotlib.pyplot as plt
 
 K_data_unsorted = [[0.7723396840415656,14.839244412502758], #list of coordinates of K graph
@@ -49,6 +50,7 @@ K_data_unsorted = [[0.7723396840415656,14.839244412502758], #list of coordinates
 [4.654119070106258,7.42548567449813],
 [4.787636901150821,7.446548229649244],
 [4.8628330035756315,7.489785554084866]]
+
 K_data_x = [] #list where all x-coords are entered
 K_data_y = [] #list where all y_coords are entered
 
@@ -60,10 +62,9 @@ for i in range(len(K_data_unsorted)): #sorts both x and y coordinates from unsor
 #plt.plot(K_data_x, K_data_y) #plots the data
 #plt.show()
 
-
 def max_skin_buckling(thickness, length, width, E, v): #function that calculates the skin buckling in a certain section, thickness in mm, length of the plate in mm, width of the plate in mm, v is the poisson ratio, E is the youngs modulus
     k = 0
-    a_over_b = width/length #width over length, used to find an approximate K
+    a_over_b = length/width #width over length, used to find an approximate K
 
     j = 0 #index of position
 
@@ -78,9 +79,14 @@ def max_skin_buckling(thickness, length, width, E, v): #function that calculates
     dydx = (K_data_y[j+1]-K_data_y[j])/(K_data_x[j+1]-K_data_x[j]) #slope of the graph between the two data points
     k = K_data_y[j] + dydx * (a_over_b - K_data_x[j]) #interpolated value of k between the two data points
 
-    critical_stress = (k*pi**2*E)/(12*(1-v**2))*(thickness/length)**2
+    critical_stress = (k*pi**2*E)/(12*(1-v**2))*(thickness/width)**2
     return critical_stress
 
+def MOS_skin_buckling(Sigma_applied, thickness, length, width): #margin of safety of skin panel
 
-sigma = max_skin_buckling(10, 150, 300, 25*10^9, 0.31)*10**6
-print(sigma)
+    Sigma_max = max_skin_buckling(thickness, length, width, E, v)
+
+    S_factor = Sigma_max/Sigma_applied
+    return S_factor
+
+print(MOS_skin_buckling(20, 0.012, 2000, 1300))
