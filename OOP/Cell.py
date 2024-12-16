@@ -53,6 +53,9 @@ class Cell:
     def stringers(self, position):
         wingbox = self.wingbox(position)
 
+    def sectionProperties(self):
+        pass
+
     def _stringers_along_a_line(self, point1, point2, stringerN, stringerWidth):
         L = np.sqrt((point1[0]-point2[0])**2+(point1[1]-point2[1])**2) #point to point distance
         xdistRatio = (point2[0]-point1[0])/L #point to point distance in x - a scaling factor for projections
