@@ -44,7 +44,7 @@ def get_stringers(L1, x, t_str, h_str, w_str, alpha, stringer_hor_spacing):
     # Create dictionaries for upper and lower surface stringers
     # SAME SPACING ASSUMED OVER UPPER AND LOWER SURFACE!!!  
     stringersUS = {
-        f"stringer{i+1}": {"i": i_value, "j": 0, "height": h_str, "width": w_str}  
+        f"stringer{i+1}": {"i": i_value, "j": t_str/2, "height": h_str, "width": w_str}  
         for i, i_value in enumerate(i_values)
     }
 
@@ -133,11 +133,11 @@ def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha, t_str, h_str, w
         # Moment of inertia of each stringer about its own centroid
         'The higher order contributions of the thickness t are neglected'
         # Calculate centroid of stringer
-        x_bar_str = w_str**2 / (2*(h_str + w_str)) 
+        x_bar_str = (t_str*h_str + w_str**2) / (2*(h_str + w_str)) 
         y_bar_str = ((h_str**2)/2) / (h_str + w_str)
 
-        I_xx_stringer = (t_str*h_str**3)/12 + t_str*h_str*(h_str/2-y_bar_str)**2 + t_str*w_str*(h_str-y_bar_str)**2
-        I_yy_stringer = t_str*h_str*x_bar_str**2 + (t_str*w_str**3)/12 + t_str*w_str*(w_str/2-x_bar_str)**2
+        I_xx_stringer = (t_str*h_str**3)/12 + t_str*h_str*(h_str/2-y_bar_str)**2 + (w_str * t_str**3)/12 + t_str*w_str*(h_str-y_bar_str)**2
+        I_yy_stringer = (h_str*t_str**3)/12 + t_str*h_str*x_bar_str**2 + (t_str*w_str**3)/12 + t_str*w_str*(w_str/2-x_bar_str)**2
 
         # Parallel Axis Theorem contribution
         I_xx += I_xx_stringer + stringer["height"] * stringer["width"] * dy**2
