@@ -15,7 +15,7 @@ class FlexBox():
         return dict()
     
     @property
-    def toatalArea(self):
+    def totalArea(self):
         return dict()
     
     def ribMass(self, ribThickness):

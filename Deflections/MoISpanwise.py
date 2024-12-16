@@ -80,7 +80,7 @@ for z in z_values:
     L3 = upperCoords[1][1] - lowerCoords[1][1]
 
     # Calculate moments of inertia and centroid for the current cross-section
-    I_xx, I_yy, I_xy, x_bar, y_bar, _, _ = calculate_moments_of_inertia(L1, L2, L3, x, t_f, t_s, t_m, t_str, h_str, w_str, stringer_hor_spacing)
+    I_xx, I_yy, I_xy, x_bar, y_bar, num_upper_stringers, num_lower_stringers = calculate_moments_of_inertia(L1, L2, L3, x, t_f, t_s, t_m, t_str, h_str, w_str, stringer_hor_spacing)
 
     # Append the results to the lists
     I_xx_values.append(I_xx)
