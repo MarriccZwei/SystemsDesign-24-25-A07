@@ -68,6 +68,28 @@ class Cell:
         lenAppend(self.edges, 't')
         lenAppend(self.edges, 'b')
 
+        #inboard to outboard distances along the skin
+        def inboutb_lenAppend(dict, surf1):
+            #intersect with bottom skin
+            vertex1 = self.vertices["o"+surf1+'b']
+            vertex2 = self.vertices["i"+surf1+'b']
+            distance = np.sqrt((vertex1[0]-vertex2[0])**2-(vertex1[1]-vertex2[1])**2)
+            dict[surf1+'b'] = distance
+            dict['b'+surf1] = distance
+            #intersect with top skin
+            vertex1 = self.vertices["o"+surf1+'t']
+            vertex2 = self.vertices["i"+surf1+'t']
+            distance = np.sqrt((vertex1[0]-vertex2[0])**2-(vertex1[1]-vertex2[1])**2)
+            dict[surf1+'t'] = distance
+            dict['t'+surf1] = distance
+        
+        inboutb_lenAppend(self.edges, 'f')
+        inboutb_lenAppend(self.edges, 'r')
+        if self.midSpar == None: #propagating the None if there is no midspar
+            self.edges["bm"], self.edges["mb"], self.edges["tm"], self.edges["mt"] = None
+        else: 
+            inboutb_lenAppend(self.edges, 'm') #if there is a midspar
+
         #calculating the amount of stringers
         averageLenTop = (self.edges['it']+self.edges['ot'])/2
         averageLenBot = (self.edges['ib']+self.edges['ob'])/2
