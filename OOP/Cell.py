@@ -73,6 +73,7 @@ class Cell:
         #obtained by dividing the length available for stringers by stringer spacing
         self.stringerNumTop = int((averageLenTop-stringerDesign['w'])/stringerDesign['st'])
         self.stringerNumBot = int((averageLenBot-stringerDesign['w'])/stringerDesign['sb'])
+        self.stringerNum = self.stringerNumTop+self.stringerNumBot #total number of stringers
         #since we only use one type of stringer, the area of 1 stringer is:
         self.stringerArea = stringerDesign['t']*(stringerDesign['w']+stringerDesign['h']-stringerDesign['t'])
 
@@ -108,12 +109,50 @@ class Cell:
         '''Returns a dictionary of section properties, such as moment of inertia "ixx" or centroid "xbar"/"ybar"
         Taking into account the wingbox sheets and stringers'''
         wingbox = self.wingbox(position)
+        wbvertices = wingbox.coords
+        wbt = wingbox.thicknesses
 
-        #getting positions
+        #getting positions and moments of Area
         strPosesTop, strPosesBot = self._stringer_positions(position)
-        wbxbar = wingbox.centroidComponent[0]
-        wbybar = wingbox.centroidComponent[1]
+        strPoses = strPosesBot+strPosesTop #positions of all stringers, cuz we simply sum it for computing the moment of area
+        wbareaMx = wingbox.centroidComponent[0]
+        wbareaMy = wingbox.centroidComponent[1]
 
+        #getting centroid properties - stringer treated as pt areas
+        strAreaMomentX, strAreaMomentY = 0, 0
+        for pos in strPoses:
+            strAreaMomentX += self.stringerArea*pos[0]
+            strAreaMomentY += self.stringerArea*pos[1]
+        #xbar and ybar expressions have a common denominator - sum of areas
+        denominator = wingbox.areas["tot"]+self.stringerNum*self.stringerArea
+        xbar = (wbareaMx+strAreaMomentX)/denominator
+        ybar = (wbareaMy+strAreaMomentY)/denominator
+        
+        #moments of inertia
+        ixx, iyy = 0
+
+        def moicontrib(point1, point2, thickness): #sheet contributions
+            midpoint = ((point1[0]+point2[0])/2+(point1[1]+point2[1])/2)
+            xdist = point1[0]-point2[0]
+            ydist = point1[1]-point2[1]
+            L = np.sqrt((point1[0]-point2[0])**2+(point1[1]-point2[1])**2) #point to point distance
+            ixx = L*thickness*ydist**2/12 + L*thickness*(midpoint[1]-ybar)**2
+            iyy = L*thickness*xdist**2/12 + L*thickness*(midpoint[0]-xbar)**2
+            return ixx, iyy
+        
+        ixx, iyy += moicontrib(wbvertices["ft"], wbvertices["fb"], wbt["f"]) #front spar
+        ixx, iyy += moicontrib(wbvertices["rt"], wbvertices["rb"], wbt["r"]) #rear spar
+        ixx, iyy += moicontrib(wbvertices["ft"], wbvertices["rt"], wbt["t"]) #top skin
+        ixx, iyy += moicontrib(wbvertices["rb"], wbvertices["fb"], wbt["b"]) #bottom skin
+        if self.midSpar != None: #midSpar contribution
+            ixx, iyy += moicontrib(wbvertices["ft"], wbvertices["fb"], wbt["f"])
+
+        #stringer contributions - parallel axis only
+        for pos in strPoses:
+            ixx += self.stringerArea*(pos[1]-ybar)**2
+            iyy += self.stringerArea*(pos[0]-xbar)**2
+
+        return {'xbar': xbar, 'ybar': ybar, 'ixx': ixx, 'iyy': iyy}
 
 
     def _stringers_along_a_line(self, point1, point2, stringerN, stringerWidth):
