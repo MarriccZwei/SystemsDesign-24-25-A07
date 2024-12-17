@@ -1,14 +1,39 @@
 import numpy as np
 
-def crit_shear_tress(t, b, k_s, v, E):
+def crit_shear_stress(t, b, k_s, v, E):
     tau_crit = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2)))
     return tau_crit
 
-def ideal_term():
+def boom1(t,b,sigma_ratio):
+    boom = (t*b/6)*(2+sigma_ratio)
+    return boom
+
+def sigma_ratio1(y1,y2):
+    sigma_ratio = y2/y1
+    return sigma_ratio
+
+
+def ideal_Ixx(Bft,Bmt,Brt,Bfb,Bmb,Brb,yft,ymt,yrt,yfb,ymb,yrb):
+    Ixx = Bft*yft**2 + Bmt*ymt**2 + Brt*yrt**2 + Bfb*yfb**2 + Bmb*ymb**2 + Brb*yrb**2
+    return Ixx
     
+def delta_q(V, Ixx, B, y):
+    dq = (V*B*y)/Ixx
+    return dq
 
 
-def shearcalc_mid():
-    
-
-def shearcalc_nomid():
+def shearcalc():
+     if midspar == "none":
+         
+         q0 = 
+        
+        shearflow_dict = {
+        "shearflow_f": [],
+        "shearflow_m": [0],
+        "shearflow_r": [],  
+        "shearflow_ftm": [],   
+        "shearflow_mtr": [],
+        "shearflow_fbm": [],  
+        "shearflow_mbr": []       
+        }
+        return shearflow_dict

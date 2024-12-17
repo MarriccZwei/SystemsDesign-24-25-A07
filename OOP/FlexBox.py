@@ -15,6 +15,10 @@ class FlexBox():
         return dict()
     
     @property
+    def areas(self):
+        return dict()
+    
+    @property
     def totalArea(self):
         return dict()
     

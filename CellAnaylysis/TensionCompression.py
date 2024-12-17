@@ -13,9 +13,12 @@ from OOP import FlexBox
 # Define constants
 #t_skin = 0.02  # Skin thickness in meters (example value)
 material_strength_tension = 485e6  # Ultimate tensile strength in Pa (example value)
-material_strength_compression = 485e6  # Ultimate compressive strength in Pa (example value) TODO change thios
+material_strength_compression = 485e6  # Ultimate compressive strength in Pa (example value)
 
 def calculateStress(Moments, Momentlocations, cell:Cell.Cell, z):
+    material_strength_tension = 485e6  # Ultimate tensile strength in Pa (example value)
+    material_strength_compression = 485e6
+
     Ixx, centroid = cell.sectionProperties(z)["ixx"], cell.sectionProperties(z)["centroid"] #Ixx and centroid
     Moment_interp = interp1d(Momentlocations, Moments, kind='linear') # Interpolate the bending moment distribution
     moment = Moment_interp(z)
@@ -40,6 +43,8 @@ def plotTCgraph(Moments, Momentlocations):
     maxStressList = []
     momentList=[]
     zList=[]
+    safetyListmax=[]
+    safetyListmin=[]
     z = 0
     for c in listCells:
         while z<c.endPos:
@@ -48,6 +53,8 @@ def plotTCgraph(Moments, Momentlocations):
             minStressList.append(x[1])
             maxStressList.append(x[0])
             momentList.append(x[2])
+            safetyListmin.append(x[1]/material_strength_compression)
+            safetyListmax.append(x[0]/material_strength_tension)
             z = z+interval
 
     #Plot the spanwise bending moment distribution
@@ -72,6 +79,19 @@ def plotTCgraph(Moments, Momentlocations):
     plt.grid(True)
     plt.legend()
     plt.show()
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(zList, safetyListmax, label='Upper Skin Safety Margin', color='red')
+    plt.plot(zList, safetyListmin, label='Lower Skin Safety Margin', color='blue')
+    plt.title("Spanwise Safety Margin")
+    plt.xlabel("Spanwise Position (m)")
+    plt.ylabel("[-]]")
+    plt.axhline(-1, color='green', linestyle='--', label='')
+    plt.axhline(1, color='purple', linestyle='--', label='')
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+
 
     # Print some critical points
     print(f"Maximum bending moment: {np.max(momentList) / 1e6:.2f} MN·m")
