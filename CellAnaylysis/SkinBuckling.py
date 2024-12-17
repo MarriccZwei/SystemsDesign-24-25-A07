@@ -1,5 +1,15 @@
+if __name__ == "__main__":
+    # ONLY FOR TESTING
+    import sys
+    import os
+    sys.path.insert(1, os.getcwd())
+    # ONLY FOR TESTING
+
 from math import pi
 from ShearBuckling import E, v
+from interpolatedLoads import pos_loadcase, neg_loadcase
+from maximumStresses import MaxAxialStress
+import OOP.Cell as cell
 #import matplotlib.pyplot as plt
 
 K_data_unsorted = [[0.7723396840415656,14.839244412502758], #list of coordinates of K graph
@@ -85,8 +95,8 @@ def max_skin_buckling(thickness, length, width, E, v): #function that calculates
 def MOS_skin_buckling(Sigma_applied, thickness, length, width): #margin of safety of skin panel
 
     Sigma_max = max_skin_buckling(thickness, length, width, E, v)
-
     S_factor = Sigma_max/Sigma_applied
     return S_factor
 
-print(MOS_skin_buckling(20, 0.012, 2000, 1300))
+def Spanwise_MOS(Spanwise_location):
+    return "hoi"
