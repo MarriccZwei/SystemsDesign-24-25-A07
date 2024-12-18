@@ -55,7 +55,7 @@ def plotTCgraph(Moments, Momentlocations):
     for c in listCells:
         while z<c.endPos:
             zList.append(z)
-            x = axialMomentStress(Moments, Momentlocations, c, z)
+            x = axialStress(Moments, Momentlocations, c, z)
             minStressList.append(x[1])
             maxStressList.append(x[0])
             momentList.append(x[2])
