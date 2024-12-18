@@ -15,16 +15,22 @@ from OOP import FlexBox
 material_strength_tension = 485e6  # Ultimate tensile strength in Pa (example value)
 material_strength_compression = 485e6  # Ultimate compressive strength in Pa (example value)
 
-def calculateStress(Moments, Momentlocations, cell:Cell.Cell, z):
-    material_strength_tension = 485e6  # Ultimate tensile strength in Pa (example value)
-    material_strength_compression = 485e6#TODO check that this is correct
+#TODO: iontegrate this with the calculateStress function
+def axialStress(MomentX:float, MOIxx:float, MOIyy:float, MOIxy:float, FrontSparLen:float, CentroidX:float, Chord:float): 
+    Y = FrontSparLen/2 #location of maximum axial stress will likely be at the front spar
+    X = CentroidX*Chord
+    Denominator = MOIxx*MOIyy - MOIxy**2
+    MaxStress = MomentX*((MOIyy*Y - MOIxy*X)/(Denominator))
 
+#TODO change the function name
+#TODO make the function more felxible (able to take any x and y as inputs)
+def tensionCompressionStresses(Moments, Momentlocations, cell:Cell.Cell, z):
     Ixx, centroid = cell.sectionProperties(z)["ixx"], cell.sectionProperties(z)["centroid"] #Ixx and centroid
     Moment_interp = interp1d(Momentlocations, Moments, kind='linear') # Interpolate the bending moment distribution
     moment = Moment_interp(z)
     wingbox = cell.wingbox(z) #FlexBox object
     wingboxcoords = wingbox.coords() #Coordinates of the cornes of the crossection --> dictionary
-
+    
     # Calculate y_upper and y_lower based on the centroid and wingbox coordinates
     y_coords = [coord[1] for coord in wingboxcoords]  # Extract y-coordinates of corners
     y_lower = max(y_coords) - centroid[1]  # Distance from centroid to the top
@@ -49,7 +55,7 @@ def plotTCgraph(Moments, Momentlocations):
     for c in listCells:
         while z<c.endPos:
             zList.append(z)
-            x = calculateStress(Moments, Momentlocations, c, z)
+            x = axialMomentStress(Moments, Momentlocations, c, z)
             minStressList.append(x[1])
             maxStressList.append(x[0])
             momentList.append(x[2])
