@@ -10,7 +10,7 @@ from scipy import interpolate
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from OOP import Cell
-from OOP import FlexBox
+from OOP.FlexBox import FlexBox
 from General import Constants as c
 
 
@@ -54,10 +54,9 @@ for i in range(len(Ks_data_unsorted)): #sorting
 # plt.plot(Ks_data_x, Ks_data_y) #plots the data
 # plt.show()
 
-
 #cnsts
-v = 0.33 #poisson ratio
-E = 72.4e9 #young modulus
+v = c.POISSON_RATIO
+E = c.E_MODULUS
 
 #interpolation
 def interpolate():
@@ -75,9 +74,9 @@ def crit_shear_stress():
     for i in webs:
         t = FlexBox.thicknesses(i) #thickness of the web [m]
         b = FlexBox.lengths(i) #highest b gives lowest tau_critical, so the front spar 'f' [m]
-        a_over_b =  1
+        a_over_b = Cell.edges(i)/FlexBox.lengths(i)
         k_s = interpolate()(a_over_b)
-        if a_over_b > 5:
+        if a_over_b > 4.9:
             k_s = 9.5567
         tau_crit = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2)))
     return tau_crit # returns list of critical shear stress for front, rear and mid(if used) spar web
@@ -88,9 +87,9 @@ def crit_shear_stress():
 
 def max_shear_stress(V, A):
     k_v = 1.5
-    A = FlexBox.areas('f') + FlexBox.areas('r')
+    A = FlexBox.areas('f') + FlexBox.areas('r') + FlexBox.areas('m')
     if FlexBox.midSpar == None:
-        A += FlexBox.areas('m')
+        A -= FlexBox.areas('m')
 
     V_pos = pos_loadcase("Vy")
     V_neg = neg_loadcase("Vy")
@@ -98,8 +97,10 @@ def max_shear_stress(V, A):
     tau_max_shear_neg = k_v * V_neg/sum(A) #V/A is the avg shear stress
     return tau_max_shear_pos, tau_max_shear_neg
     
-# print(SBT.combined_shear_load())
 
+
+
+#torsion contribution to shear flow
 def torsion(FlexBox: FlexBox, torque):
     areas = FlexBox.totalArea
     lengths = FlexBox.lengths
