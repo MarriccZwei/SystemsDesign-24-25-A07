@@ -28,13 +28,14 @@ def crit_shear_stress(k_s):
     v = 0.33 #poisson ratio
     E = 72.4e9 #young modulus
     tau_crit = []
-    webs = ['f', 'm', 'r']
+    webs = ['f', 'r', 'm']
+    if webs[2] == None:
+        webs = webs[:-1]
     for i in webs:
         t = FlexBox.thicknesses(i) #thickness of the web [m]
         b = FlexBox.length(i) #highest b gives lowest tau_critical, so the front spar 'f' [m]
         tau_crit = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2)))
-    return tau_crit
-
+    return tau_crit # returns list of critical shear stress for front, rear and mid(if used) spar web
 
 #formula test
 # print(crit_shear_stress(4, 150, 10, 0.33, 72.4e9))
