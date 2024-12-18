@@ -15,16 +15,17 @@ import scipy.integrate as integrate
 import TensionCompression as tc
 import ColumnBuckling as cb
 import interpolatedLoads as ld
+import ShearBuckling as sb
 
 def calculateDeltaTwist(loads, cell:cell.Cell, posEnd = 1):
-    torques = loads['Tz']
     zStart = cell.startPos
     zEnd = cell.endPos
     length =zEnd-zStart
     def _integrant(z):
-        return torsion(cell.wingbox((z-zStart)/length),torques(z))[-1][0]
+        return torsion(cell.wingbox((z-zStart)/length),loads(z)['Tz'])['twist']
     theta, error = integrate.quad(_integrant, zStart, cell.spanwisePos(posEnd))
     return theta
+
 
 
 
@@ -69,6 +70,7 @@ def mofs(cells:List[cell.Cell], plot=False, yieldSF=1.1, fractureSF=1.5, colBuck
         returnedList[3][i] = colBucklCritStress/compressiveStress/colBucklSF
 
         #4. shearBucklSF
+        critTau = sb.crit_shear_stress(cells[i])
         
 
 
@@ -80,13 +82,15 @@ if __name__ == "__main__":
     thrust = 91964.80101516769
     wgboxArea = 123.969 #[m^2] measured in CATIA
 
-    posLoad = ld.pos_loadcase()
-
     ribposes = np.linspace(0, c.ENGINESPANWISEPOS*halfspan, 11).tolist() +np.linspace(c.ENGINESPANWISEPOS*halfspan+1, halfspan, 19).tolist()
     distr = cell_distr(planform, ribposes, {'w':0.05, 'h':0.05, 't':0.005, 'st':0.1, 'sb':0.13}, {'f':0.004, 'b':0.012, 'r':0.004, 't':0.012, 'm':0.004}, 10, 0.4)
+    totalTwist = 0
     for celli in distr:
         print(f"cell start: {celli.startPos}, cell end: {celli.endPos}")
-        print(f"The twist at cell is {calculateDeltaTwist(posLoad, celli)}")
+        delta = calculateDeltaTwist(ld.pos_loadcase, celli)
+        print(f"The deltatwist at cell is {delta}")
+        totalTwist += delta
+    print(np.rad2deg(totalTwist))
     poses = [celli.startPos for celli in distr]
     ixxs = [celli.sectionProperties(0)["ixx"] for celli in distr]
     plt.plot(poses, ixxs)
