@@ -7,33 +7,42 @@ if __name__ == "__main__":
 from OOP.Planform import Planform
 import pandas as pd
 from General import Constants as c
-from General.generalFunctions import sparHeight, length
+from General.generalFunctions import sparHeight, length, check_value
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 import numpy as np
 import os 
 
 class FlexBox():
-    def __init__(self, planform:Planform, wingboxThicknesses: dict, position: float, midSpar: float):
+    def __init__(self, planform:Planform, wingboxThicknesses: dict, position: float, midSpar: float = None):
         self.midSpar = midSpar
         self.chord = planform.chord_spanwise(position/(planform.b/2))
         self.position = position
         self.thicknesses = wingboxThicknesses
 
-    @property
-    def wingBoxCoords(self):
+    def airfoilCoords(self, raw:bool = False) -> list:
         path = os.path.join(os.getcwd(), 'naca64a210-il.csv')
         df = pd.read_csv(path)
-        spars = [c.FRONTSPARFRAC, c.BACKSPARFRAC]
-        if self.midSpar != None: spars.append(self.midSpar)
         chord = self.chord
         scaleFactor = chord/0.1/1000
-
-        frontSpar = spars[0]*chord
-        backSpar = spars[1]*chord
-
         xCoor = np.array(df['X(mm)'].to_list())*scaleFactor
         yCoor = np.array(df['Y(mm)'].to_list())*scaleFactor
+        if raw: 
+            return xCoor, yCoor, chord
+        coords = np.array(list(zip(xCoor, yCoor)))
+        target = np.array([chord/4,0])
+        coords -= target
+        coords[:, 1] = -coords[:, 1]
+        return coords
+
+    @property
+    def wingBoxCoords(self) -> dict:
+        xCoor, yCoor, chord = self.airfoilCoords(raw=True)
+
+        spars = [c.FRONTSPARFRAC, c.BACKSPARFRAC]
+        if self.midSpar != None: spars.append(self.midSpar)
+        frontSpar = spars[0]*chord
+        backSpar = spars[1]*chord
 
         yUpperCoor = []
         yLowerCoor = [0]
@@ -71,27 +80,18 @@ class FlexBox():
             upperWingBoxCoords[1].append(point[1][0])
             lowerWingBoxCoords[1].append(point[1][1])
         
-
-        x0 = chord/4
-
-        transFormedX = []
-        transFormedY = []
         xWingBoxCoords = upperWingBoxCoords[0]+lowerWingBoxCoords[0]
         yWingBoxCoords = upperWingBoxCoords[1]+lowerWingBoxCoords[1]
-        for x in xWingBoxCoords:
-            xTrans = x-x0
-            transFormedX.append(xTrans)
-        for y in yWingBoxCoords:
-            yTrans = -y
-            transFormedY.append(yTrans)
-        
-        if self.midSpar != None:
-            xElement = transFormedX.pop(2)
-            transFormedX.insert(-1, xElement)
-            yElement = transFormedY.pop(2)
-            transFormedY.insert(-1, yElement)
 
-        coordsList = list(zip(transFormedX, transFormedY))
+        coords = np.array(list(zip(xWingBoxCoords, yWingBoxCoords)))
+        target = np.array([chord/4,0])
+        coords -= target
+        coords[:, 1] = -coords[:, 1]
+        coordsList = [tuple(arr) for arr in list(coords)]
+
+        if self.midSpar != None:
+            mt = coordsList.pop(2)
+            coordsList.insert(-1, mt)
 
         coordsDict = {
             'ft': coordsList[0],
@@ -107,7 +107,7 @@ class FlexBox():
         return coordsDict
     
     @property
-    def lengths(self):
+    def lengths(self) -> dict:
         coordsDict = self.wingBoxCoords
         lengthsDict = {
             'f': length(coordsDict['ft'], coordsDict['fb']),
@@ -124,7 +124,7 @@ class FlexBox():
         return lengthsDict
     
     @property
-    def areas(self):
+    def areas(self) -> dict:
         lengths = self.lengths
         fArea = lengths['f']*thicknesses['f']
         rArea = lengths['r']*thicknesses['r']
@@ -141,7 +141,7 @@ class FlexBox():
         return areaDict
 
     @property
-    def centroidComponent(self):
+    def centroidComponent(self) -> tuple:
         coordsDict = self.wingBoxCoords
         areasDict = self.areas
         xf = (coordsDict['ft'][0]+coordsDict['fb'][0])/2
@@ -168,42 +168,85 @@ class FlexBox():
         y = productY/area
         return (x, y)
     
-    def airfoilCoords(self):
-        path = os.path.join(os.getcwd(), 'naca64a210-il.csv')
-        df = pd.read_csv(path)
-        chord = self.chord
-        scaleFactor = chord/0.1/1000
-        xCoor = np.array(df['X(mm)'].to_list())*scaleFactor
-        yCoor = np.array(df['Y(mm)'].to_list())*scaleFactor
-        x0 = chord/4
-        transFormedX = []
-        transFormedY = []
-        for x in xCoor:
-            xTrans = x-x0
-            transFormedX.append(xTrans)
-        for y in yCoor:
-            yTrans = -y
-            transFormedY.append(yTrans)
-        coordsList = list(zip(transFormedX,transFormedY))
-        return coordsList
+    @property
+    def totalArea(self) -> dict:
+        cDict = self.wingBoxCoords
+        wingBoxCoords = np.array([
+            cDict['fb'],
+            cDict['rb'],
+            cDict['rt'],
+            cDict['ft'],
+        ])
+
+        x = wingBoxCoords[:, 0]
+        y = wingBoxCoords[:, 1]
+        area = 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+        areaDict = {
+            'total': area
+        }
+        if self.midSpar != None:
+            boxCoords = np.array([
+                cDict['fb'],
+                cDict['mb'],
+                cDict['mt'],
+                cDict['ft'],
+            ])
+            x = boxCoords[:, 0]
+            y = boxCoords[:, 1]
+            area = 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+            areaDict['front'] = area
+            boxCoords = np.array([
+                cDict['mb'],
+                cDict['rb'],
+                cDict['rt'],
+                cDict['mt'],
+            ])
+            x = boxCoords[:, 0]
+            y = boxCoords[:, 1]
+            area = 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+            areaDict['back'] = area
+
+            diff = areaDict['total']-(areaDict['front']+areaDict['back'])
+            try:
+                check_value(diff, 0, 0.1)
+            except ValueError as e:
+                print(e)
+        return areaDict
     
-    def plot(self):
+    def ribMass(self, ribThickness:float) -> float:
+        volume = self.totalArea['total']*ribThickness
+        rho = c.DENSITY
+        return volume*rho
+
+
+    
+    def plot(self) -> None:
         airfoilList = list(zip(*self.airfoilCoords()))
-        wingBoxList = list(zip(*list(self.wingBoxCoords.values())))
+        cDict = self.wingBoxCoords
+        wingBoxCoords = [
+            cDict['fb'],
+            cDict['rb'],
+            cDict['rt'],
+            cDict['ft'],
+        ]
+        if self.midSpar != None:
+            wingBoxCoords.insert(1, cDict['mb'])
+            wingBoxCoords.insert(-1, cDict['mt'])
+
+        wingBoxList = list(zip(*wingBoxCoords))
+
         centroid = self.centroidComponent
+
         plt.plot(airfoilList[0], airfoilList[1], color = 'red')
-        plt.scatter(wingBoxList[0], wingBoxList[1], color = 'black')
-        plt.scatter(centroid[0], centroid[1])
+        plt.plot(wingBoxList[0], wingBoxList[1], color = 'black')
+        plt.plot([wingBoxList[0][0], wingBoxList[0][-1]], [wingBoxList[1][0], wingBoxList[1][-1]], color = 'black')
+        if self.midSpar != None:
+            plt.plot([wingBoxList[0][1], wingBoxList[0][-2]], [wingBoxList[1][1], wingBoxList[1][-2]], color = 'black')
+        plt.scatter(centroid[0], centroid[1], zorder = 2)
         plt.axis('equal')
         plt.gca().invert_yaxis()
         plt.grid(True)
         plt.show()
-
-
-    
-    
-
-
 
 
 if __name__ == '__main__':
@@ -218,8 +261,9 @@ if __name__ == '__main__':
     position = 15
     midSpar = 0.4
     wingBox = FlexBox(planform, thicknesses, position, midSpar)
-    # print(wingBox.wingBoxCoords)
-    # print(wingBox.lengths)
-    # print(wingBox.centroidComponent)
-    #wingBox.airfoilCoords()
+    print(wingBox.wingBoxCoords)
+    print(wingBox.lengths)
+    print(wingBox.centroidComponent)
+    wingBox.airfoilCoords()
     wingBox.plot()
+    print(wingBox.totalArea)
