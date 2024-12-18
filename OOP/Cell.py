@@ -262,5 +262,5 @@ if __name__ == "__main__": #tests
     plotcell(cell1, False, 1)
     plotcell(cell2, True, 2)
     sps1, sps2 = cell1.sectionProperties(0.3), cell2.sectionProperties(0.3)
-    print(f"@0.3 of cell: cell1 ixx: {sps1["ixx"]}, cell1 iyy:{sps1["iyy"]}, cell2 ixx: {sps2["ixx"]}, cell21 iyy:{sps2["iyy"]}")
+    print(f'@0.3 of cell: cell1 ixx: {sps1["ixx"]}, cell1 iyy:{sps1["iyy"]}, cell2 ixx: {sps2["ixx"]}, cell21 iyy:{sps2["iyy"]}')
     plt.show()
