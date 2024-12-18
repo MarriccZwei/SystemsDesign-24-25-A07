@@ -54,10 +54,9 @@ for i in range(len(Ks_data_unsorted)): #sorting
 # plt.plot(Ks_data_x, Ks_data_y) #plots the data
 # plt.show()
 
-
 #cnsts
-v = 0.33 #poisson ratio
-E = 72.4e9 #young modulus
+v = c.POISSON_RATIO
+E = c.E_MODULUS
 
 #interpolation
 def interpolate():
