@@ -7,7 +7,6 @@ if __name__ == "__main__":
 
 from math import pi
 from interpolatedLoads import pos_loadcase, neg_loadcase
-from maximumStresses import MaxAxialStress
 import OOP.Cell as cell
 import OOP.Planform as pf
 import matplotlib.pyplot as plt
