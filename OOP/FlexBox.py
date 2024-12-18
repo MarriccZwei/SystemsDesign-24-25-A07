@@ -36,7 +36,7 @@ class FlexBox():
         return coords
 
     @property
-    def wingBoxCoords(self) -> dict:
+    def coords(self) -> dict:
         xCoor, yCoor, chord = self.airfoilCoords(raw=True)
 
         spars = [c.FRONTSPARFRAC, c.BACKSPARFRAC]
@@ -108,7 +108,7 @@ class FlexBox():
     
     @property
     def lengths(self) -> dict:
-        coordsDict = self.wingBoxCoords
+        coordsDict = self.coords
         lengthsDict = {
             'f': length(coordsDict['ft'], coordsDict['fb']),
             'r': length(coordsDict['rt'], coordsDict['rb']),
@@ -126,6 +126,7 @@ class FlexBox():
     @property
     def areas(self) -> dict:
         lengths = self.lengths
+        thicknesses = self.thicknesses
         fArea = lengths['f']*thicknesses['f']
         rArea = lengths['r']*thicknesses['r']
         tArea = lengths['t']*thicknesses['t']
@@ -134,15 +135,17 @@ class FlexBox():
             'f': fArea,
             'r': rArea,
             't': tArea,
-            'b': bArea
+            'b': bArea,
+            'tot':fArea+rArea+tArea+bArea
         }
         if self.midSpar != None:
             areaDict['m'] = lengths['m']*thicknesses['m']
+            areaDict['tot'] += areaDict['m']
         return areaDict
 
     @property
     def centroidComponent(self) -> tuple:
-        coordsDict = self.wingBoxCoords
+        coordsDict = self.coords
         areasDict = self.areas
         xf = (coordsDict['ft'][0]+coordsDict['fb'][0])/2
         xr = (coordsDict['rt'][0]+coordsDict['rb'][0])/2
@@ -156,21 +159,21 @@ class FlexBox():
         yb = (coordsDict['fb'][1]+coordsDict['rb'][1])/2
         productY = areasDict['f']*yf+areasDict['r']*yr+areasDict['t']*yt+areasDict['b']*yb
 
-        area = areasDict['f']+areasDict['r']+areasDict['t']+areasDict['b']
+        #area = areasDict['f']+areasDict['r']+areasDict['t']+areasDict['b']
         if self.midSpar != None:
-            area += areasDict['m']
+            #area += areasDict['m']
             xm = (coordsDict['mt'][0]+coordsDict['mb'][0])/2
             ym = (coordsDict['mt'][1]+coordsDict['mb'][1])/2
             productX += areasDict['m']*xm
             productY += areasDict['m']*ym
         
-        x = productX/area
-        y = productY/area
+        x = productX
+        y = productY
         return (x, y)
     
     @property
     def totalArea(self) -> dict:
-        cDict = self.wingBoxCoords
+        cDict = self.coords
         wingBoxCoords = np.array([
             cDict['fb'],
             cDict['rb'],
@@ -222,7 +225,7 @@ class FlexBox():
     
     def plot(self) -> None:
         airfoilList = list(zip(*self.airfoilCoords()))
-        cDict = self.wingBoxCoords
+        cDict = self.coords
         wingBoxCoords = [
             cDict['fb'],
             cDict['rb'],
@@ -235,7 +238,8 @@ class FlexBox():
 
         wingBoxList = list(zip(*wingBoxCoords))
 
-        centroid = self.centroidComponent
+        area = self.areas['tot']
+        centroid = np.array(self.centroidComponent)/area
 
         plt.plot(airfoilList[0], airfoilList[1], color = 'red')
         plt.plot(wingBoxList[0], wingBoxList[1], color = 'black')
@@ -261,9 +265,9 @@ if __name__ == '__main__':
     position = 15
     midSpar = 0.4
     wingBox = FlexBox(planform, thicknesses, position, midSpar)
-    print(wingBox.wingBoxCoords)
-    print(wingBox.lengths)
-    print(wingBox.centroidComponent)
-    wingBox.airfoilCoords()
-    wingBox.plot()
-    print(wingBox.totalArea)
+    # print(wingBox.coords)
+    # print(wingBox.lengths)
+    # print(wingBox.centroidComponent)
+    # wingBox.airfoilCoords()
+    #wingBox.plot()
+    # print(wingBox.totalArea)

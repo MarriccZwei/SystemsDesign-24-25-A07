@@ -4,6 +4,7 @@ if __name__ == "__main__":
     import os
     sys.path.insert(1, os.getcwd())
     # ONLY FOR TESTING
+    import matplotlib.pyplot as plt
 
 import OOP.Planform as pf
 import OOP.FlexBox as fb
@@ -26,8 +27,8 @@ class Cell:
         self.zLen = endPos-startPos
         
         #creation of inboard and outboard flex boxes
-        self.inboardFrame = fb.FlexBox(startPos, planform, wingboxThicknesses, midSpar)
-        self.outboardFrame = fb.FlexBox(endPos, planform, wingboxThicknesses, midSpar)
+        self.inboardFrame = fb.FlexBox(planform, wingboxThicknesses, startPos, midSpar)
+        self.outboardFrame = fb.FlexBox(planform, wingboxThicknesses, endPos, midSpar)
 
         #creation of the edges dictionary
         def multipleDictsAdd(dict, spar, skin):
@@ -48,8 +49,9 @@ class Cell:
         self.vertices = dict()
         multipleDictsAdd(self.vertices, 'f', 't')
         multipleDictsAdd(self.vertices, 'f', 'b')
-        multipleDictsAdd(self.vertices, 'm', 't')
-        multipleDictsAdd(self.vertices, 'm', 'b')
+        if self.midSpar != None:
+            multipleDictsAdd(self.vertices, 'm', 't')
+            multipleDictsAdd(self.vertices, 'm', 'b')
         multipleDictsAdd(self.vertices, 'r', 't')
         multipleDictsAdd(self.vertices, 'r', 'b')
 
@@ -63,7 +65,7 @@ class Cell:
             dict[element+'o'] = self.outboardFrame.lengths[element]
 
         lenAppend(self.edges, 'f')
-        lenAppend(self.edges, 'm')
+        if self.midSpar != None: lenAppend(self.edges, 'm') 
         lenAppend(self.edges, 'r')
         lenAppend(self.edges, 't')
         lenAppend(self.edges, 'b')
@@ -85,9 +87,7 @@ class Cell:
         
         inboutb_lenAppend(self.edges, 'f')
         inboutb_lenAppend(self.edges, 'r')
-        if self.midSpar == None: #propagating the None if there is no midspar
-            self.edges["bm"], self.edges["mb"], self.edges["tm"], self.edges["mt"] = None
-        else: 
+        if self.midSpar != None: 
             inboutb_lenAppend(self.edges, 'm') #if there is a midspar
 
         #calculating the amount of stringers
@@ -120,7 +120,7 @@ class Cell:
         return self.startPos+position*(self.endPos-self.startPos)
 
     def wingbox(self, position):
-        return fb.FlexBox(self.spanwisePos(position), self.planform, self.wingboxThicknesses, self.midSpar)
+        return fb.FlexBox(self.planform, self.wingboxThicknesses, self.spanwisePos(position), self.midSpar)
     
     #returns the lists of stringer positions on top and on the bottom of the wingbox
     def _stringer_positions(self, position):
@@ -133,15 +133,13 @@ class Cell:
             #we need to determin the nyumber of stringers to go before and after the mid spar
             #we do it via a ratio of subcell top length to total top length
             wblns = wingbox.lengths
-            nStrBefroreMTop = wblns['ft']/wblns['t']*self.stringerNumTop 
-            nStrAfterMTop = wblns['rt']/wblns['t']*self.stringerNumTop
-            nStrBefroreMBot = wblns['fb']/wblns['b']*self.stringerNumBot
-            nStrAfterMBot = wblns['rb']/wblns['b']*self.stringerNumBot
+            nStrBefroreMTop = int(round(wblns['ft']/wblns['t']*self.stringerNumTop))
+            nStrAfterMTop = int(round(wblns['rt']/wblns['t']*self.stringerNumTop))
+            nStrBefroreMBot = int(round(wblns['fb']/wblns['b']*self.stringerNumBot))
+            nStrAfterMBot = int(round(wblns['rb']/wblns['b']*self.stringerNumBot))
             #creating the stringer position list assuming equally spaced stringers in each subcell
-            stringerPosTop = self._stringers_along_a_line(wbpts['ft'], wbpts['mt'], nStrBefroreMTop, self.stringerDesign['w'])
-            + self._stringers_along_a_line(wbpts['mt'], wbpts['rt'], nStrAfterMTop, self.stringerDesign['w'])
-            stringerPosBot = self._stringers_along_a_line(wbpts['fb'], wbpts['mb'], nStrBefroreMBot, self.stringerDesign['w'])
-            + self._stringers_along_a_line(wbpts['mb'], wbpts['rb'], nStrAfterMBot, self.stringerDesign['w'])
+            stringerPosTop = self._stringers_along_a_line(wbpts['ft'], wbpts['mt'], nStrBefroreMTop, self.stringerDesign['w'])+self._stringers_along_a_line(wbpts['mt'], wbpts['rt'], nStrAfterMTop, self.stringerDesign['w'])
+            stringerPosBot = self._stringers_along_a_line(wbpts['fb'], wbpts['mb'], nStrBefroreMBot, self.stringerDesign['w'])+ self._stringers_along_a_line(wbpts['mb'], wbpts['rb'], nStrAfterMBot, self.stringerDesign['w'])
         return stringerPosTop, stringerPosBot
 
     def sectionProperties(self, position):
@@ -169,14 +167,14 @@ class Cell:
         
         #moments of inertia
         def moicontrib(point1:Tuple[float,float], point2:Tuple[float,float], thickness:float, ixx_contr:List[float], iyy_contr:List[float]): #sheet contributions
-            midpoint = ((point1[0]+point2[0])/2+(point1[1]+point2[1])/2)
+            midpoint = ((point1[0]+point2[0])/2,(point1[1]+point2[1])/2)
             xdist = point1[0]-point2[0]
             ydist = point1[1]-point2[1]
             L = np.sqrt(xdist**2+ydist**2) #point to point distance
             ixx_contr.append(L*thickness*ydist**2/12 + L*thickness*(midpoint[1]-ybar)**2)
             iyy_contr.append(L*thickness*xdist**2/12 + L*thickness*(midpoint[0]-xbar)**2)
         
-        sheetcontribsX, sheetcontribsY = list() #moment contributions from sheets
+        sheetcontribsX, sheetcontribsY = list(), list() #moment contributions from sheets
         moicontrib(wbvertices["ft"], wbvertices["fb"], wbt["f"], sheetcontribsX, sheetcontribsY) #front spar
         moicontrib(wbvertices["rt"], wbvertices["rb"], wbt["r"], sheetcontribsX, sheetcontribsY) #rear spar
         moicontrib(wbvertices["ft"], wbvertices["rt"], wbt["t"], sheetcontribsX, sheetcontribsY) #top skin
@@ -228,6 +226,41 @@ if __name__ == "__main__": #tests
     thrust = 91964.80101516769
     wgboxArea = 123.969 #[m^2] measured in CATIA
 
-    cell1 = Cell(planform, 10, 11, {}, {})
+    cell1 = Cell(planform, 10, 11, {'w':0.05, 'h':0.05, 't':0.005, 'st':0.1, 'sb':0.13}, {'f':0.006, 'b':0.011, 'r':0.006, 't':0.011})
     print(cell1._stringers_along_a_line((1, 1), (-1, -1), 10, 0.01))
     print(cell1.spanwisePos(0.5))
+    print(cell1.edges)
+
+    cell2 = Cell(planform, 20, 21.3, {'w':0.05, 'h':0.05, 't':0.005, 'st':0.1, 'sb':0.13}, {'f':0.004, 'b':0.012, 'r':0.004, 't':0.012, 'm':0.004}, 0.4)
+
+    def plotcell(cell1:Cell, mids:bool, row:int):
+        row-=1 #to get zero at first raw to make the numeration align
+        plt.subplot(2, 3, 3*row+1)
+        plt.plot([cell1.vertices["ift"][0], cell1.vertices["irt"][0], cell1.vertices["irb"][0], cell1.vertices["ifb"][0], cell1.vertices["ift"][0]],
+                [cell1.vertices["ift"][1], cell1.vertices["irt"][1], cell1.vertices["irb"][1], cell1.vertices["ifb"][1], cell1.vertices["ift"][1]])
+        if mids: plt.plot([cell1.vertices["imt"][0], cell1.vertices["imb"][0]], [cell1.vertices["imt"][1], cell1.vertices["imb"][1]])
+        stringers = cell1.stringers(0)
+        sectionProperties = cell1.sectionProperties(0)
+        plt.plot(sectionProperties["xbar"], sectionProperties["ybar"], 'bx')
+        for point in stringers['p']: plt.plot(point[0], point[1], 'rx')
+        plt.title("Inboard")
+        plt.subplot(2, 3, 3*row+2)
+        plt.plot([cell1.vertices["oft"][0], cell1.vertices["ort"][0], cell1.vertices["orb"][0], cell1.vertices["ofb"][0], cell1.vertices["oft"][0]],
+                [cell1.vertices["oft"][1], cell1.vertices["ort"][1], cell1.vertices["orb"][1], cell1.vertices["ofb"][1], cell1.vertices["oft"][1]])
+        if mids: plt.plot([cell1.vertices["omt"][0], cell1.vertices["omb"][0]], [cell1.vertices["omt"][1], cell1.vertices["omb"][1]])
+        sectionProperties = cell1.sectionProperties(1)
+        plt.plot(sectionProperties["xbar"], sectionProperties["ybar"], 'bx')
+        stringers = cell1.stringers(1)
+        for point in stringers['p']: plt.plot(point[0], point[1], 'rx')
+        plt.title("Outboard")
+        plt.subplot(2, 3, 3*row+3)
+        plt.plot([cell1.spanwisePos(0), cell1.spanwisePos(0), cell1.spanwisePos(1), cell1.spanwisePos(1), cell1.spanwisePos(0)],
+                [cell1.vertices["ift"][1], cell1.vertices["ifb"][1], cell1.vertices["ofb"][1], cell1.vertices["oft"][1], cell1.vertices["ift"][1]])
+        plt.plot([cell1.spanwisePos(0), cell1.spanwisePos(0), cell1.spanwisePos(1), cell1.spanwisePos(1), cell1.spanwisePos(0)],
+                [cell1.vertices["irt"][1], cell1.vertices["irb"][1], cell1.vertices["orb"][1], cell1.vertices["ort"][1], cell1.vertices["irt"][1]])
+        plt.title("Side View")
+    plotcell(cell1, False, 1)
+    plotcell(cell2, True, 2)
+    sps1, sps2 = cell1.sectionProperties(0.3), cell2.sectionProperties(0.3)
+    print(f"@0.3 of cell: cell1 ixx: {sps1["ixx"]}, cell1 iyy:{sps1["iyy"]}, cell2 ixx: {sps2["ixx"]}, cell21 iyy:{sps2["iyy"]}")
+    plt.show()

@@ -2,6 +2,7 @@ import OOP.Cell as cell
 from typing import Iterable
 
 def cell_distr(planform, ribposes, stringerDesign, wingBoxThicknesses, cutoffidx, midSpar):
+    '''A function that creates a distribution of the cells'''
     halfspan = planform.b/2
     cells = list()
     for i in range(1, len(ribposes)):
