@@ -47,8 +47,8 @@ for i in range(len(Ks_data_unsorted)): #sorting
     Ks_data_x.append(Ks_data_unsorted[i][0])
     Ks_data_y.append(Ks_data_unsorted[i][1])
 
-plt.plot(Ks_data_x, Ks_data_y) #plots the data
-plt.show()
+# plt.plot(Ks_data_x, Ks_data_y) #plots the data
+# plt.show()
 
 #cnsts
 v = 0.33 #poisson ratio
