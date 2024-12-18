@@ -10,7 +10,7 @@ from scipy import interpolate
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from OOP import Cell
-from OOP import FlexBox
+from OOP.FlexBox import FlexBox
 from General import Constants as c
 
 
