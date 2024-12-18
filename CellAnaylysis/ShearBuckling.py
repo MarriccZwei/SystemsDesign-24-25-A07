@@ -28,7 +28,9 @@ def crit_shear_stress(k_s):
     v = 0.33 #poisson ratio
     E = 72.4e9 #young modulus
     tau_crit = []
-    webs = ['f', 'm', 'r']
+    webs = ['f', 'r', 'm']
+    if webs[2] == None:
+        webs = webs[:-1]
     for i in webs:
         t = FlexBox.thicknesses(i) #thickness of the web [m]
         b = FlexBox.length(i) #highest b gives lowest tau_critical, so the front spar 'f' [m]
@@ -36,6 +38,7 @@ def crit_shear_stress(k_s):
     return tau_crit
 
 
+print(None/3)
 #formula test
 # print(crit_shear_stress(4, 150, 10, 0.33, 72.4e9))
 
