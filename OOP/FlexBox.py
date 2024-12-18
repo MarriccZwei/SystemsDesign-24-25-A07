@@ -220,6 +220,34 @@ class FlexBox():
         volume = self.totalArea['total']*ribThickness
         rho = c.DENSITY
         return volume*rho
+    
+    @property
+    def polarMoment(self):
+        areas = self.totalArea
+        lengths = self.lengths
+
+        if midSpar != None:
+            g = c.G_MODULUS
+            areaFactor1 = 1/(2*areas['front'])
+            q1Cell1 = areaFactor1*(lengths['f']/(g*thicknesses['f'])+lengths['b']/(g*thicknesses['b'])+lengths['m']/(g*thicknesses['m'])+lengths['t']/(g*thicknesses['t']))
+            q2Cell1 = areaFactor1*(-lengths['m']/(g*thicknesses['m']))
+            areaFactor2 = 1/(2*areas['back'])
+            q2Cell2 = areaFactor2*(lengths['f']/(g*thicknesses['f'])+lengths['b']/(g*thicknesses['b'])+lengths['m']/(g*thicknesses['m'])+lengths['t']/(g*thicknesses['t']))
+            q1Cell2 = areaFactor2*(-lengths['m']/(g*thicknesses['m']))
+            matrix = np.array([[2*1/areaFactor1,2*1/areaFactor2,0],
+                               [q1Cell1,q2Cell1,-1],
+                               [q1Cell2,q2Cell2,-1]])
+            rhs = np.array([[1],
+                            [0],
+                            [0]])
+
+            solution = np.linalg.solve(matrix,rhs)
+            j = 1/(g*solution[-1])[0]
+        else:
+            area = areas['total']
+            integral = lengths['f']/thicknesses['f']+lengths['b']/thicknesses['b']+lengths['r']/thicknesses['r']+lengths['t']/thicknesses['t']
+            j = 4*area**2/integral
+        return j
 
 
     
@@ -263,7 +291,7 @@ if __name__ == '__main__':
     }
     planform = Planform(251, 9.87,0.1,28.5,2.15,False)
     position = 15
-    midSpar = 0.4
+    midSpar = None
     wingBox = FlexBox(planform, thicknesses, position, midSpar)
     # print(wingBox.coords)
     # print(wingBox.lengths)
@@ -271,3 +299,4 @@ if __name__ == '__main__':
     # wingBox.airfoilCoords()
     #wingBox.plot()
     # print(wingBox.totalArea)
+    #print(wingBox.polarMoment)
