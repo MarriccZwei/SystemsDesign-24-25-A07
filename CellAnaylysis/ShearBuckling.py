@@ -5,6 +5,8 @@ if __name__ == "__main__":
     sys.path.insert(1, os.getcwd())
     # ONLY FOR TESTING
 import numpy as np
+import scipy as sp
+from scipy import interpolate
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from OOP import Cell
@@ -47,18 +49,24 @@ for i in range(len(Ks_data_unsorted)): #sorting
     Ks_data_x.append(Ks_data_unsorted[i][0])
     Ks_data_y.append(Ks_data_unsorted[i][1])
 
+
 # plt.plot(Ks_data_x, Ks_data_y) #plots the data
 # plt.show()
+
 
 #cnsts
 v = 0.33 #poisson ratio
 E = 72.4e9 #young modulus
-k_s = 10 #assumption for now TODO input it
 
+#interpolation
+def interpolate():
+    f = sp.interpolate.interp1d(Ks_data_x,Ks_data_y,kind='cubic',fill_value="interpolate")
+    return(f)
 
-def crit_shear_stress(k_s):
-    v = 0.33 #poisson ratio
-    E = 72.4e9 #young modulus
+def crit_shear_stress():
+    #k_s determination
+    
+
     tau_crit = []
     webs = ['f', 'r', 'm']
     if FlexBox.midSpar == None:
@@ -66,6 +74,10 @@ def crit_shear_stress(k_s):
     for i in webs:
         t = FlexBox.thicknesses(i) #thickness of the web [m]
         b = FlexBox.lengths(i) #highest b gives lowest tau_critical, so the front spar 'f' [m]
+        a_over_b =  1
+        k_s = interpolate()(a_over_b)
+        if a_over_b > 5:
+            k_s = 9.5567
         tau_crit = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2)))
     return tau_crit # returns list of critical shear stress for front, rear and mid(if used) spar web
 
