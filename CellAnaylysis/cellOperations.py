@@ -56,6 +56,7 @@ def mofs(cells:List[cell.Cell], plot=False, yieldSF=1.1, fractureSF=1.5, colBuck
 
         #4. shearBucklSF
         critTau = sb.crit_shear_stress(cells[i])
+        
 
 
 if __name__ == "__main__":
