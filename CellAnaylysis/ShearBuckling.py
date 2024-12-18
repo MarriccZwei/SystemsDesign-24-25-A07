@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from OOP import Cell
 from OOP import FlexBox
+from General import Constants as c
 
 
 test = False
@@ -98,3 +99,41 @@ def max_shear_stress(V, A):
     return tau_max_shear_pos, tau_max_shear_neg
     
 # print(SBT.combined_shear_load())
+
+def torsion(FlexBox: FlexBox, torque):
+    areas = FlexBox.totalArea
+    lengths = FlexBox.lengths
+    thicknesses = FlexBox.thicknesses
+    g = c.G_MODULUS
+
+    if FlexBox.midSpar != None:
+
+        areaFactor1 = 1/(2*areas['front'])
+        q1Cell1 = areaFactor1*(lengths['f']/(g*thicknesses['f'])+lengths['b']/(g*thicknesses['b'])+lengths['m']/(g*thicknesses['m'])+lengths['t']/(g*thicknesses['t']))
+        q2Cell1 = areaFactor1*(-lengths['m']/(g*thicknesses['m']))
+        areaFactor2 = 1/(2*areas['back'])
+        q2Cell2 = areaFactor2*(lengths['f']/(g*thicknesses['f'])+lengths['b']/(g*thicknesses['b'])+lengths['m']/(g*thicknesses['m'])+lengths['t']/(g*thicknesses['t']))
+        q1Cell2 = areaFactor2*(-lengths['m']/(g*thicknesses['m']))
+        matrix = np.array([[2*1/areaFactor1,2*1/areaFactor2,0],
+                            [q1Cell1,q2Cell1,-1],
+                            [q1Cell2,q2Cell2,-1]])
+        rhs = np.array([[torque],
+                        [0],
+                        [0]])
+
+        solution = np.linalg.solve(matrix,rhs)
+        torsionDict = {
+            'q1': solution[0][0],
+            'q2': solution[1][0],
+            'twist': solution[2][0]
+        }
+
+    else:
+        area = areas['total']
+        q = torque/(2*area)
+        twist = torque/(g*FlexBox.polarMoment)
+        torsionDict = {
+            'q1': q,
+            'twist': twist
+        }
+    return torsionDict
