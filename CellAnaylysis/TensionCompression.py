@@ -17,7 +17,7 @@ material_strength_compression = 485e6  # Ultimate compressive strength in Pa (ex
 
 def calculateStress(Moments, Momentlocations, cell:Cell.Cell, z):
     material_strength_tension = 485e6  # Ultimate tensile strength in Pa (example value)
-    material_strength_compression = 485e6
+    material_strength_compression = 485e6#TODO check that this is correct
 
     Ixx, centroid = cell.sectionProperties(z)["ixx"], cell.sectionProperties(z)["centroid"] #Ixx and centroid
     Moment_interp = interp1d(Momentlocations, Moments, kind='linear') # Interpolate the bending moment distribution
