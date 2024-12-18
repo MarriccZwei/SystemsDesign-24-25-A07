@@ -238,7 +238,8 @@ class FlexBox():
 
         wingBoxList = list(zip(*wingBoxCoords))
 
-        centroid = self.centroidComponent
+        area = self.areas['tot']
+        centroid = np.array(self.centroidComponent)/area
 
         plt.plot(airfoilList[0], airfoilList[1], color = 'red')
         plt.plot(wingBoxList[0], wingBoxList[1], color = 'black')
@@ -264,9 +265,9 @@ if __name__ == '__main__':
     position = 15
     midSpar = 0.4
     wingBox = FlexBox(planform, thicknesses, position, midSpar)
-    print(wingBox.coords)
-    print(wingBox.lengths)
-    print(wingBox.centroidComponent)
-    wingBox.airfoilCoords()
-    wingBox.plot()
-    print(wingBox.totalArea)
+    # print(wingBox.coords)
+    # print(wingBox.lengths)
+    # print(wingBox.centroidComponent)
+    # wingBox.airfoilCoords()
+    #wingBox.plot()
+    # print(wingBox.totalArea)
