@@ -7,8 +7,9 @@ if __name__ == "__main__":
 
 import OOP.Planform as pf
 import OOP.FlexBox as fb
-from typing import Dict
+from typing import Dict, List, Tuple
 import numpy as np
+import General.Constants as c
 
 class Cell:
     '''The representation of the wingbox between 2 ribs'''
@@ -52,8 +53,8 @@ class Cell:
         multipleDictsAdd(self.vertices, 'r', 't')
         multipleDictsAdd(self.vertices, 'r', 'b')
 
-        #creation of the lengths dictionary
-        self.lengths = dict()
+        #creation of the edges dictionary
+        self.edges = dict()
 
         def lenAppend(dict, element):
             dict['i'+element] = self.inboardFrame.lengths[element]
@@ -61,21 +62,59 @@ class Cell:
             dict['o'+element] = self.outboardFrame.lengths[element]
             dict[element+'o'] = self.outboardFrame.lengths[element]
 
-        lenAppend(self.lengths, 'f')
-        lenAppend(self.lengths, 'm')
-        lenAppend(self.lengths, 'r')
-        lenAppend(self.lengths, 't')
-        lenAppend(self.lengths, 'b')
+        lenAppend(self.edges, 'f')
+        lenAppend(self.edges, 'm')
+        lenAppend(self.edges, 'r')
+        lenAppend(self.edges, 't')
+        lenAppend(self.edges, 'b')
+
+        #inboard to outboard distances along the skin
+        def inboutb_lenAppend(dict, surf1):
+            #intersect with bottom skin
+            vertex1 = self.vertices["o"+surf1+'b']
+            vertex2 = self.vertices["i"+surf1+'b']
+            distance = np.sqrt((vertex1[0]-vertex2[0])**2-(vertex1[1]-vertex2[1])**2)
+            dict[surf1+'b'] = distance
+            dict['b'+surf1] = distance
+            #intersect with top skin
+            vertex1 = self.vertices["o"+surf1+'t']
+            vertex2 = self.vertices["i"+surf1+'t']
+            distance = np.sqrt((vertex1[0]-vertex2[0])**2-(vertex1[1]-vertex2[1])**2)
+            dict[surf1+'t'] = distance
+            dict['t'+surf1] = distance
+        
+        inboutb_lenAppend(self.edges, 'f')
+        inboutb_lenAppend(self.edges, 'r')
+        if self.midSpar == None: #propagating the None if there is no midspar
+            self.edges["bm"], self.edges["mb"], self.edges["tm"], self.edges["mt"] = None
+        else: 
+            inboutb_lenAppend(self.edges, 'm') #if there is a midspar
 
         #calculating the amount of stringers
-        averageLenTop = (self.lengths['it']+self.lengths['ot'])/2
-        averageLenBot = (self.lengths['ib']+self.lengths['ob'])/2
+        averageLenTop = (self.edges['it']+self.edges['ot'])/2
+        averageLenBot = (self.edges['ib']+self.edges['ob'])/2
         #obtained by dividing the length available for stringers by stringer spacing
         self.stringerNumTop = int((averageLenTop-stringerDesign['w'])/stringerDesign['st'])
         self.stringerNumBot = int((averageLenBot-stringerDesign['w'])/stringerDesign['sb'])
         self.stringerNum = self.stringerNumTop+self.stringerNumBot #total number of stringers
         #since we only use one type of stringer, the area of 1 stringer is:
         self.stringerArea = stringerDesign['t']*(stringerDesign['w']+stringerDesign['h']-stringerDesign['t'])
+
+        #Assessing the cell materialVolume (without rib contributions)
+        self.materialVolume = self.stringerNum*self.zLen*self.stringerArea #stringer contributions
+        
+        def sheet_volume(spar): #defining sheet contribution
+            return (self.edges[spar+'o']+self.edges[spar+'i'])*self.zLen/2*self.wingboxThicknesses[spar]
+        #evaluating sheet contributions
+        self.materialVolume += sheet_volume('f')+sheet_volume('r') #main spars
+        if self.midSpar != None: #midspar (if present)
+            self.materialVolume += sheet_volume('m')
+        self.materialVolume += sheet_volume('t')+sheet_volume('r') #skins
+
+        #Cell weight estimation (without rib contributions)
+        self.mass = c.DENSITY*self.materialVolume
+        self.weight = c.G*self.mass
+        
 
     def spanwisePos(self, position):
         return self.startPos+position*(self.endPos-self.startPos)
@@ -129,23 +168,22 @@ class Cell:
         ybar = (wbareaMy+strAreaMomentY)/denominator
         
         #moments of inertia
-        ixx, iyy = 0
-
-        def moicontrib(point1, point2, thickness): #sheet contributions
+        def moicontrib(point1:Tuple[float,float], point2:Tuple[float,float], thickness:float, ixx_contr:List[float], iyy_contr:List[float]): #sheet contributions
             midpoint = ((point1[0]+point2[0])/2+(point1[1]+point2[1])/2)
             xdist = point1[0]-point2[0]
             ydist = point1[1]-point2[1]
-            L = np.sqrt((point1[0]-point2[0])**2+(point1[1]-point2[1])**2) #point to point distance
-            ixx = L*thickness*ydist**2/12 + L*thickness*(midpoint[1]-ybar)**2
-            iyy = L*thickness*xdist**2/12 + L*thickness*(midpoint[0]-xbar)**2
-            return ixx, iyy
+            L = np.sqrt(xdist**2+ydist**2) #point to point distance
+            ixx_contr.append(L*thickness*ydist**2/12 + L*thickness*(midpoint[1]-ybar)**2)
+            iyy_contr.append(L*thickness*xdist**2/12 + L*thickness*(midpoint[0]-xbar)**2)
         
-        ixx, iyy += moicontrib(wbvertices["ft"], wbvertices["fb"], wbt["f"]) #front spar
-        ixx, iyy += moicontrib(wbvertices["rt"], wbvertices["rb"], wbt["r"]) #rear spar
-        ixx, iyy += moicontrib(wbvertices["ft"], wbvertices["rt"], wbt["t"]) #top skin
-        ixx, iyy += moicontrib(wbvertices["rb"], wbvertices["fb"], wbt["b"]) #bottom skin
+        sheetcontribsX, sheetcontribsY = list() #moment contributions from sheets
+        moicontrib(wbvertices["ft"], wbvertices["fb"], wbt["f"], sheetcontribsX, sheetcontribsY) #front spar
+        moicontrib(wbvertices["rt"], wbvertices["rb"], wbt["r"], sheetcontribsX, sheetcontribsY) #rear spar
+        moicontrib(wbvertices["ft"], wbvertices["rt"], wbt["t"], sheetcontribsX, sheetcontribsY) #top skin
+        moicontrib(wbvertices["rb"], wbvertices["fb"], wbt["b"], sheetcontribsX, sheetcontribsY) #bottom skin
         if self.midSpar != None: #midSpar contribution
-            ixx, iyy += moicontrib(wbvertices["ft"], wbvertices["fb"], wbt["f"])
+            moicontrib(wbvertices["ft"], wbvertices["fb"], wbt["f"], sheetcontribsX, sheetcontribsY)
+        ixx, iyy = sum(sheetcontribsX), sum(sheetcontribsY) #summing to obtain moments of inertia
 
         #stringer contributions - parallel axis only
         for pos in strPoses:
@@ -170,6 +208,17 @@ class Cell:
             stringerPositions.append((xPositions[i], yPositions[i]))
 
         return stringerPositions
+    
+    def stringers(self, position):
+        '''Returns a dictionary of stringer positions and properties'''
+        strPosesTop, strPosesBot = self._stringer_positions(position)
+        strPoses = strPosesTop+strPosesBot
+        widthSideSegment = self.stringerDesign['w']-self.stringerDesign['t']
+        #2*rectangle, 2*parallel axis
+        iBucklAxis = self.stringerDesign['t']**3*widthSideSegment/12+self.stringerDesign['t']*widthSideSegment*self.stringerDesign['t']**2/4
+        + self.stringerDesign['t']*self.stringerDesign['h']**3/12+self.stringerDesign['t']*self.stringerDesign['h']**3/4 #not necessarily thin walled
+        return{'p':strPoses, 'pb':strPosesBot, 'pt':strPosesTop, 'A':self.stringerArea, 't':self.stringerDesign['t'], 'h':self.stringerDesign['h'], 
+               'ib':iBucklAxis, 'n':self.stringerNum, 'nb':self.stringerNumBot, 'nt':self.stringerNumTop} #all stringer information in 1 splace
 
 if __name__ == "__main__": #tests
     planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
@@ -181,4 +230,4 @@ if __name__ == "__main__": #tests
 
     cell1 = Cell(planform, 10, 11, {}, {})
     print(cell1._stringers_along_a_line((1, 1), (-1, -1), 10, 0.01))
-    print(cell1.edges)
+    print(cell1.spanwisePos(0.5))
