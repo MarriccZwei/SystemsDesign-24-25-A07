@@ -16,7 +16,39 @@ if test == True:
     from interpolatedLoads import pos_loadcase, neg_loadcase
     # from maximumStresses import MaxAxialStress
 
+Ks_data_unsorted = [[1.0091484479320676, 15.032487640377036],
+[1.016997390249054, 14.557738502239232],
+[1.0513018325535106, 14.056354868850171],
+[1.0989414220099736, 13.5009504648507],
+[1.1596297661963866, 13.000068018200238],
+[1.2265560953257175, 12.6349892781837],
+[1.3133777480247875, 12.229582905236327],
+[1.426547503553056, 11.838245560022482],
+[1.552873410969546, 11.460726649172862],
+[1.6924986664852848, 11.042754808707762],
+[1.8783315493472044, 10.61209220404028],
+[2.0506860888460894, 10.28972173396292],
+[2.275593637792344, 10.04976068333232],
+[2.579652892384468, 9.811303192917515],
+[2.863423033826525, 9.762419586377744],
+[3.008606092282798, 9.738040431450184],
+[3.1538607488445862, 9.68652559453277],
+[3.3914590619932206, 9.63676491120045],
+[3.7610484826571495, 9.562374479571272],
+[4.077726903346138, 9.541253038444603],
+[4.33496994669521, 9.546139609145943],
+[4.677960671160641, 9.552655036747728],
+[4.935203714509714, 9.557541607449068]
+]
 
+Ks_data_x = [] #x coord ks
+Ks_data_y = [] #y coord ks
+for i in range(len(Ks_data_unsorted)): #sorting
+    Ks_data_x.append(Ks_data_unsorted[i][0])
+    Ks_data_y.append(Ks_data_unsorted[i][1])
+
+plt.plot(Ks_data_x, Ks_data_y) #plots the data
+plt.show()
 
 #cnsts
 v = 0.33 #poisson ratio
@@ -47,9 +79,10 @@ def max_shear_stress(V, A):
     if FlexBox.midSpar == None:
         A += FlexBox.areas('m')
 
-    V = pos_loadcase()
-    tau_avg_shear = V/sum(A)
-    tau_max_shear = k_v * tau_avg_shear
-    return tau_max_shear
+    V_pos = pos_loadcase("Vy")
+    V_neg = neg_loadcase("Vy")
+    tau_max_shear_pos = k_v * V_pos/sum(A) #V/A is the avg shear stress
+    tau_max_shear_neg = k_v * V_neg/sum(A) #V/A is the avg shear stress
+    return tau_max_shear_pos, tau_max_shear_neg
     
 # print(SBT.combined_shear_load())
