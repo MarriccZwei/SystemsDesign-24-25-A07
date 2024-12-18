@@ -9,7 +9,20 @@ from typing import Iterable, List
 import OOP.Planform as pf
 import numpy as np
 from General import Constants as c
+from ShearBuckling import torsion
 import matplotlib.pyplot as plt
+import scipy.integrate as integrate
+
+def calculateDeltaTwist(loads, cell:cell.Cell, posEnd = 1):
+    torques = loads['Tz']
+    zStart = cell.startPos
+    zEnd = cell.endPos
+    length =zEnd-zStart
+    def _integrant(z):
+        return torsion(cell.wingbox((z-zStart)/length),torques(z))[-1][0]
+    theta, error = integrate.quad(_integrant, zStart, cell.spanwisePos(posEnd))
+    return theta
+
 
 def cell_distr(planform, ribposes, stringerDesign, wingBoxThicknesses, cutoffidx, midSpar):
     '''A function that creates a distribution of the cells'''
