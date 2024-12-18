@@ -11,6 +11,7 @@ import numpy as np
 from General import Constants as c
 import matplotlib.pyplot as plt
 import TensionCompression as tc
+import ColumnBuckling as cb
 
 def cell_distr(planform, ribposes, stringerDesign, wingBoxThicknesses, cutoffidx, midSpar):
     '''A function that creates a distribution of the cells'''
@@ -22,17 +23,38 @@ def cell_distr(planform, ribposes, stringerDesign, wingBoxThicknesses, cutoffidx
     return cells
 
 
-def mofs(cells:List[cell.Cell], plot=False):
-    '''A function that conducts the analysis of each of the 6 failure modes
-    Returns a list of lists: cell start positions, list of each of the failure modes margins of safety
+def mofs(cells:List[cell.Cell], plot=False, yieldSF=1.1, fractureSF=1.5, colBucklSF=1, shearBucklSF=1, skinBucklSF=1):
+    '''A function that conducts the analysis of each of the 5 failure modes
+    Returns a list of arrays: cell start positions, array of each of the failure modes margins of safety
     0 - positions
     1 - tensile yield strength
     2- compressive yield strength
     3 - column buckling of stringers
-    4 - shear buckling of spars'''
-    
-    #1 and 2. tensile and compressive stress
-    tensileStress, compressiveStress, bendingMoment = tc.tensionCompressionStresses()
+    4 - shear buckling of spars
+    5 - skin buckling
+    Use the safety factors defaults to specify the safety factors (upon which mofs are calculated)]'''
+    ncells = len(cells)
+    returnedList = [np.zeros(ncells)]*6
+
+    for i in range(ncells):
+        #0. cell start position
+        returnedList[0][i] = cells[i].startPos
+
+        #1 and 2. tensile and compressive stress
+        tensileStress, compressiveStress, bendingMoment = tc.tensionCompressionStresses()
+        returnedList[1][i] = min(c.YIELD_SIGMA/tensileStress/yieldSF, c.ULTIMATE_SIGMA/tensileStress/fractureSF)
+        returnedList[2][i] = min(c.YIELD_SIGMA/compressiveStress/yieldSF, c.ULTIMATE_SIGMA/tensileStress/fractureSF)
+
+        #3. column buckling of stringers
+        if i == ncells-1: #accounting for the boundary conditions
+            colBucklCritStress = cb.crit_buckling_stress(cells[i], True)
+        else:
+            colBucklCritStress = cb.crit_buckling_stress(cells[i], True)
+        #since we always have a stringer at maximum stress position, so we will reuse compressiveStress
+        returnedList[3][i] = colBucklCritStress/compressiveStress/colBucklSF
+
+        #4. shearBucklSF
+        
 
 
 if __name__ == "__main__":
