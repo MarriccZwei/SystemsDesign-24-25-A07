@@ -10,22 +10,29 @@ from scipy.interpolate import interp1d
 from OOP import Cell
 from OOP import FlexBox
 
+
 test = False
 if test == True:
-    import Loads.WingSBT as SBT
+    from interpolatedLoads import pos_loadcase, neg_loadcase
+    from maximumStresses import MaxAxialStress
+
 
 
 #cnsts
-# v = 0.33 #poisson ratio
-# E = 72.4e9 #young modulus
-k_s = 10 #assumption for now
+v = 0.33 #poisson ratio
+E = 72.4e9 #young modulus
+k_s = 10 #assumption for now TODO input it
 
 
-def crit_shear_stress(t, b, k_s):
+def crit_shear_stress(k_s):
     v = 0.33 #poisson ratio
     E = 72.4e9 #young modulus
-
-    tau_crit = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2)))
+    tau_crit = []
+    webs = ['f', 'm', 'r']
+    for i in webs:
+        t = FlexBox.thicknesses(i) #thickness of the web [m]
+        b = FlexBox.length(i) #highest b gives lowest tau_critical, so the front spar 'f' [m]
+        tau_crit = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2)))
     return tau_crit
 
 
@@ -33,10 +40,10 @@ def crit_shear_stress(t, b, k_s):
 # print(crit_shear_stress(4, 150, 10, 0.33, 72.4e9))
 
 
-
 def max_shear_stress(V, A):
     k_v = 1.5
-    V = SBT.combined_shear_load()
+    A = 1
+    V = pos_loadcase()
     tau_avg_shear = V/sum(A)
     tau_max_shear = k_v * tau_avg_shear
     return tau_max_shear
