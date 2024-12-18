@@ -20,7 +20,7 @@ def get_segments(L1, L2, L3, x, t_f, t_s, t_m):
     segments = {
         # Express the position of a segment with the wingbox dimensions in variable form
         "x": {"i": x/2, "j": t_f/2, "length": x, "thickness": t_f},
-        "L1": {"i": t_s/2, "j": L1/2, "length": L1, "thickness": t_s},
+        "L1": {"i": 0, "j": L1/2, "length": L1, "thickness": t_s},
         "L2": {"i": x/2, "j": L2/2, "length": L2, "thickness": t_m},
         "L3": {"i": x, "j": L3/2, "length": L3, "thickness": t_s},
         "d": {"i": x/2, "j": (L1 - ((d/2) * np.sin(alpha))), "length": d, "thickness": t_f},
@@ -28,10 +28,11 @@ def get_segments(L1, L2, L3, x, t_f, t_s, t_m):
     return segments, alpha
 
 # Function to define the sringers of the cross-section
-'A_str is the point area of a stringer'
-def get_stringers(L1, x, t_str, A_str, alpha):
-    # Assumed stringer spacing (m)
-    stringer_hor_spacing = 0.15  # Horizontal spacing in meters
+'h_str is the height of the stringer'
+'w_str is the width of the stringer'
+'t_str is the thickness of the stringer'
+'stringer_hor_spacing is the horizontal spacing between stringers'
+def get_stringers(L1, x, t_str, h_str, w_str, alpha, stringer_hor_spacing):
     total_length = x  # Total length of wingbox upper surface
 
     # Generate i-coordinates for stringers (equally spaced)
@@ -41,13 +42,14 @@ def get_stringers(L1, x, t_str, A_str, alpha):
     j_values = (L1 - np.tan(alpha) * i_values)  # Linear variation with slope (since j increases with x along the surface)
 
     # Create dictionaries for upper and lower surface stringers
+    # SAME SPACING ASSUMED OVER UPPER AND LOWER SURFACE!!!  
     stringersUS = {
-        f"stringer{i+1}": {"i": i_value, "j": t_str, "area": A_str}  # Upper surface stringers, at height t
+        f"stringer{i+1}": {"i": i_value, "j": t_str/2, "height": h_str, "width": w_str}  
         for i, i_value in enumerate(i_values)
     }
 
     stringersLS = {
-        f"stringer{i+1}": {"i": i_value, "j": j_value, "area": A_str}
+        f"stringer{i+1}": {"i": i_value, "j": j_value, "height": h_str, "width": w_str}
         for i, (i_value, j_value) in enumerate(zip(i_values, j_values))
     }
 
@@ -61,9 +63,9 @@ def get_stringers(L1, x, t_str, A_str, alpha):
 'W.r.t to the top left corner of the wingbox'
 def centroid(segments, stringersUS, stringersLS):
     # Calculating the weighted sum of the x and y coordinates
-    total_x = sum(segment["i"] * segment["length"] * segment["thickness"] for segment in segments.values()) + sum(stringer["i"] * stringer["area"] for stringer in stringersUS.values()) + sum(stringer["i"] * stringer["area"] for stringer in stringersLS.values())
-    total_y = sum(segment["j"] * segment["length"] * segment["thickness"] for segment in segments.values()) + sum(stringer["j"] * stringer["area"] for stringer in stringersUS.values()) + sum(stringer["j"] * stringer["area"] for stringer in stringersLS.values())
-    total_A = sum(segment["length"] * segment["thickness"] for segment in segments.values()) + sum(stringer["area"] for stringer in stringersUS.values()) + sum(stringer["area"] for stringer in stringersLS.values())
+    total_x = sum(segment["i"] * segment["length"] * segment["thickness"] for segment in segments.values()) + sum(stringer["i"] * stringer["height"] * stringer["width"] for stringer in stringersUS.values()) + sum(stringer["i"] * stringer["height"] * stringer["width"] for stringer in stringersLS.values())
+    total_y = sum(segment["j"] * segment["length"] * segment["thickness"] for segment in segments.values()) + sum(stringer["j"] * stringer["height"] * stringer["width"] for stringer in stringersUS.values()) + sum(stringer["j"] * stringer["height"] * stringer["width"] for stringer in stringersLS.values())
+    total_A = sum(segment["length"] * segment["thickness"] for segment in segments.values()) + sum(stringer["height"] * stringer["width"] for stringer in stringersUS.values()) + sum(stringer["height"] * stringer["width"] for stringer in stringersLS.values())
 
     x_bar = total_x / total_A
     y_bar = total_y / total_A
@@ -72,7 +74,7 @@ def centroid(segments, stringersUS, stringersLS):
 
 # Function to calculate the MOI of the wingbox
 'About the centroid of the wingbox'
-def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha):
+def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha, t_str, h_str, w_str):
     # Initialize moments of inertia (about the centroidal axes)
     I_xx = 0  # Moment of inertia about the x-axis (centroidal)
     I_yy = 0  # Moment of inertia about the y-axis (centroidal)
@@ -128,19 +130,35 @@ def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha):
         dx = stringer["i"] - x_bar
         dy = stringer["j"] - y_bar
 
-        'Only the parallel axis theorem term in the stringers’ contribution to the moment of inertia is taken into account'
+        # Moment of inertia of each stringer about its own centroid
+        'The higher order contributions of the thickness t are neglected'
+        # Calculate centroid of stringer
+        x_bar_str = (t_str*h_str + w_str**2) / (2*(h_str + w_str)) 
+        y_bar_str = ((h_str**2)/2) / (h_str + w_str)
+
+        I_xx_stringer = (t_str*h_str**3)/12 + t_str*h_str*(h_str/2-y_bar_str)**2 + (w_str * t_str**3)/12 + t_str*w_str*(h_str-y_bar_str)**2
+        I_yy_stringer = (h_str*t_str**3)/12 + t_str*h_str*x_bar_str**2 + (t_str*w_str**3)/12 + t_str*w_str*(w_str/2-x_bar_str)**2
+
         # Parallel Axis Theorem contribution
-        I_xx += stringer["area"] * dy**2
-        I_yy += stringer["area"] * dx**2
+        I_xx += I_xx_stringer + stringer["height"] * stringer["width"] * dy**2
+        I_yy += I_yy_stringer + stringer["height"] * stringer["width"] * dx**2
 
     for stringer in stringersLS.values():
         dx = stringer["i"] - x_bar
         dy = stringer["j"] - y_bar
 
-        'Only the parallel axis theorem term in the stringers’ contribution to the moment of inertia is taken into account'
+        # Moment of inertia of each stringer about its own centroid
+        'The higher order contributions of the thickness t are neglected'
+        # Calculate centroid of stringer
+        x_bar_str = w_str**2 / (2*(h_str + w_str)) 
+        y_bar_str = ((h_str**2)/2) / (h_str + w_str)
+
+        I_xx_stringer = (t_str*h_str**3)/12 + t_str*h_str*(h_str/2-y_bar_str) **2 + t_str*w_str*(h_str-y_bar_str)**2
+        I_yy_stringer = t_str*h_str*x_bar_str**2 + (t_str*w_str**3)/12 + t_str*w_str*(w_str/2-x_bar_str)**2
+
         # Parallel Axis Theorem contribution
-        I_xx += stringer["area"] * dy**2
-        I_yy += stringer["area"] * dx**2
+        I_xx += I_xx_stringer + stringer["height"] * stringer["width"] * dy**2
+        I_yy += I_yy_stringer + stringer["height"] * stringer["width"] * dx**2
 
     return I_xx, I_yy, I_xy
 
