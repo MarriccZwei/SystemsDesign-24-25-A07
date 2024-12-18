@@ -6,11 +6,9 @@ if __name__ == "__main__":
     # ONLY FOR TESTING
 
 from math import pi
-from ShearBuckling import E, v
 from interpolatedLoads import pos_loadcase, neg_loadcase
-from maximumStresses import MaxAxialStress
 import OOP.Cell as cell
-import OOP.Planform as planform
+import OOP.Planform as pf
 import matplotlib.pyplot as plt
 
 K_data_unsorted = [[0.7723396840415656,14.839244412502758], #list of coordinates of K graph
@@ -94,14 +92,30 @@ def max_skin_buckling(thickness, length, width, E, v): #function that calculates
     return critical_stress
 
 def MOS_skin_buckling(Sigma_applied, thickness, length, width): #margin of safety of skin panel
-
+    E = 72.4e9
+    v = 0.33
     Sigma_max = max_skin_buckling(thickness, length, width, E, v)
     S_factor = Sigma_max/Sigma_applied
     return S_factor
 
-def Spanwise_MOS(cell:cell.Cell):
+'''def Spanwise_MOS(cell:cell.Cell):
     YMax = cell.wingboxLengths("f")/2
     MOIxx = cell.sectionProperties("ixx")
     MxPos = pos_loadcase(cell.startPos)
 
     SigmaAppliedPos = MxPos*YMax/MOIxx
+'''
+if __name__ == "__main__": #tests
+    planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
+    halfspan = planform.b/2
+    mWing = 22962.839350654576
+    mEngine = 3554.759960907367/2 #divide by two as we are looking at the half-span only
+    thrust = 91964.80101516769
+    wgboxArea = 123.969 #[m^2] measured in CATIA
+
+    cell1 = cell.Cell(planform, 10, 11, {}, {})
+    print(cell1._stringers_along_a_line((1, 1), (-1, -1), 10, 0.01))
+    print(cell1.spanwisePos(0.5))
+
+cellProperties = cell1.sectionProperties()
+print(cellProperties)

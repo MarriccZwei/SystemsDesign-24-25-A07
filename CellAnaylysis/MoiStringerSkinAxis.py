@@ -4,7 +4,8 @@ if __name__ == "__main__":
     import os
     sys.path.insert(1, os.getcwd())
     # ONLY FOR TESTING
-import OOP.Cell as Cell
+from OOP.Cell import Cell
+import OOP.Planform as pf
 import numpy as np
 #import General.Constants as consts
 
@@ -13,7 +14,8 @@ stringerDesign = {
     "t": 0.002,         # Thickness of the stringer [m]
     "w": 0.03,          # Width of the stringer base [m]
     "h": 0.04,          # Height of the stringer [m]
-    "spacing": 0.2      # Spacing between adjacent stringers [m] 
+    "sb": 0.2,      # Spacing between bottom stringers [m]
+    "st": 0.2      # Spacing between top stringers [m] 
 }
 
 # MOI of individual stringers (used for local buckling)
@@ -38,7 +40,7 @@ def moi_stringer(stringerDesign):
 
 
 # MOI of skin and stringers (used for global buckling)
-def moi_panel(cell:Cell.Cell, stringerDesigns, nPoints=10):
+def moi_panel(cell:Cell, stringerDesign, nPoints=10):
     """
     Calculates the moment of inertia (MOI) of all stringers placed along a line, evaluated at multiple spanwise positions.
 
@@ -69,22 +71,45 @@ def moi_panel(cell:Cell.Cell, stringerDesigns, nPoints=10):
         y_centroid = (point1[1] + point2[1]) / 2  
         
         
-        I_xx = 0
-        I_yy = 0
-        for position in stringer_positions:
+        I_xx_pan = 0
+        I_yy_pan = 0
+        for x_pos, y_pos in stringer_positions: 
             I_xx_str, I_yy_str, x_bar_str, y_bar_str = moi_stringer(stringerDesign)
 
             # Parallel axis controbution
-            I_xx = I_xx_str + (h*t+w*t-t**2) * (h-y_bar_str)**2 
-            I_yy = I_yy_str + (h*t+w*t-t**2) * (x_centroid-x_bar_str)**2 
+            I_xx_pan = I_xx_str + (h*t+w*t-t**2) * (h-y_bar_str)**2 
+            I_yy_pan = I_yy_str + (h*t+w*t-t**2) * (x_centroid-x_pos)**2 
             
         I_xx_values.append({
             "spanwise_location": spanwise_location,
-            "I_xx": I_xx
+            "I_xx": I_xx_pan
         })
         I_yy_values.append({
             "spanwise_location": spanwise_location,
-            "I_yy": I_yy
+            "I_yy": I_yy_pan
         })
     
-    return I_xx, I_yy
+    return I_xx_values, I_yy_values
+
+# Test
+# I_xx_str, I_yy_str, x_bar_str, y_bar_str = moi_stringer(stringerDesign)
+# print(I_xx_str, I_yy_str, x_bar_str,y_bar_str)
+
+# planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
+# halfspan = planform.b/2
+# mWing = 22962.839350654576
+# mEngine = 3554.759960907367/2 #divide by two as we are looking at the half-span only
+# thrust = 91964.80101516769
+# wgboxArea = 123.969 #[m^2] measured in CATIA
+
+# wingboxThicknesses = {
+#     "f": 0.001, #m
+#     "t": 0.001, #m
+#     "m": 0.001, #m
+#     "b": 0.001, #m
+#     "r": 0.001 #m
+# }
+
+# cell = Cell(planform, 10, 11, stringerDesign, wingboxThicknesses, midSpar=None)
+# I_xx_values, I_yy_values = moi_panel(cell, stringerDesign, nPoints=10)
+# print(I_xx_values, I_yy_values)
