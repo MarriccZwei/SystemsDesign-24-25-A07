@@ -63,16 +63,16 @@ def interpolate():
     f = sp.interpolate.interp1d(Ks_data_x,Ks_data_y,kind='cubic',fill_value="interpolate")
     return(f)
 
-def crit_shear_stress():
+def crit_shear_stress(cell:Cell.Cell):
     tau_crit = []
     webs = ['f', 'r', 'm']
-    if FlexBox.midSpar == None:
+    if cell.midSpar == None:
         webs = webs[:-1]
     for i in webs:
-        t = FlexBox.thicknesses(i) #thickness of the web [m]
-        b = FlexBox.lengths(i) #highest b gives lowest tau_critical, so the front spar 'f' [m]
+        t = cell.wingboxThicknesses[i] #thickness of the web [m]
+        b = cell.edges[i+"i"]
         #k_s determination
-        a_over_b = Cell.edges(i)/FlexBox.lengths(i)
+        a_over_b = cell.edges[i+'t']/b
         k_s = interpolate()(a_over_b)
         if a_over_b > 4.9:
             k_s = 9.5567
