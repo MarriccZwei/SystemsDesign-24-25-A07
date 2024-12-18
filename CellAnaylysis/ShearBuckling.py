@@ -5,10 +5,13 @@ if __name__ == "__main__":
     sys.path.insert(1, os.getcwd())
     # ONLY FOR TESTING
 import numpy as np
+import scipy as sp
+from scipy import interpolate
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from OOP import Cell
-from OOP import FlexBox
+from OOP.FlexBox import FlexBox
+from General import Constants as c
 
 
 test = False
@@ -47,18 +50,20 @@ for i in range(len(Ks_data_unsorted)): #sorting
     Ks_data_x.append(Ks_data_unsorted[i][0])
     Ks_data_y.append(Ks_data_unsorted[i][1])
 
+
 # plt.plot(Ks_data_x, Ks_data_y) #plots the data
 # plt.show()
 
 #cnsts
-v = 0.33 #poisson ratio
-E = 72.4e9 #young modulus
-k_s = 10 #assumption for now TODO input it
+v = c.POISSON_RATIO
+E = c.E_MODULUS
 
+#interpolation
+def interpolate():
+    f = sp.interpolate.interp1d(Ks_data_x,Ks_data_y,kind='cubic',fill_value="interpolate")
+    return(f)
 
-def crit_shear_stress(k_s):
-    v = 0.33 #poisson ratio
-    E = 72.4e9 #young modulus
+def crit_shear_stress():
     tau_crit = []
     webs = ['f', 'r', 'm']
     if FlexBox.midSpar == None:
@@ -66,6 +71,11 @@ def crit_shear_stress(k_s):
     for i in webs:
         t = FlexBox.thicknesses(i) #thickness of the web [m]
         b = FlexBox.lengths(i) #highest b gives lowest tau_critical, so the front spar 'f' [m]
+        #k_s determination
+        a_over_b = Cell.edges(i)/FlexBox.lengths(i)
+        k_s = interpolate()(a_over_b)
+        if a_over_b > 4.9:
+            k_s = 9.5567
         tau_crit = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2)))
     return tau_crit # returns list of critical shear stress for front, rear and mid(if used) spar web
 
@@ -75,14 +85,93 @@ def crit_shear_stress(k_s):
 
 def max_shear_stress(V, A):
     k_v = 1.5
-    A = FlexBox.areas('f') + FlexBox.areas('r')
+    A = FlexBox.areas('f') + FlexBox.areas('r') + FlexBox.areas('m')
     if FlexBox.midSpar == None:
-        A += FlexBox.areas('m')
+        A -= FlexBox.areas('m')
 
     V_pos = pos_loadcase("Vy")
     V_neg = neg_loadcase("Vy")
-    tau_max_shear_pos = k_v * V_pos/sum(A) #V/A is the avg shear stress
-    tau_max_shear_neg = k_v * V_neg/sum(A) #V/A is the avg shear stress
+    tau_max_shear_pos = abs(k_v * V_pos/sum(A)) #V/A is the avg shear stress
+    tau_max_shear_neg = abs(k_v * V_neg/sum(A)) #V/A is the avg shear stress
     return tau_max_shear_pos, tau_max_shear_neg
     
-# print(SBT.combined_shear_load())
+
+
+
+#torsion contribution to shear flow
+def torsion(FlexBox: FlexBox, torque):
+    areas = FlexBox.totalArea
+    lengths = FlexBox.lengths
+    thicknesses = FlexBox.thicknesses
+    g = c.G_MODULUS
+
+    if FlexBox.midSpar != None:
+
+        areaFactor1 = 1/(2*areas['front'])
+        q1Cell1 = areaFactor1*(lengths['f']/(g*thicknesses['f'])+lengths['b']/(g*thicknesses['b'])+lengths['m']/(g*thicknesses['m'])+lengths['t']/(g*thicknesses['t']))
+        q2Cell1 = areaFactor1*(-lengths['m']/(g*thicknesses['m']))
+        areaFactor2 = 1/(2*areas['back'])
+        q2Cell2 = areaFactor2*(lengths['f']/(g*thicknesses['f'])+lengths['b']/(g*thicknesses['b'])+lengths['m']/(g*thicknesses['m'])+lengths['t']/(g*thicknesses['t']))
+        q1Cell2 = areaFactor2*(-lengths['m']/(g*thicknesses['m']))
+        matrix = np.array([[2*1/areaFactor1,2*1/areaFactor2,0],
+                            [q1Cell1,q2Cell1,-1],
+                            [q1Cell2,q2Cell2,-1]])
+        rhs = np.array([[torque],
+                        [0],
+                        [0]])
+
+        solution = np.linalg.solve(matrix,rhs)
+        torsionDict = {
+            'q1': solution[0][0],
+            'q2': solution[1][0],
+            'twist': solution[2][0]
+        }
+
+    else:
+        area = areas['total']
+        q = torque/(2*area)
+        twist = torque/(g*FlexBox.polarMoment)
+        torsionDict = {
+            'q1': q,
+            'twist': twist
+        }
+    return torsionDict
+
+
+def comparison():
+    if FlexBox.midSpar != None: #three spar case
+        tau_totalpos = torsion('q1') * FlexBox.thicknesses('f') + max_shear_stress[0]
+        if tau_totalpos >= crit_shear_stress()[0]:
+            print('shear force on the front spar web is critical (positive load case)')
+        tau_totalneg = torsion('q1') * FlexBox.thicknesses('f') + max_shear_stress[1]
+        if tau_totalneg >= crit_shear_stress()[0]:
+            print('shear force on the front spar web is critical (negative load case)')
+        #rear stress
+        tau_totalpos = torsion('q2') * FlexBox.thicknesses('r') + max_shear_stress[0]
+        if tau_totalpos >= crit_shear_stress()[1]:
+            print('shear force on the rear spar web is critical (positive load case)')
+        tau_totalneg = torsion('q2') * FlexBox.thicknesses('r') + max_shear_stress[1]
+        if tau_totalneg >= crit_shear_stress()[1]:
+            print('shear force on the rear spar web is critical (negative load case)')
+        #mid spar stress
+        tau_totalpos = abs(torsion('q2')-torsion('q1')) * FlexBox.thicknesses('r') + max_shear_stress[0]
+        if tau_totalpos >= crit_shear_stress()[2]:
+            print('shear force on the mid spar web is critical (positive load case)')
+        tau_totalneg = abs(torsion('q2')-torsion('q1')) * FlexBox.thicknesses('r') + max_shear_stress[1]
+        if tau_totalneg >= crit_shear_stress()[2]:
+            print('shear force on the mid spar web is critical (negative load case)')
+        
+    else:  # two spar case
+        tau_totalpos = torsion('q1') * FlexBox.thicknesses('f') + max_shear_stress[0]
+        if tau_totalpos >= crit_shear_stress()[0]:
+            print('shear force on the front spar web is critical (positive load case)')
+        tau_totalneg = torsion('q1') * FlexBox.thicknesses('f') + max_shear_stress[1]
+        if tau_totalneg >= crit_shear_stress()[0]:
+            print('shear force on the front spar web is critical (negative load case)')
+        #rear stress
+        tau_totalpos = torsion('q1') * FlexBox.thicknesses('r') + max_shear_stress[0]
+        if tau_totalpos >= crit_shear_stress()[1]:
+            print('shear force on the rear spar web is critical (positive load case)')
+        tau_totalneg = torsion('q1') * FlexBox.thicknesses('r') + max_shear_stress[1]
+        if tau_totalneg >= crit_shear_stress()[1]:
+            print('shear force on the rear spar web is critical (negative load case)')

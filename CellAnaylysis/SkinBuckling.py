@@ -98,6 +98,21 @@ def MOS_skin_buckling(Sigma_applied, thickness, length, width): #margin of safet
     S_factor = Sigma_max/Sigma_applied
     return S_factor
 
+def maxStress(endPos, startPos):
+    n = 5    #increment of distance that you want to use
+    dZ = (endPos-startPos)/n
+    MxPos = []
+    MxNeg = []
+    spanwisePos = []
+    i = 0
+    #for i in range(n):
+    #MxPos.append(pos_loadcase(startPos + i * dZ))
+    #MxNeg.append(neg_loadcase(startPos + i* dZ))
+    spanwisePos.append(i)
+    return spanwisePos
+
+    
+
 '''def Spanwise_MOS(cell:cell.Cell):
     YMax = cell.wingboxLengths("f")/2
     MOIxx = cell.sectionProperties("ixx")
@@ -113,9 +128,7 @@ if __name__ == "__main__": #tests
     thrust = 91964.80101516769
     wgboxArea = 123.969 #[m^2] measured in CATIA
 
-    cell1 = cell.Cell(planform, 10, 11, {}, {})
-    print(cell1._stringers_along_a_line((1, 1), (-1, -1), 10, 0.01))
-    print(cell1.spanwisePos(0.5))
+    cell1 = cell.Cell(planform, 10, 11, {'w':0.05, 'h':0.05, 't':0.005, 'st':0.1, 'sb':0.13}, {'f':0.006, 'b':0.011, 'r':0.006, 't':0.011})
 
-cellProperties = cell1.sectionProperties()
-print(cellProperties)
+    print(maxStress(10, 11))
+    print(pos_loadcase(1))
