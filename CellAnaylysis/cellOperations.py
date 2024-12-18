@@ -10,6 +10,7 @@ import OOP.Planform as pf
 import numpy as np
 from General import Constants as c
 import matplotlib.pyplot as plt
+import TensionCompression as tc
 
 def cell_distr(planform, ribposes, stringerDesign, wingBoxThicknesses, cutoffidx, midSpar):
     '''A function that creates a distribution of the cells'''
@@ -20,8 +21,19 @@ def cell_distr(planform, ribposes, stringerDesign, wingBoxThicknesses, cutoffidx
         cells.append(cell.Cell(planform, ribposes[i-1], ribposes[i], stringerDesign, wingBoxThicknesses, midSpar))
     return cells
 
+
 def mofs(cells:List[cell.Cell], plot=False):
-    '''A function that conducts the analysis of each of the 6 failure modes'''
+    '''A function that conducts the analysis of each of the 6 failure modes
+    Returns a list of lists: cell start positions, list of each of the failure modes margins of safety
+    0 - positions
+    1 - tensile yield strength
+    2- compressive yield strength
+    3 - column buckling of stringers
+    4 - shear buckling of spars'''
+    
+    #1 and 2. tensile and compressive stress
+    tensileStress, compressiveStress, bendingMoment = tc.tensionCompressionStresses()
+
 
 if __name__ == "__main__":
     planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
