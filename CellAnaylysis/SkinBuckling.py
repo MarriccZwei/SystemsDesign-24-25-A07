@@ -10,7 +10,8 @@ from ShearBuckling import E, v
 from interpolatedLoads import pos_loadcase, neg_loadcase
 from maximumStresses import MaxAxialStress
 import OOP.Cell as cell
-#import matplotlib.pyplot as plt
+import OOP.Planform as planform
+import matplotlib.pyplot as plt
 
 K_data_unsorted = [[0.7723396840415656,14.839244412502758], #list of coordinates of K graph
 [0.7876282837892491,14.3654933267152],
@@ -98,5 +99,9 @@ def MOS_skin_buckling(Sigma_applied, thickness, length, width): #margin of safet
     S_factor = Sigma_max/Sigma_applied
     return S_factor
 
-def Spanwise_MOS(Spanwise_location):
-    return "hoi"
+def Spanwise_MOS(cell:cell.Cell):
+    YMax = cell.wingboxLengths("f")/2
+    MOIxx = cell.sectionProperties("ixx")
+    MxPos = pos_loadcase(cell.startPos)
+
+    SigmaAppliedPos = MxPos*YMax/MOIxx
