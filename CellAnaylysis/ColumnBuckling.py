@@ -34,7 +34,6 @@ def crit_buckling_stress (cell, tip = False):
     
     sigma_buckling_values = []
     I_xx_values, I_yy_values = moi_panel(cell, cell.stringerDesign, nPoints=10) # idk why it wants me to include the 2nd argument
-    #sigma_buckling = (K * np.pi**2 * consts.E_MODULUS * cell.sectionProperties["ixx"]) / ((cell.zLen)**2 * Area)
     for ixx_dict in I_xx_values:
         ixx = ixx_dict["I_xx"] 
         sigma_buckling = (K * np.pi**2 * consts.E_MODULUS * ixx) / (Len**2 * Area) 
