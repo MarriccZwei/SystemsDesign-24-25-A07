@@ -12,6 +12,7 @@ from General import Constants as c
 import matplotlib.pyplot as plt
 import TensionCompression as tc
 import ColumnBuckling as cb
+import ShearBuckling as sb
 
 def cell_distr(planform, ribposes, stringerDesign, wingBoxThicknesses, cutoffidx, midSpar):
     '''A function that creates a distribution of the cells'''
@@ -54,7 +55,7 @@ def mofs(cells:List[cell.Cell], plot=False, yieldSF=1.1, fractureSF=1.5, colBuck
         returnedList[3][i] = colBucklCritStress/compressiveStress/colBucklSF
 
         #4. shearBucklSF
-        
+        critTau = sb.crit_shear_stress(cells[i])
 
 
 if __name__ == "__main__":

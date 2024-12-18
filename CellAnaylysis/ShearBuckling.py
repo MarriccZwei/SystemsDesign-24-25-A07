@@ -83,19 +83,20 @@ def crit_shear_stress(cell:Cell.Cell):
 # print(crit_shear_stress(4, 150, 10, 0.33, 72.4e9))
 
 
-def max_shear_stress(V, A):
+def max_shear_stress(cell:Cell.Cell):
     k_v = 1.5
     A = FlexBox.areas('f') + FlexBox.areas('r') + FlexBox.areas('m')
     if FlexBox.midSpar == None:
         A -= FlexBox.areas('m')
 
-    V_pos = pos_loadcase("Vy")
+    #!!!TODO determine the crit spanwise pos!!!#
+    V_pos = pos_loadcase(cell.spanwisePos(0.5))["Vy"]
     V_neg = neg_loadcase("Vy")
     tau_max_shear_pos = abs(k_v * V_pos/sum(A)) #V/A is the avg shear stress
     tau_max_shear_neg = abs(k_v * V_neg/sum(A)) #V/A is the avg shear stress
     return tau_max_shear_pos, tau_max_shear_neg
     
-
+#TODO overall, a fuction that gives maximum applied tau for a given cell
 
 
 #torsion contribution to shear flow
