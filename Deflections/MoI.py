@@ -137,7 +137,7 @@ def MOI(segments, stringersUS, stringersLS, x_bar, y_bar, alpha, t_str, h_str, w
         y_bar_str = ((h_str**2)/2) / (h_str + w_str)
 
         I_xx_stringer = (t_str*h_str**3)/12 + t_str*h_str*(h_str/2-y_bar_str)**2 + (w_str * t_str**3)/12 + t_str*w_str*(h_str-y_bar_str)**2
-        I_yy_stringer = (h_str*t_str**3)/12 + t_str*h_str*(t_strS/2-x_bar_str)**2 + (t_str*w_str**3)/12 + t_str*w_str*(w_str/2-x_bar_str)**2
+        I_yy_stringer = (h_str*t_str**3)/12 + t_str*h_str*(t_str/2-x_bar_str)**2 + (t_str*w_str**3)/12 + t_str*w_str*(w_str/2-x_bar_str)**2
 
         # Parallel Axis Theorem contribution
         I_xx += I_xx_stringer + stringer["height"] * stringer["width"] * dy**2
