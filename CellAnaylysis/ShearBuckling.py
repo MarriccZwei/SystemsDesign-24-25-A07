@@ -63,6 +63,7 @@ def interpolate():
     f = sp.interpolate.interp1d(Ks_data_x,Ks_data_y,kind='cubic',fill_value="interpolate")
     return(f)
 
+
 def crit_shear_stress(cell:Cell.Cell):
     tau_crit = []
     webs = ['f', 'r', 'm']
@@ -76,7 +77,8 @@ def crit_shear_stress(cell:Cell.Cell):
         k_s = interpolate()(a_over_b)
         if a_over_b > 4.9:
             k_s = 9.5567
-        tau_crit = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2)))
+        tau_crit_case = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2))) #tau_crit for front rear (and mid)
+        tau_crit.append(tau_crit_case)
     return tau_crit # returns list of critical shear stress for front, rear and mid(if used) spar web
 
 #formula test
