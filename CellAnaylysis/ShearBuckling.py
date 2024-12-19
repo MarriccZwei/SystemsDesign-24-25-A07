@@ -74,7 +74,7 @@ def crit_shear_stress(cell:Cell.Cell):
         webs = webs[:-1]
     for i in webs:
         t = cell.wingboxThicknesses[i] #thickness of the web [m]
-        b = cell.edges[i+"i"]
+        b = cell.edges[i+"o"]
         #k_s determination
         a_over_b = cell.edges[i+'t']/b
         k_s = interpolate()(a_over_b)
