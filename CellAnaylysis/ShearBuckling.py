@@ -140,28 +140,31 @@ def max_shear_stress(cell:Cell.Cell):
 
     V_pos = load_pos["Vy"](cell.spanwisePos(0.0)) #taken from code structure document
     V_neg = load_neg["Vy"](cell.spanwisePos(0.0)) #at zero as the shear would be the highest there per cell
+    shearFlowspos = torsion(cell.wingbox(1.0), load_pos["Tz"](cell.spanwisePos(0.0))) #shearflow due to torsion pos case
+    shearFlowsneg = torsion(cell.wingbox(1.0), load_neg["Tz"](cell.spanwisePos(0.0))) #shearflow due to torsion neg case
 
-    tau_max_shear_pos = abs(k_v * V_pos/A) #V/A is the avg shear stress    and output is shear per web
-    tau_max_shear_neg = abs(k_v * V_neg/A) #V/A is the avg shear stress
+
+    tau_max_shear_pos = (k_v * V_pos/A) #V/A is the avg shear stress    and output is shear per web
+    tau_max_shear_neg = (k_v * V_neg/A) #V/A is the avg shear stress    
 
     #total max shear stress including torsion
     if cell.midSpar == None:
-        tau_totalposf = torsion('q1') * cell.wingboxThicknesses('f') + tau_max_shear_pos
-        tau_totalposr = torsion('q2') * cell.wingboxThicknesses('r') + tau_max_shear_pos
+        tau_totalposf = shearFlowspos['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_pos
+        tau_totalposr = shearFlowspos['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_pos
         tau_max_pos = [tau_totalposf, tau_totalposr] # no mid spar positive load case
-        tau_totalnegf = torsion('q1') * cell.wingboxThicknesses('f') + tau_max_shear_neg
-        tau_totalnegr = torsion('q2') * cell.wingboxThicknesses('r') + tau_max_shear_neg
+        tau_totalnegf = shearFlowsneg['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_neg
+        tau_totalnegr = shearFlowsneg['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_neg
         tau_max_neg = [tau_totalnegf, tau_totalnegr] #no mid spar negative load case
     else:
-        tau_totalposf = torsion('q1') * cell.wingboxThicknesses('f') + tau_max_shear_pos
-        tau_totalposr = torsion('q2') * cell.wingboxThicknesses('r') + tau_max_shear_pos
-        tau_totalposm = abs(torsion('q2')-torsion('q1')) * cell.wingboxThicknesses('m') + tau_max_shear_pos
+        tau_totalposf = shearFlowspos['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_pos
+        tau_totalposr = shearFlowspos['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_pos
+        tau_totalposm = (shearFlowspos['q1']-shearFlowspos['q2']) * cell.wingboxThicknesses['m'] + tau_max_shear_pos
         tau_max_pos = [tau_totalposf, tau_totalposr, tau_totalposm] # with mid spar positive load case
-        tau_totalnegf = torsion('q1') * cell.wingboxThicknesses('f') + tau_max_shear_neg
-        tau_totalnegr = torsion('q2') * cell.wingboxThicknesses('r') + tau_max_shear_neg
-        tau_totalnegm = abs(torsion('q2')-torsion('q1')) * cell.wingboxThicknesses('m') + tau_max_shear_neg
+        tau_totalnegf = shearFlowsneg['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_neg
+        tau_totalnegr = shearFlowsneg['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_neg
+        tau_totalnegm = (shearFlowsneg['q1']-shearFlowsneg['q2']) * cell.wingboxThicknesses['m'] + tau_max_shear_neg
         tau_max_neg = [tau_totalnegf, tau_totalnegr, tau_totalnegm] #with mid spar negative load case
 
 
-    return tau_max_pos, tau_max_neg
+    return abs(tau_max_pos), tau_max_neg
     
