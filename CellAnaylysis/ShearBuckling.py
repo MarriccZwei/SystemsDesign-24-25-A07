@@ -5,7 +5,7 @@ if __name__ == "__main__":
     sys.path.insert(1, os.getcwd())
     # ONLY FOR TESTING
 import numpy as np
-import scipy as sp
+import scipy.interpolate as si
 from scipy import interpolate
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
@@ -13,8 +13,6 @@ from OOP import Cell
 from OOP.FlexBox import FlexBox
 from General import Constants as c
 
-
-from interpolatedLoads import pos_loadcase, neg_loadcase
 
 
 Ks_data_unsorted = [[1.0091484479320676, 15.032487640377036],
@@ -57,13 +55,11 @@ v = c.POISSON_RATIO
 E = c.E_MODULUS
 
 #LOADS pos and neg case
-load_pos = pos_loadcase()
-load_neg = neg_loadcase()
 
 
 #interpolation
-def interpolate():
-    f = sp.interpolate.interp1d(Ks_data_x,Ks_data_y,kind='cubic',fill_value="interpolate")
+def interpolateKs():
+    f = si.CubicSpline(Ks_data_x, Ks_data_y)
     return(f)
 
 
@@ -77,9 +73,11 @@ def crit_shear_stress(cell:Cell.Cell):
         b = cell.edges[i+"o"]
         #k_s determination
         a_over_b = cell.edges[i+'t']/b
-        k_s = interpolate()(a_over_b)
+        
         if a_over_b > 4.9:
             k_s = 9.5567
+        else:
+            k_s = interpolateKs()(a_over_b)
         tau_crit_case = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2))) #tau_crit for front rear (and mid)
         tau_crit.append(tau_crit_case)
     return tau_crit # returns list of critical shear stress for front, rear and mid(if used) spar web
@@ -131,7 +129,7 @@ def torsion(FlexBox: FlexBox, torque):
 
 
 
-def max_shear_stress(cell:Cell.Cell):
+def max_shear_stress(cell:Cell.Cell, load_neg, load_pos):
     k_v = 1.5 #factor 1.5 to take max from average TODO can be changed
 
     A = cell.edges['f'+"i"] * cell.wingboxThicknesses['f'] + cell.edges['r'+"i"] * cell.wingboxThicknesses['r']
@@ -150,21 +148,23 @@ def max_shear_stress(cell:Cell.Cell):
     #total max shear stress including torsion
     if cell.midSpar == None:
         tau_totalposf = shearFlowspos['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_pos
-        tau_totalposr = shearFlowspos['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_pos
+        tau_totalposr = -shearFlowspos['q1'] * cell.wingboxThicknesses['r'] + tau_max_shear_pos
         tau_max_pos = [tau_totalposf, tau_totalposr] # no mid spar positive load case
         tau_totalnegf = shearFlowsneg['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_neg
-        tau_totalnegr = shearFlowsneg['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_neg
+        tau_totalnegr = -shearFlowsneg['q1'] * cell.wingboxThicknesses['r'] + tau_max_shear_neg
         tau_max_neg = [tau_totalnegf, tau_totalnegr] #no mid spar negative load case
     else:
         tau_totalposf = shearFlowspos['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_pos
-        tau_totalposr = shearFlowspos['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_pos
-        tau_totalposm = (shearFlowspos['q1']-shearFlowspos['q2']) * cell.wingboxThicknesses['m'] + tau_max_shear_pos
+        tau_totalposr = -shearFlowspos['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_pos
+        tau_totalposm = (shearFlowspos['q2']-shearFlowspos['q1']) * cell.wingboxThicknesses['m'] + tau_max_shear_pos
         tau_max_pos = [tau_totalposf, tau_totalposr, tau_totalposm] # with mid spar positive load case
         tau_totalnegf = shearFlowsneg['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_neg
-        tau_totalnegr = shearFlowsneg['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_neg
-        tau_totalnegm = (shearFlowsneg['q1']-shearFlowsneg['q2']) * cell.wingboxThicknesses['m'] + tau_max_shear_neg
+        tau_totalnegr = -shearFlowsneg['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_neg
+        tau_totalnegm = (shearFlowsneg['q2']-shearFlowsneg['q1']) * cell.wingboxThicknesses['m'] + tau_max_shear_neg
         tau_max_neg = [tau_totalnegf, tau_totalnegr, tau_totalnegm] #with mid spar negative load case
 
 
-    return abs(tau_max_pos), tau_max_neg
+    return tau_max_pos, tau_max_neg
     
+if __name__ == "__main__":
+    print(interpolateKs()(4))

@@ -10,6 +10,7 @@ from interpolatedLoads import pos_loadcase, neg_loadcase
 import OOP.Cell as cell
 import OOP.Planform as pf
 import matplotlib.pyplot as plt
+import scipy.interpolate as si
 
 K_data_unsorted = [[0.7723396840415656,14.839244412502758], #list of coordinates of K graph
 [0.7876282837892491,14.3654933267152],
@@ -67,6 +68,11 @@ for i in range(len(K_data_unsorted)): #sorts both x and y coordinates from unsor
     K_data_x.append(K_data_unsorted[i][0])
     K_data_y.append(K_data_unsorted[i][1])
 
+#interpolation
+def interpolateKs():
+    f = si.CubicSpline(K_data_x, K_data_y)
+    return(f)
+
 
 #plt.plot(K_data_x, K_data_y) #plots the data
 #plt.show()
@@ -77,16 +83,10 @@ def max_skin_buckling(thickness, length, width, E, v): #function that calculates
 
     j = 0 #index of position
 
-    if a_over_b < 4.8628330035756315:
-        while True: #loop that finds between which two x-coords the a/b sits
-            if K_data_x[j] < a_over_b and K_data_x[j+1] > a_over_b: #tests between which two x values a/b is 
-                break
-            j += 1
-    else: #in case a/b is larger than 4.86, k approximates 7.45
-        k = 7.45
-
-    dydx = (K_data_y[j+1]-K_data_y[j])/(K_data_x[j+1]-K_data_x[j]) #slope of the graph between the two data points
-    k = K_data_y[j] + dydx * (a_over_b - K_data_x[j]) #interpolated value of k between the two data points
+    if a_over_b > 4.9:
+        k_s = 9.5567
+    else:
+        k_s = interpolateKs()(a_over_b)
 
     critical_stress = (k*pi**2*E)/(12*(1-v**2))*(thickness/width)**2
     return critical_stress

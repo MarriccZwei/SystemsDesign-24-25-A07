@@ -188,7 +188,7 @@ class Cell:
             ixx += self.stringerArea*(pos[1]-ybar)**2
             iyy += self.stringerArea*(pos[0]-xbar)**2
 
-        return {'xbar': xbar, 'ybar': ybar, 'ixx': ixx, 'iyy': iyy}
+        return {'xbar': xbar, 'ybar': ybar, 'ixx': ixx, 'iyy': iyy, 'centroid':(xbar, ybar)}
 
 
     def _stringers_along_a_line(self, point1, point2, stringerN, stringerWidth):
