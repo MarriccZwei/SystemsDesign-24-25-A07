@@ -75,13 +75,13 @@ class Cell:
             #intersect with bottom skin
             vertex1 = self.vertices["o"+surf1+'b']
             vertex2 = self.vertices["i"+surf1+'b']
-            distance = np.sqrt((vertex1[0]-vertex2[0])**2+(vertex1[1]-vertex2[1])**2)
+            distance = np.sqrt((vertex1[0]-vertex2[0])**2+(vertex1[1]-vertex2[1])**2+self.zLen**2)
             dict[surf1+'b'] = distance
             dict['b'+surf1] = distance
             #intersect with top skin
             vertex1 = self.vertices["o"+surf1+'t']
             vertex2 = self.vertices["i"+surf1+'t']
-            distance = np.sqrt((vertex1[0]-vertex2[0])**2+(vertex1[1]-vertex2[1])**2)
+            distance = np.sqrt((vertex1[0]-vertex2[0])**2+(vertex1[1]-vertex2[1])**2+self.zLen**2)
             dict[surf1+'t'] = distance
             dict['t'+surf1] = distance
         

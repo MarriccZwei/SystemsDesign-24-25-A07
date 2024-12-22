@@ -78,15 +78,11 @@ def interpolateKs():
 #plt.show()
 
 def max_skin_buckling(thickness, length, width, E, v): #function that calculates the skin buckling in a certain section, thickness in mm, length of the plate in mm, width of the plate in mm, v is the poisson ratio, E is the youngs modulus
-    k = 0
     a_over_b = length/width #width over length, used to find an approximate K
-
-    j = 0 #index of position
-
     if a_over_b > 4.9:
-        k_s = 9.5567
+        k = 9.5567
     else:
-        k_s = interpolateKs()(a_over_b)
+        k = interpolateKs()(a_over_b)
 
     critical_stress = (k*pi**2*E)/(12*(1-v**2))*(thickness/width)**2
     return critical_stress

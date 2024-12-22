@@ -53,18 +53,23 @@ def mofs(cells:List[cell.Cell], plot=False, yieldSF=1.1, fractureSF=1.5, colBuck
     Use the safety factors defaults to specify the safety factors (upon which mofs are calculated)]
     There is one plot for the margin of safety both in the positive and negative load factor - the most constraining one is plotted.'''
     ncells = len(cells)
-    returnedList = [[]]*6
+    poses = list()
+    tensile = list()
+    compressive = list()
+    columnB = list()
+    shearB = list()
+    skinB = list()
     loads_pos = il.pos_loadcase()
     loads_neg = il.neg_loadcase()
 
     for i in range(ncells):
         #0. cell start position
-        returnedList[0].append(cells[i].startPos)
+        poses.append(cells[i].startPos)
 
         #1 and 2. tensile and compressive stress
         normalStresses = tc.tensionCompressionStresses(cells[i], loads_neg, loads_pos)
-        returnedList[1].append(min(c.YIELD_SIGMA/normalStresses['p+']/yieldSF, c.ULTIMATE_SIGMA/normalStresses['p+']/fractureSF))
-        returnedList[2].append(min(c.YIELD_SIGMA/normalStresses['p-']/yieldSF, c.ULTIMATE_SIGMA/normalStresses['p-']/fractureSF))
+        tensile.append(min(c.YIELD_SIGMA/normalStresses['p+']/yieldSF, c.ULTIMATE_SIGMA/normalStresses['p+']/fractureSF))
+        compressive.append(min(c.YIELD_SIGMA/normalStresses['p-']/yieldSF, c.ULTIMATE_SIGMA/normalStresses['p-']/fractureSF))
 
         #3. column buckling of stringers
         if i == ncells-1: #accounting for the boundary conditions
@@ -72,7 +77,7 @@ def mofs(cells:List[cell.Cell], plot=False, yieldSF=1.1, fractureSF=1.5, colBuck
         else:
             colBucklCritStress = min(cb.crit_buckling_stress(cells[i], True))
         #since we always have a stringer at maximum stress position, so we will reuse compressiveStress
-        returnedList[3].append(colBucklCritStress/normalStresses['p-']/colBucklSF)
+        columnB.append(colBucklCritStress/normalStresses['p-']/colBucklSF)
 
         #4. shearBucklSF
         critTau = sb.crit_shear_stress(cells[i])
@@ -83,13 +88,13 @@ def mofs(cells:List[cell.Cell], plot=False, yieldSF=1.1, fractureSF=1.5, colBuck
             newmof = min(abs(critTau[j])/abs(appliedTauNeg[j]/shearBucklSF), abs(critTau[j])/abs(appliedTauPos[j]/shearBucklSF)) #the more constraining of the two
             if newmof<prevmof: #updating the margin of safety if this one is most constraining
                 prevmof = newmof
-        returnedList[4].append(prevmof) #now that the most costraining mof for this mode is determined, we can add it
+        shearB.append(prevmof) #now that the most costraining mof for this mode is determined, we can add it
 
         #5. skinBuckling
-        returnedList[5].append(min(sk.MOS_skin_buckling(normalStresses['p-'], cells[i].wingboxThicknesses['b'], cells[i].edges['fb'], cells[i].edges['ob'])/skinBucklSF,
+        skinB.append(min(sk.MOS_skin_buckling(normalStresses['p-'], cells[i].wingboxThicknesses['b'], cells[i].edges['fb'], cells[i].edges['ob'])/skinBucklSF,
                                  sk.MOS_skin_buckling(normalStresses['n-'], cells[i].wingboxThicknesses['t'], cells[i].edges['ft'],cells[i].edges['ot'])/skinBucklSF))
         
-    return returnedList
+    return (poses, tensile, compressive, columnB, shearB, skinB)
 
 
 

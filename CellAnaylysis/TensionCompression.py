@@ -39,8 +39,8 @@ def tensionCompressionStresses(cell:Cell.Cell, load_neg, load_pos):
     # Calculate bending stresses
     maxstress_pos = moment_pos * y_upper / Ixx  # Maximum stress at the upper skin
     minstress_pos = moment_pos * y_lower / Ixx  # Minimum stress at the lower skin
-    maxstress_neg = moment_neg * y_lower / Ixx  # Maximum stress at the upper skin
-    minstress_neg = moment_neg * y_upper / Ixx  # Minimum stress at the lower skin
+    maxstress_neg = -moment_neg * y_lower / Ixx  # Maximum stress at the upper skin
+    minstress_neg = -moment_neg * y_upper / Ixx  # Minimum stress at the lower skin
 
     return {'p+':maxstress_pos, 'p-':minstress_pos, 'n+':maxstress_neg, 'n-':minstress_neg}
 
