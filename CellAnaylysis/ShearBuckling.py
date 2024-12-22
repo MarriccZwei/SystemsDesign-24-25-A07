@@ -165,6 +165,13 @@ def max_shear_stress(cell:Cell.Cell, load_neg, load_pos):
 
 
     return tau_max_pos, tau_max_neg
-    
+
+
+def MOS_web_shear(cell:Cell.Cell, load_neg, load_pos): # margin of safety list to plot
+    MOS_pos = np.array(crit_shear_stress(cell))/np.absolute(np.array(max_shear_stress(cell, load_neg, load_pos)[0]))
+    MOS_neg = np.array(crit_shear_stress(cell))/np.absolute(np.array(max_shear_stress(cell, load_neg, load_pos)[1]))
+    return MOS_pos, MOS_neg       # 'f', 'r', and 'm' if applicable
+
+
 if __name__ == "__main__":
     print(interpolateKs()(4))
