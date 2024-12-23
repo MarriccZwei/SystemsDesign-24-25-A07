@@ -10,7 +10,7 @@ import numpy as np
 import General.Constants as consts
 import OOP.Planform as pf
 
-def crit_buckling_stress (cell, tip = False):
+def crit_buckling_stress (cell:Cell, tip = False):
     """
     Calculates the critical buckling stress of the skin and stringers based on its geometry.
     
@@ -36,7 +36,7 @@ def crit_buckling_stress (cell, tip = False):
     I_xx_values, I_yy_values = moi_panel(cell, cell.stringerDesign, nPoints=10) # idk why it wants me to include the 2nd argument
     for ixx_dict in I_xx_values:
         ixx = ixx_dict["I_xx"] 
-        sigma_buckling = (K * np.pi**2 * consts.E_MODULUS * ixx) / (Len**2 * Area) 
+        sigma_buckling = (K * np.pi**2 * consts.E_MODULUS *ixx) / (Len**2 * Area) 
         sigma_buckling_values.append(sigma_buckling)
 
     return(sigma_buckling_values)
