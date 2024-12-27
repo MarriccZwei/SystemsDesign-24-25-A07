@@ -68,8 +68,10 @@ def mofs(cells:List[cell.Cell], plot=False, yieldSF=1.1, fractureSF=1.5, colBuck
 
         #1 and 2. tensile and compressive stress
         normalStresses = tc.tensionCompressionStresses(cells[i], loads_neg, loads_pos)
-        tensile.append(min(c.YIELD_SIGMA/normalStresses['p+']/yieldSF, c.ULTIMATE_SIGMA/normalStresses['p+']/fractureSF))
-        compressive.append(min(c.YIELD_SIGMA/normalStresses['p-']/yieldSF, c.ULTIMATE_SIGMA/normalStresses['p-']/fractureSF))
+        # tensile.append(min(c.YIELD_SIGMA/normalStresses['p+']/yieldSF, c.ULTIMATE_SIGMA/normalStresses['p+']/1)) #1 is for nult nmax correction
+        # compressive.append(min(c.YIELD_SIGMA/normalStresses['p-']/yieldSF, c.ULTIMATE_SIGMA/normalStresses['p-']/1))#1 is for nult nmax correction
+        tensile.append(c.ULTIMATE_SIGMA/normalStresses['p+'])
+        compressive.append(c.ULTIMATE_SIGMA/normalStresses['p-'])
 
         #3. column buckling of stringers
         if i == ncells-1: #accounting for the boundary conditions

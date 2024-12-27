@@ -22,8 +22,8 @@ wgboxArea = 123.969 #[m^2] measured in CATIA
 '''Defining initial design parameters'''
 plot = True #do we want to plot
 "rib spacing"
-nRibsBefore = [20, 20, 20] #number of ribs before the engine at at the engine
-nRibsAfter = [35, 35, 35] #number of ribs strictly after the engine
+nRibsBefore = [7, 7, 7] #number of ribs before the engine at at the engine
+nRibsAfter = [27, 27, 27] #number of ribs strictly after the engine
 midsCoffIdx = list()
 ribPoses = list()
 #assembling the rib spacing lists
@@ -60,26 +60,31 @@ for i in range(3):
         plt.plot(margins_of_safety[0], margins_of_safety[1])
         plt.plot([0, 25], [1, 1])
         plt.title("Tensile strength failure margin of Safety")
+        plt.axis([0, 25, 0, 10])
 
         plt.subplot(233)
         plt.plot(margins_of_safety[0], margins_of_safety[2])
         plt.plot([0, 25], [1, 1])
         plt.title("Compressive strength failure margin of safety")
+        plt.axis([0, 25, 0, 10])
 
         plt.subplot(234)
         plt.plot(margins_of_safety[0], margins_of_safety[3])
         plt.plot([0, 25], [1, 1])
         plt.title("Stringer column buckling margin of safety")
+        plt.axis([0, 25, 0, 10])
 
         plt.subplot(235)
         plt.plot(margins_of_safety[0], margins_of_safety[4])
         plt.plot([0, 25], [1, 1])
         plt.title("Spar shear buckling margin of safety")
+        plt.axis([0, 25, 0, 10])
 
         plt.subplot(236)
         plt.plot(margins_of_safety[0], margins_of_safety[5])
         plt.plot([0, 25], [1, 1])
         plt.title("Skin buckling margin of safety")
+        plt.axis([0, 25, 0, 10])
 
         plt.show()
         print(margins_of_safety)
