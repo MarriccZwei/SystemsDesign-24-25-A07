@@ -19,10 +19,14 @@ def crit_buckling_stress (cell:Cell, tip = False):
     """
 
     #  Choosing the constant depending on the cell we are evaluating
+    '''TODO: AT THE TIP YOU HAVE ALSO A RIB, SO THE THING IS FIXED AT BOTH ENDS'''
     if tip:
         K = 0.25
     else:
         K = 4.
+
+    '''TODO: AT THE TIP YOU HAVE ALSO A RIB, SO THE THING IS FIXED AT BOTH ENDS'''
+    K=4
 
     #  Area of the stringer
     Area = cell.stringerDesign["t"]*cell.stringerDesign["w"] + cell.stringerDesign["t"]*cell.stringerDesign["h"] - (cell.stringerDesign["t"])**2
@@ -36,7 +40,7 @@ def crit_buckling_stress (cell:Cell, tip = False):
     I_xx_values, I_yy_values = moi_panel(cell, cell.stringerDesign, nPoints=10) # idk why it wants me to include the 2nd argument
     for ixx_dict in I_xx_values:
         ixx = ixx_dict["I_xx"] 
-        sigma_buckling = (K * np.pi**2 * consts.E_MODULUS *ixx) / (Len**2 * Area) 
+        sigma_buckling = (K * np.pi**2 * consts.E_MODULUS *ixx) / (cell.zLen * Area) 
         sigma_buckling_values.append(sigma_buckling)
 
     return(sigma_buckling_values)
