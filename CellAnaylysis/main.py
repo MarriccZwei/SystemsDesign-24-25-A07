@@ -41,9 +41,9 @@ stringerDesigns = [
 ]
 #same indexing as stringerDesign
 thicknesses = [
-    {'f':0.007, 'r':0.007, 'b':0.007, 't':0.007},
-    {'f':0.006, 'r':0.006, 'b':0.012, 't':0.012},
-    {'f':0.004, 'r':0.004, 'b':0.011, 't':0.011, 'm':0.004}
+    {'f':0.015, 'r':0.015, 'b':0.007, 't':0.007},
+    {'f':0.012, 'r':0.012, 'b':0.012, 't':0.012},
+    {'f':0.007, 'r':0.007, 'b':0.013, 't':0.013, 'm':0.007}
 ]
 #mid spar persence and position
 midSpars = [None, None, 0.4]
