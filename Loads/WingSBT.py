@@ -17,14 +17,19 @@ def combined_shear_load_negative(fuelFraction, planform:pf.Planform, mWing, engi
     aerodynamicShear = lambda pos: -xfi.NormalperSpanNeg(pos) #to account for the fact that lift is negative in our coord system
 
     #wing structure self-weight
-    distrWeightShear, ribPtLoads = il.wing_weight_distr_est(planform, mWing, wgboxArea)
+    distrWeightShear0, ribPtLoads0 = il.wing_weight_distr_est(planform, mWing, wgboxArea)
 
     #fuel weight
-    fuelWeightshear = il.fuel_in_wing_weight_est(planform, fuelFraction)
+    fuelWeightshear0 = il.fuel_in_wing_weight_est(planform, fuelFraction)
     
     #engine weight
-    engineWeightShear = il.engine_shear(engineMass, consts.ENGINESPANWISEPOS*planform.b/2)
+    engineWeightShear0 = il.engine_shear(engineMass, consts.ENGINESPANWISEPOS*planform.b/2)
 
+    n = -1
+    distrWeightShear = lambda pos:n*distrWeightShear0(pos)
+    ribPtLoads = [(tup[0], n*tup[1]) for tup in ribPtLoads0]
+    fuelWeightshear = lambda pos:n*fuelWeightshear0(pos)
+    engineWeightShear = (engineWeightShear0[0], n*engineWeightShear0[1])
     #the complete distributed shear load
     def distrShear(pos):
         valWgWeight = distrWeightShear(pos)
@@ -42,13 +47,20 @@ def combined_shear_load(fuelFraction, planform:pf.Planform, mWing, engineMass, w
     aerodynamicShear = lambda pos: -xfi.NormalperSpan(pos) #to account for the fact that lift is negative in our coord system
 
     #wing structure self-weight
-    distrWeightShear, ribPtLoads = il.wing_weight_distr_est(planform, mWing, wgboxArea)
+    distrWeightShear0, ribPtLoads0 = il.wing_weight_distr_est(planform, mWing, wgboxArea)
 
     #fuel weight
-    fuelWeightshear = il.fuel_in_wing_weight_est(planform, fuelFraction)
+    fuelWeightshear0 = il.fuel_in_wing_weight_est(planform, fuelFraction)
     
     #engine weight
-    engineWeightShear = il.engine_shear(engineMass, consts.ENGINESPANWISEPOS*planform.b/2)
+    engineWeightShear0 = il.engine_shear(engineMass, consts.ENGINESPANWISEPOS*planform.b/2)
+
+    #load factor multiplication
+    n = 3.8
+    distrWeightShear = lambda pos:n*distrWeightShear0(pos)
+    ribPtLoads = [(tup[0], n*tup[1]) for tup in ribPtLoads0]
+    fuelWeightshear = lambda pos:n*fuelWeightshear0(pos)
+    engineWeightShear = (engineWeightShear0[0], n*engineWeightShear0[1])
 
     #the complete distributed shear load
     def distrShear(pos):
