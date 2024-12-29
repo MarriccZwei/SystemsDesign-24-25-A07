@@ -4,7 +4,7 @@ if __name__ == "__main__":
     import os
     sys.path.insert(1, os.getcwd())
     # ONLY FOR TESTING
-
+#
 import OOP.Cell as cell
 from typing import List
 '''Here will be the function that will call the functions analysing the cell structure 

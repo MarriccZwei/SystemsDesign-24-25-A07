@@ -67,7 +67,16 @@ for i in range(len(K_data_unsorted)): #sorts both x and y coordinates from unsor
     K_data_x.append(K_data_unsorted[i][0])
     K_data_y.append(K_data_unsorted[i][1])
 
+<<<<<<< HEAD
 
+=======
+#interpolation
+def interpolateKs():
+    f = si.CubicSpline(K_data_x, K_data_y)
+    return(f)
+
+#
+>>>>>>> recovery2
 #plt.plot(K_data_x, K_data_y) #plots the data
 #plt.show()
 

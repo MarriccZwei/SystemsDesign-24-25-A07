@@ -84,12 +84,16 @@ def crit_shear_stress():
 #formula test
 # print(crit_shear_stress(4, 150, 10, 0.33, 72.4e9))
 
+<<<<<<< HEAD
 
 def max_shear_stress(V, A):
     k_v = 1.5
     A = FlexBox.areas('f') + FlexBox.areas('r') + FlexBox.areas('m')
     if FlexBox.midSpar == None:
         A -= FlexBox.areas('m')
+=======
+#
+>>>>>>> recovery2
 
     V_pos = pos_loadcase("Vy")
     V_neg = neg_loadcase("Vy")

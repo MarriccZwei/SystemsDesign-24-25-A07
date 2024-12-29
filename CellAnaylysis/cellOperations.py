@@ -11,6 +11,26 @@ import numpy as np
 from General import Constants as c
 import matplotlib.pyplot as plt
 import TensionCompression as tc
+<<<<<<< HEAD
+=======
+import ColumnBuckling as cb
+import interpolatedLoads as ld
+import ShearBuckling as sb
+import interpolatedLoads as il
+import SkinBuckling as sk
+#
+def calculateDeltaTwist(loads, cell:cell.Cell, posEnd = 1):
+    zStart = cell.startPos
+    zEnd = cell.endPos
+    length =zEnd-zStart
+    def _integrant(z):
+        return torsion(cell.wingbox((z-zStart)/length),loads(z)['Tz'])['twist']
+    theta, error = integrate.quad(_integrant, zStart, cell.spanwisePos(posEnd))
+    return theta
+
+
+
+>>>>>>> recovery2
 
 def cell_distr(planform, ribposes, stringerDesign, wingBoxThicknesses, cutoffidx, midSpar):
     '''A function that creates a distribution of the cells'''

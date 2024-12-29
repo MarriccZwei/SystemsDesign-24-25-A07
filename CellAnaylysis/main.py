@@ -49,4 +49,43 @@ for i in range(3):
     cells = cop.cell_distr(planform, ribPoses, str)
     margins_of_safety = cop.mofs(cells, plot=True)
 
+<<<<<<< HEAD
 '''Analyze the results... somehow'''
+=======
+#plotting mofs
+if plot:
+    plt.subplot(232)
+    plt.plot(margins_of_safety[0], margins_of_safety[1])
+    plt.plot([0, 25], [1, 1])
+    plt.title("Tensile strength failure margin of Safety")
+    plt.axis([0, 25, 0, 10])
+
+    plt.subplot(233)
+    plt.plot(margins_of_safety[0], margins_of_safety[2])
+    plt.plot([0, 25], [1, 1])
+    plt.title("Compressive strength failure margin of safety")
+    plt.axis([0, 25, 0, 10])
+
+    plt.subplot(234)
+    plt.plot(margins_of_safety[0], margins_of_safety[3])
+    plt.plot([0, 25], [1, 1])
+    plt.title("Stringer column buckling margin of safety")
+    plt.axis([0, 25, 0, 10])
+
+    plt.subplot(235)
+    plt.plot(margins_of_safety[0], margins_of_safety[4])
+    plt.plot([0, 25], [1, 1])
+    plt.title("Spar shear buckling margin of safety")
+    plt.axis([0, 25, 0, 10])
+
+    plt.subplot(236)
+    plt.plot(margins_of_safety[0], margins_of_safety[5])
+    plt.plot([0, 25], [1, 1])
+    plt.title("Skin buckling margin of safety")
+    plt.axis([0, 25, 0, 10])
+
+    plt.show()
+    print(margins_of_safety)
+
+'''TODO Add a code that computes the mass of the design!'''
+>>>>>>> recovery2
