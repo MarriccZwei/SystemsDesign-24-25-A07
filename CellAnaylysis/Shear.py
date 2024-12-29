@@ -16,7 +16,7 @@ def sigma_ratio1(y1,y2):
 def ideal_Ixx(Bft,Bmt,Brt,Bfb,Bmb,Brb,yft,ymt,yrt,yfb,ymb,yrb):
     Ixx = Bft*yft**2 + Bmt*ymt**2 + Brt*yrt**2 + Bfb*yfb**2 + Bmb*ymb**2 + Brb*yrb**2
     return Ixx
-#
+    
 def delta_q(V, Ixx, B, y):
     dq = (V*B*y)/Ixx
     return dq

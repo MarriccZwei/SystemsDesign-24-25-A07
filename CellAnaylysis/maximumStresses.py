@@ -4,4 +4,3 @@ def MaxAxialStress(MomentX:float, MOIxx:float, MOIyy:float, MOIxy:float, FrontSp
     Denominator = MOIxx*MOIyy - MOIxy**2
     MaxStress = MomentX*((MOIyy*Y - MOIxy*X)/(Denominator))
 
-#
