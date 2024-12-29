@@ -71,9 +71,12 @@ for i in range(len(K_data_unsorted)): #sorts both x and y coordinates from unsor
 #plt.plot(K_data_x, K_data_y) #plots the data
 #plt.show()
 
-def max_skin_buckling(thickness, length, width, E, v): #function that calculates the skin buckling in a certain section, thickness in mm, length of the plate in mm, width of the plate in mm, v is the poisson ratio, E is the youngs modulus
+def max_skin_buckling(cell:cell.Cell, E, v): #function that calculates the skin buckling in a certain section, thickness in mm, length of the plate in mm, width of the plate in mm, v is the poisson ratio, E is the youngs modulus
     k = 0
-    a_over_b = length/width #width over length, used to find an approximate K
+    a = [cell.endPos-cell.startPos, cell.endPos-cell.startPos]
+    b = [cell.edges['ot'], cell.edges['ob']]
+
+    a_over_b = [a[0]/b[0], a[1]/b[1]] #width over length, used to find an approximate K
 
     j = 0 #index of position
 
