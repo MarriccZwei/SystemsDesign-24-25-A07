@@ -4,6 +4,7 @@ if __name__ == "__main__":
     import os
     sys.path.insert(1, os.getcwd())
     # ONLY FOR TESTING
+    import matplotlib.pyplot
 import CellAnaylysis.cellOperations as cop
 import OOP.Planform as pf
 import numpy as np
@@ -19,34 +20,73 @@ thrust = 91964.80101516769
 wgboxArea = 123.969 #[m^2] measured in CATIA
 
 '''Defining initial design parameters'''
+plot = True #do we want to plot
+
 "rib spacing"
-nRibsBefore = [11, 11, 11] #number of ribs before the engine at at the engine
-nRibsAfter = [19, 19, 19] #number of ribs strictly after the engine
-midsCoffIdx = list()
-ribPoses = list()
-#assembling the rib spacing lists
-for i in range(3):
-    ribPoses.append(np.linspace(0, c.ENGINESPANWISEPOS*halfspan, nRibsBefore[i]).tolist() + np.linspace(c.ENGINESPANWISEPOS*halfspan, halfspan, nRibsAfter[i]+1).tolist()[1:])
-    midsCoffIdx.append(nRibsBefore-1) #we always cut the midspar at the engine rib, we substract 1 due to array indices starting from 0
-#ribPoses[0] corresponds to design option 1, etc. same for midsCoffIdx
+#the rib stations required due to the subsystem presence - do not change!
+#the 0.6 halfspan does not correspond to subsystem - it is there to model the point when skin buckling changes significance
+#you can change 
+ribStations = [0, 3.3, 3.9, 5.1, c.ENGINESPANWISEPOS*halfspan, 0.6*halfspan, 17.62, 17.92, 22.42, halfspan]
+
+#change this, the columns left as zeros are there for a reason - the spacing between the enforced spars is just small.
+ribBetweenCounts = [2, 0, 0, 1, 7, 3, 0, 6, 0] #amount of ribs between the ribs from ribStations
+
+#generating rib positions
+ribPoses = [0] #this is intentional to account for the rib at root
+for i in range(len(ribBetweenCounts)):
+    #+2 accounts for the first and the last rib, then the 1st rib is removed, so indeed you end up with 1 side rib plus the between rib count
+    ribPoses+=np.linspace(ribStations[i], ribStations[i+1], ribBetweenCounts[i]+2).tolist()[1:]
+
+midsCoffIdx = sum(ribBetweenCounts[:4])+5-1 #the selected and the enforced ribs up to the engine rib, -1 to account for indexing
 
 "wingboxDesigns"
 #design with index 0 is design option 1, etc.
-stringerDesigns = [
-    {'w':0.1, 'h':0.1, 't':0.01, 'sb':0.12, 'st':0.17},
-    {'w':0.1, 'h':0.1, 't':0.006, 'sb':0.12, 'st':0.17},
-    {'w':0.1, 'h':0.1, 't':0.007, 'sb':0.12, 'st':0.17}
-]
+stringerDesign = {'w':0.1, 'h':0.1, 't':0.007, 'sb':0.12, 'st':0.17}
+
 #same indexing as stringerDesign
-thicknesses = [
-    {'f':0.007, 'r':0.007, 'b':0.007, 't':0.007},
-    {'f':0.006, 'r':0.006, 'b':0.012, 't':0.012},
-    {'f':0.004, 'r':0.004, 'b':0.011, 't':0.011, 'm':0.004}
-]
+thicknesses = {'f':0.01, 'r':0.01, 'b':0.012, 't':0.012, 'm':0.01}
+
+#mid spar persence and position
+midSpar = 0.4
 
 '''Dividing the wing into the cells'''
-for i in range(3):
-    cells = cop.cell_distr(planform, ribPoses, str)
-    margins_of_safety = cop.mofs(cells, plot=True)
+cells = cop.cell_distr(planform, ribPoses
+                        , stringerDesign, thicknesses, midsCoffIdx, midSpar)
+margins_of_safety = cop.mofs(cells, plot=True)
 
-'''Analyze the results... somehow'''
+#plotting mofs
+if plot:
+    plt.subplot(232)
+    plt.plot(margins_of_safety[0], margins_of_safety[1])
+    plt.plot([0, 25], [1, 1])
+    plt.title("Tensile strength failure margin of Safety")
+    plt.axis([0, 25, 0, 10])
+
+    plt.subplot(233)
+    plt.plot(margins_of_safety[0], margins_of_safety[2])
+    plt.plot([0, 25], [1, 1])
+    plt.title("Compressive strength failure margin of safety")
+    plt.axis([0, 25, 0, 10])
+
+    plt.subplot(234)
+    plt.plot(margins_of_safety[0], margins_of_safety[3])
+    plt.plot([0, 25], [1, 1])
+    plt.title("Stringer column buckling margin of safety")
+    plt.axis([0, 25, 0, 10])
+
+    plt.subplot(235)
+    plt.plot(margins_of_safety[0], margins_of_safety[4])
+    plt.plot([0, 25], [1, 1])
+    plt.title("Spar shear buckling margin of safety")
+    plt.axis([0, 25, 0, 10])
+
+    plt.subplot(236)
+    plt.plot(margins_of_safety[0], margins_of_safety[5])
+    plt.plot([0, 25], [1, 1])
+    plt.title("Skin buckling margin of safety")
+    plt.axis([0, 25, 0, 10])
+
+    plt.show()
+    print(margins_of_safety)
+
+'''TODO Add a code that computes the mass of the design'''
