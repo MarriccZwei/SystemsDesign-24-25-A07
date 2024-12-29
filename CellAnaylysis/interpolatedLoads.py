@@ -5,7 +5,7 @@ if __name__ == "__main__":
     sys.path.insert(1, os.getcwd())
     import matplotlib.pyplot as plt
     # ONLY FOR TESTING
-
+#
 import numpy as np
 import General.Constants as consts
 import Loads.SBTdiagrams as sbt
@@ -13,8 +13,9 @@ import Loads.InertialLoads as il
 import Loads.WingSBT as wsbt
 import Loads.XFLRimport as xfi
 import OOP.Planform as pf
+import scipy.interpolate as sip
 
-def pos_loadcase(spanwise_position):
+def pos_loadcase():
     planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
     halfspan = planform.b/2
     mWing = 22962.839350654576
@@ -38,14 +39,14 @@ def pos_loadcase(spanwise_position):
     posesT, loadsT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
 
     load_dict = {
-    "Mx": np.interp(spanwise_position,posesM,loadsM),  
-    "Vy": np.interp(spanwise_position,posesV,loadsV),     
-    "Tz": np.interp(spanwise_position,posesT,loadsT)   
+    "Mx": sip.CubicSpline(posesM,loadsM),  
+    "Vy": sip.CubicSpline(posesV,loadsV),     
+    "Tz": sip.CubicSpline(posesT,loadsT)   
     }
 
     return load_dict
 
-def neg_loadcase(spanwise_position):
+def neg_loadcase():
     planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
     halfspan = planform.b/2
     mWing = 22962.839350654576
@@ -67,9 +68,9 @@ def neg_loadcase(spanwise_position):
     posesnT, loadsnT = diagramMaker.torque_diagram(distTorque, pointTorques, halfspan)
 
     load_dict = {
-    "Mx": np.interp(spanwise_position,posesnM,loadsnM),  
-    "Vy": np.interp(spanwise_position,posesnV,loadsnV),     
-    "Tz": np.interp(spanwise_position,posesnT,loadsnT)    
+    "Mx": sip.CubicSpline(posesnM,loadsnM),  
+    "Vy": sip.CubicSpline(posesnV,loadsnV),     
+    "Tz": sip.CubicSpline(posesnT,loadsnT) 
     }
 
     return load_dict
@@ -90,15 +91,16 @@ if __name__ == "__main__":
     bendingPlus = np.zeros(100)
     torqueMinus = np.zeros(100)
     torquePlus = np.zeros(100)
+    loadsMinus = neg_loadcase()
+    loadsPlus = pos_loadcase()
     for i in range(res):
-        loadsMinus = neg_loadcase(poses[i])
-        loadsPlus = pos_loadcase(poses[i])
-        shearMinus[i] = loadsMinus["Vy"]
-        shearPlus[i] = loadsPlus["Vy"]
-        bendingMinus[i] = loadsMinus["Mx"]
-        bendingPlus[i] = loadsPlus["Mx"]
-        torqueMinus[i] = loadsMinus["Vy"]
-        torquePlus[i] = loadsPlus["Vy"]
+        position = i*halfspan/res
+        shearMinus[i] = loadsMinus["Vy"](position)
+        shearPlus[i] = loadsPlus["Vy"](position)
+        bendingMinus[i] = loadsMinus["Mx"](position)
+        bendingPlus[i] = loadsPlus["Mx"](position)
+        torqueMinus[i] = loadsMinus["Vy"](position)
+        torquePlus[i] = loadsPlus["Vy"](position)
 
     #plots
     plt.subplot(321)

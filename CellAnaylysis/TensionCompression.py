@@ -24,29 +24,26 @@ def axialStress(MomentX:float, MOIxx:float, MOIyy:float, MOIxy:float, FrontSparL
 
 #TODO change the function name
 #TODO make the function more felxible (able to take any x and y as inputs)
-def tensionCompressionStresses(Moments, Momentlocations, cell:Cell.Cell, z):
-    Ixx, centroid = cell.sectionProperties(z)["ixx"], cell.sectionProperties(z)["centroid"] #Ixx and centroid
-    Moment_interp = interp1d(Momentlocations, Moments, kind='linear') # Interpolate the bending moment distribution
-    moment = Moment_interp(z)
-    wingbox = cell.wingbox(z) #FlexBox object
-    wingboxcoords = wingbox.coords() #Coordinates of the cornes of the crossection --> dictionary
+def tensionCompressionStresses(cell:Cell.Cell, load_neg, load_pos):
+    Ixx, centroid = cell.sectionProperties(1)["ixx"], cell.sectionProperties(1)["centroid"] #Ixx and centroid
+    moment_pos = load_pos["Mx"](cell.spanwisePos(0))
+    moment_neg = load_neg["Mx"](cell.spanwisePos(0))
+    wingbox = cell.wingbox(0) #FlexBox object
+    wingboxcoords = wingbox.coords #Coordinates of the cornes of the crossection --> dictionary
     
     # Calculate y_upper and y_lower based on the centroid and wingbox coordinates
-    y_coords = [coord[1] for coord in wingboxcoords]  # Extract y-coordinates of corners
+    y_coords = [coord[1] for coord in wingboxcoords.values()]  # Extract y-coordinates of corners
     y_lower = max(y_coords) - centroid[1]  # Distance from centroid to the top
     y_upper = centroid[1] - min(y_coords)  # Distance from centroid to the bottom
 
     # Calculate bending stresses
-    maxstress = moment * y_upper / Ixx  # Maximum stress at the upper skin
-    minstress = moment * y_lower / Ixx  # Minimum stress at the lower skin
+    maxstress_pos = moment_pos * y_upper / Ixx  # Maximum stress at the upper skin
+    minstress_pos = moment_pos * y_lower / Ixx  # Minimum stress at the lower skin
+    maxstress_neg = -moment_neg * y_lower / Ixx  # Maximum stress at the upper skin
+    minstress_neg = -moment_neg * y_upper / Ixx  # Minimum stress at the lower skin
 
-<<<<<<< HEAD
-    return maxstress,minstress,moment
-
-=======
     return {'p+':maxstress_pos, 'p-':minstress_pos, 'n+':maxstress_neg, 'n-':minstress_neg}
 #
->>>>>>> recovery2
 def plotTCgraph(Moments, Momentlocations):
     listCells=[]
     interval = 0.05#[m]
