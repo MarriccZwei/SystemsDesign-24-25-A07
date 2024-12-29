@@ -5,7 +5,7 @@ if __name__ == "__main__":
     sys.path.insert(1, os.getcwd())
     import matplotlib.pyplot as plt
     # ONLY FOR TESTING
-
+#
 import numpy as np
 import General.Constants as consts
 import Loads.SBTdiagrams as sbt

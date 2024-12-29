@@ -18,7 +18,7 @@ import interpolatedLoads as ld
 import ShearBuckling as sb
 import interpolatedLoads as il
 import SkinBuckling as sk
-
+#
 def calculateDeltaTwist(loads, cell:cell.Cell, posEnd = 1):
     zStart = cell.startPos
     zEnd = cell.endPos
