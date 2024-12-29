@@ -210,10 +210,10 @@ class FlexBox():
             areaDict['back'] = area
 
             diff = areaDict['total']-(areaDict['front']+areaDict['back'])
-            # try:
-            #     check_value(diff, 0.001, 0.1)
-            # except ValueError as e:
-            #     print(e)
+            try:
+                check_value(diff, 0, 0.1)
+            except ValueError as e:
+                print(e)
         return areaDict
     
     def ribMass(self, ribThickness:float) -> float:
@@ -225,9 +225,8 @@ class FlexBox():
     def polarMoment(self):
         areas = self.totalArea
         lengths = self.lengths
-        thicknesses = self.thicknesses
 
-        if self.midSpar != None:
+        if midSpar != None:
             g = c.G_MODULUS
             areaFactor1 = 1/(2*areas['front'])
             q1Cell1 = areaFactor1*(lengths['f']/(g*thicknesses['f'])+lengths['b']/(g*thicknesses['b'])+lengths['m']/(g*thicknesses['m'])+lengths['t']/(g*thicknesses['t']))

@@ -201,11 +201,11 @@ for i in range(25):
     i = i + step
 
 # Plot
-# plt.plot(ytab, ltab)
+plt.plot(ytab, ltab)
 
-# # plt.title('Normal Force per Span')
-# plt.grid()
-# plt.xlabel('Span in y-direction [m]')
-# plt.ylabel('Pitching Moment per span [N]')  
+# plt.title('Normal Force per Span')
+plt.grid()
+plt.xlabel('Span in y-direction [m]')
+plt.ylabel('Pitching Moment per span [N]')  
 
-# plt.show()
+plt.show()

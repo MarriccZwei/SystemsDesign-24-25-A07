@@ -5,7 +5,7 @@ if __name__ == "__main__":
     sys.path.insert(1, os.getcwd())
     # ONLY FOR TESTING
 import numpy as np
-import scipy.interpolate as si
+import scipy as sp
 from scipy import interpolate
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
@@ -14,6 +14,10 @@ from OOP.FlexBox import FlexBox
 from General import Constants as c
 
 
+test = False
+if test == True:
+    from interpolatedLoads import pos_loadcase, neg_loadcase
+    # from maximumStresses import MaxAxialStress
 
 Ks_data_unsorted = [[1.0091484479320676, 15.032487640377036],
 [1.016997390249054, 14.557738502239232],
@@ -54,40 +58,49 @@ for i in range(len(Ks_data_unsorted)): #sorting
 v = c.POISSON_RATIO
 E = c.E_MODULUS
 
-#LOADS pos and neg case
-
-
 #interpolation
-def interpolateKs():
-    f = si.CubicSpline(Ks_data_x, Ks_data_y)
+def interpolate():
+    f = sp.interpolate.interp1d(Ks_data_x,Ks_data_y,kind='cubic',fill_value="interpolate")
     return(f)
 
+def crit_shear_stress():
+    #k_s determination
+    
 
-def crit_shear_stress(cell:Cell.Cell):
     tau_crit = []
     webs = ['f', 'r', 'm']
-    if cell.midSpar == None:
+    if FlexBox.midSpar == None:
         webs = webs[:-1]
     for i in webs:
-        t = cell.wingboxThicknesses[i] #thickness of the web [m]
-        b = cell.edges[i+"o"]
-        #k_s determination
-        a_over_b = cell.edges[i+'t']/b
-        
+        t = FlexBox.thicknesses(i) #thickness of the web [m]
+        b = FlexBox.lengths(i) #highest b gives lowest tau_critical, so the front spar 'f' [m]
+        a_over_b = Cell.edges(i)/FlexBox.lengths(i)
+        k_s = interpolate()(a_over_b)
         if a_over_b > 4.9:
             k_s = 9.5567
-        else:
-            k_s = interpolateKs()(a_over_b)
-        tau_crit_case = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2))) #tau_crit for front rear (and mid)
-        tau_crit.append(tau_crit_case)
+        tau_crit = ((np.pi**2*k_s*E)*(t/b)**2/(12*(1-v**2)))
     return tau_crit # returns list of critical shear stress for front, rear and mid(if used) spar web
 
 #formula test
 # print(crit_shear_stress(4, 150, 10, 0.33, 72.4e9))
 
 
+def max_shear_stress(V, A):
+    k_v = 1.5
+    A = FlexBox.areas('f') + FlexBox.areas('r') + FlexBox.areas('m')
+    if FlexBox.midSpar == None:
+        A -= FlexBox.areas('m')
 
-#torsion contribution to shear flow - by kaj 
+    V_pos = pos_loadcase("Vy")
+    V_neg = neg_loadcase("Vy")
+    tau_max_shear_pos = abs(k_v * V_pos/sum(A)) #V/A is the avg shear stress
+    tau_max_shear_neg = abs(k_v * V_neg/sum(A)) #V/A is the avg shear stress
+    return tau_max_shear_pos, tau_max_shear_neg
+    
+
+
+
+#torsion contribution to shear flow
 def torsion(FlexBox: FlexBox, torque):
     areas = FlexBox.totalArea
     lengths = FlexBox.lengths
@@ -125,53 +138,3 @@ def torsion(FlexBox: FlexBox, torque):
             'twist': twist
         }
     return torsionDict
-
-
-
-
-def max_shear_stress(cell:Cell.Cell, load_neg, load_pos):
-    k_v = 1.5 #factor 1.5 to take max from average TODO can be changed
-
-    A = cell.edges['f'+"i"] * cell.wingboxThicknesses['f'] + cell.edges['r'+"i"] * cell.wingboxThicknesses['r']
-    if cell.midSpar != None:
-        A += cell.edges['m'+"i"] * cell.wingboxThicknesses['m']
-
-    V_pos = load_pos["Vy"](cell.spanwisePos(0.0)) #taken from code structure document
-    V_neg = load_neg["Vy"](cell.spanwisePos(0.0)) #at zero as the shear would be the highest there per cell
-    shearFlowspos = torsion(cell.wingbox(1.0), load_pos["Tz"](cell.spanwisePos(0.0))) #shearflow due to torsion pos case
-    shearFlowsneg = torsion(cell.wingbox(1.0), load_neg["Tz"](cell.spanwisePos(0.0))) #shearflow due to torsion neg case
-
-
-    tau_max_shear_pos = (k_v * V_pos/A) #V/A is the avg shear stress    and output is shear per web
-    tau_max_shear_neg = (k_v * V_neg/A) #V/A is the avg shear stress    
-
-    #total max shear stress including torsion
-    if cell.midSpar == None:
-        tau_totalposf = shearFlowspos['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_pos
-        tau_totalposr = -shearFlowspos['q1'] * cell.wingboxThicknesses['r'] + tau_max_shear_pos
-        tau_max_pos = [tau_totalposf, tau_totalposr] # no mid spar positive load case
-        tau_totalnegf = shearFlowsneg['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_neg
-        tau_totalnegr = -shearFlowsneg['q1'] * cell.wingboxThicknesses['r'] + tau_max_shear_neg
-        tau_max_neg = [tau_totalnegf, tau_totalnegr] #no mid spar negative load case
-    else:
-        tau_totalposf = shearFlowspos['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_pos
-        tau_totalposr = -shearFlowspos['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_pos
-        tau_totalposm = (shearFlowspos['q2']-shearFlowspos['q1']) * cell.wingboxThicknesses['m'] + tau_max_shear_pos
-        tau_max_pos = [tau_totalposf, tau_totalposr, tau_totalposm] # with mid spar positive load case
-        tau_totalnegf = shearFlowsneg['q1'] * cell.wingboxThicknesses['f'] + tau_max_shear_neg
-        tau_totalnegr = -shearFlowsneg['q2'] * cell.wingboxThicknesses['r'] + tau_max_shear_neg
-        tau_totalnegm = (shearFlowsneg['q2']-shearFlowsneg['q1']) * cell.wingboxThicknesses['m'] + tau_max_shear_neg
-        tau_max_neg = [tau_totalnegf, tau_totalnegr, tau_totalnegm] #with mid spar negative load case
-
-
-    return tau_max_pos, tau_max_neg
-
-
-def MOS_web_shear(cell:Cell.Cell, load_neg, load_pos): # margin of safety list to plot
-    MOS_pos = np.array(crit_shear_stress(cell))/np.absolute(np.array(max_shear_stress(cell, load_neg, load_pos)[0]))
-    MOS_neg = np.array(crit_shear_stress(cell))/np.absolute(np.array(max_shear_stress(cell, load_neg, load_pos)[1]))
-    return MOS_pos, MOS_neg       # 'f', 'r', and 'm' if applicable
-
-
-if __name__ == "__main__":
-    print(interpolateKs()(4))

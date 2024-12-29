@@ -10,7 +10,6 @@ from interpolatedLoads import pos_loadcase, neg_loadcase
 import OOP.Cell as cell
 import OOP.Planform as pf
 import matplotlib.pyplot as plt
-import scipy.interpolate as si
 
 K_data_unsorted = [[0.7723396840415656,14.839244412502758], #list of coordinates of K graph
 [0.7876282837892491,14.3654933267152],
@@ -68,11 +67,6 @@ for i in range(len(K_data_unsorted)): #sorts both x and y coordinates from unsor
     K_data_x.append(K_data_unsorted[i][0])
     K_data_y.append(K_data_unsorted[i][1])
 
-#interpolation
-def interpolateKs():
-    f = si.CubicSpline(K_data_x, K_data_y)
-    return(f)
-
 
 #plt.plot(K_data_x, K_data_y) #plots the data
 #plt.show()
@@ -97,7 +91,7 @@ def max_skin_buckling(cell:cell.Cell, E, v): #function that calculates the skin 
     dydx = (K_data_y[j+1]-K_data_y[j])/(K_data_x[j+1]-K_data_x[j]) #slope of the graph between the two data points
     k = K_data_y[j] + dydx * (a_over_b - K_data_x[j]) #interpolated value of k between the two data points
 
-    critical_stress = (k*pi**2*E)/(12*(1-v**2))*(cell.wingboxThickness/cell.width)**2
+    critical_stress = (k*pi**2*E)/(12*(1-v**2))*(thickness/width)**2
     return critical_stress
 
 def MOS_skin_buckling(Sigma_applied, thickness, length, width): #margin of safety of skin panel
