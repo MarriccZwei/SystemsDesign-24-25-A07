@@ -51,7 +51,6 @@ thicknesses = {'f':0.01, 'r':0.01, 'b':0.012, 't':0.012, 'm':0.01}
 
 #mid spar persence and position
 midSpar = 0.4
-midSparSpan = 0.3 * halfspan
 
 '''Dividing the wing into the cells'''
 cells = cop.cell_distr(planform, ribPoses
@@ -116,8 +115,9 @@ if plot:
             offset = (leading_edge_x(ZposCell[i]) + chord_at_span(ZposCell[i])/4) #offset due to coordinate system at quarter chord
             fcoor.append(float(cells[i].vertices['itf'][0]) + offset)
             rcoor.append(float(cells[i].vertices['itr'][0]) + offset)
-            if cells[1].midSpar != None and ZposCell[i]<=midSparSpan:
-                mcoor.append(midSpar * chord_at_span(ZposCell[i]) + leading_edge_x(ZposCell[i]))
+            if cells[i].midSpar != None:
+                #mcoor.append(midSpar * chord_at_span(ZposCell[i]) + leading_edge_x(ZposCell[i]))
+                mcoor.append(float(cells[i].vertices['itm'][0])+ offset)
             else:
                 mcoor.append(None)
         # tip coords
