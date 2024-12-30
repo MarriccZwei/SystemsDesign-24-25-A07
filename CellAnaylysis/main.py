@@ -22,14 +22,16 @@ wgboxArea = 123.969 #[m^2] measured in CATIA
 '''Defining initial design parameters'''
 plot = True #do we want to plot
 
+"""VARS"""
+t = 0.008
 "rib spacing"
 #the rib stations required due to the subsystem presence - do not change!
 #the 0.6 halfspan does not correspond to subsystem - it is there to model the point when skin buckling changes significance
 #you can change 
-ribStations = [0, 3.3, 3.9, 5.1, c.ENGINESPANWISEPOS*halfspan, 0.6*halfspan, 17.62, 17.92, 22.42, halfspan]
+ribStations = [0, 3.3, 3.9, 5.1, c.ENGINESPANWISEPOS*halfspan, 0.425*halfspan, 17.62, 17.92, 22.42, halfspan]
 
 #change this, the columns left as zeros are there for a reason - the spacing between the enforced spars is just small.
-ribBetweenCounts = [2, 0, 0, 1, 7, 3, 0, 6, 0] #amount of ribs between the ribs from ribStations
+ribBetweenCounts = [5, 0, 2, 4, 5, 8, 0,7, 2] #amount of ribs between the ribs from ribStations
 
 #generating rib positions
 ribPoses = [0] #this is intentional to account for the rib at root
@@ -41,13 +43,13 @@ midsCoffIdx = sum(ribBetweenCounts[:4])+5-1 #the selected and the enforced ribs 
 
 "wingboxDesigns"
 #design with index 0 is design option 1, etc.
-stringerDesign = {'w':0.1, 'h':0.1, 't':0.007, 'sb':0.12, 'st':0.17}
+stringerDesign = {'w':0.10, 'h':0.10, 't':0.009, 'sb':0.15, 'st':0.15}
 
 #same indexing as stringerDesign
-thicknesses = {'f':0.01, 'r':0.01, 'b':0.012, 't':0.012, 'm':0.01}
+thicknesses = {'f':t, 'r':t, 'b':t, 't':t}
 
 #mid spar persence and position
-midSpar = 0.4
+midSpar = None
 
 '''Dividing the wing into the cells'''
 cells = cop.cell_distr(planform, ribPoses
@@ -87,6 +89,6 @@ if plot:
     plt.axis([0, 25, 0, 10])
 
     plt.show()
-    print(margins_of_safety)
+    print(min(margins_of_safety[4]))
 
 '''TODO Add a code that computes the mass of the design!'''
