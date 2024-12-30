@@ -94,7 +94,7 @@ def MOS_skin_buckling(Sigma_applied, thickness, length, width): #margin of safet
     S_factor = Sigma_max/Sigma_applied
     return S_factor
 
-def maxStress(endPos, startPos):
+'''def maxStress(endPos, startPos):
     n = 5    #increment of distance that you want to use
     dZ = (endPos-startPos)/n
     MxPos = []
@@ -105,7 +105,7 @@ def maxStress(endPos, startPos):
     #MxPos.append(pos_loadcase(startPos + i * dZ))
     #MxNeg.append(neg_loadcase(startPos + i* dZ))
     spanwisePos.append(i)
-    return spanwisePos
+    return spanwisePos'''
 
     
 
@@ -116,7 +116,7 @@ def maxStress(endPos, startPos):
 
     SigmaAppliedPos = MxPos*YMax/MOIxx
 '''
-if __name__ == "__main__": #tests
+'''if __name__ == "__main__": #tests
     planform =pf.Planform(251.3429147793505, 9.872642920666417, 0.1, 28.503510117080133, 2.1496489882919865, False)
     halfspan = planform.b/2
     mWing = 22962.839350654576
@@ -127,4 +127,4 @@ if __name__ == "__main__": #tests
     cell1 = cell.Cell(planform, 10, 11, {'w':0.05, 'h':0.05, 't':0.005, 'st':0.1, 'sb':0.13}, {'f':0.006, 'b':0.011, 'r':0.006, 't':0.011})
 
     print(maxStress(10, 11))
-    print(pos_loadcase(1))
+    print(pos_loadcase(1))'''
