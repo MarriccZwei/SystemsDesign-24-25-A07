@@ -38,7 +38,7 @@ def moi_stringer(stringerDesign):
     
     return I_xx_str, I_yy_str, x_bar, y_bar
 
-
+#
 # MOI of skin and stringers (used for global buckling)
 def moi_panel(cell:Cell, stringerDesign, nPoints=10):
     """

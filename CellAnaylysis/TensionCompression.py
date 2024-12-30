@@ -43,7 +43,7 @@ def tensionCompressionStresses(cell:Cell.Cell, load_neg, load_pos):
     minstress_neg = -moment_neg * y_upper / Ixx  # Minimum stress at the lower skin
 
     return {'p+':maxstress_pos, 'p-':minstress_pos, 'n+':maxstress_neg, 'n-':minstress_neg}
-
+#
 def plotTCgraph(Moments, Momentlocations):
     listCells=[]
     interval = 0.05#[m]

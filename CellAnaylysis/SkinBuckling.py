@@ -73,31 +73,18 @@ def interpolateKs():
     f = si.CubicSpline(K_data_x, K_data_y)
     return(f)
 
-
+#
 #plt.plot(K_data_x, K_data_y) #plots the data
 #plt.show()
 
-def max_skin_buckling(cell:cell.Cell, E, v): #function that calculates the skin buckling in a certain section, thickness in mm, length of the plate in mm, width of the plate in mm, v is the poisson ratio, E is the youngs modulus
-    k = 0
-    a = [cell.endPos-cell.startPos, cell.endPos-cell.startPos]
-    b = [cell.edges['ot'], cell.edges['ob']]
+def max_skin_buckling(thickness, length, width, E, v): #function that calculates the skin buckling in a certain section, thickness in mm, length of the plate in mm, width of the plate in mm, v is the poisson ratio, E is the youngs modulus
+    a_over_b = length/width #width over length, used to find an approximate K
+    if a_over_b > 4.9:
+        k = 9.5567
+    else:
+        k = interpolateKs()(a_over_b)
 
-    a_over_b = [a[0]/b[0], a[1]/b[1]] #width over length, used to find an approximate K
-
-    j = 0 #index of position
-
-    if a_over_b < 4.8628330035756315:
-        while True: #loop that finds between which two x-coords the a/b sits
-            if K_data_x[j] < a_over_b and K_data_x[j+1] > a_over_b: #tests between which two x values a/b is 
-                break
-            j += 1
-    else: #in case a/b is larger than 4.86, k approximates 7.45
-        k = 7.45
-
-    dydx = (K_data_y[j+1]-K_data_y[j])/(K_data_x[j+1]-K_data_x[j]) #slope of the graph between the two data points
-    k = K_data_y[j] + dydx * (a_over_b - K_data_x[j]) #interpolated value of k between the two data points
-
-    critical_stress = (k*pi**2*E)/(12*(1-v**2))*(cell.wingboxThickness/cell.width)**2
+    critical_stress = (k*pi**2*E)/(12*(1-v**2))*(thickness/width)**2
     return critical_stress
 
 def MOS_skin_buckling(Sigma_applied, thickness, length, width): #margin of safety of skin panel

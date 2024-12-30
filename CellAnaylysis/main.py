@@ -89,4 +89,4 @@ if plot:
     plt.show()
     print(margins_of_safety)
 
-'''TODO Add a code that computes the mass of the design'''
+'''TODO Add a code that computes the mass of the design!'''

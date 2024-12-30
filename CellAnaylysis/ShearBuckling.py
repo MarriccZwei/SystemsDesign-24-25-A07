@@ -85,7 +85,7 @@ def crit_shear_stress(cell:Cell.Cell):
 #formula test
 # print(crit_shear_stress(4, 150, 10, 0.33, 72.4e9))
 
-
+#
 
 #torsion contribution to shear flow - by kaj 
 def torsion(FlexBox: FlexBox, torque):

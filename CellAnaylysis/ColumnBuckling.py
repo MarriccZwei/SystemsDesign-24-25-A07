@@ -17,7 +17,7 @@ def crit_buckling_stress (cell:Cell, tip = False):
     Returns:
         list: Critical buckling stress [N/m].
     """
-
+#
     #  Choosing the constant depending on the cell we are evaluating
     '''TODO: AT THE TIP YOU HAVE ALSO A RIB, SO THE THING IS FIXED AT BOTH ENDS'''
     if tip:
