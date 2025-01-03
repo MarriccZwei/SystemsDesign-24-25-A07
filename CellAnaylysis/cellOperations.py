@@ -16,7 +16,9 @@ import TensionCompression as tc
 import ColumnBuckling as cb
 import interpolatedLoads as ld
 import ShearBuckling as sb
-
+import interpolatedLoads as il
+import SkinBuckling as sk
+#
 def calculateDeltaTwist(loads, cell:cell.Cell, posEnd = 1):
     zStart = cell.startPos
     zEnd = cell.endPos
@@ -48,30 +50,54 @@ def mofs(cells:List[cell.Cell], plot=False, yieldSF=1.1, fractureSF=1.5, colBuck
     3 - column buckling of stringers
     4 - shear buckling of spars
     5 - skin buckling
-    Use the safety factors defaults to specify the safety factors (upon which mofs are calculated)]'''
+    Use the safety factors defaults to specify the safety factors (upon which mofs are calculated)]
+    There is one plot for the margin of safety both in the positive and negative load factor - the most constraining one is plotted.'''
     ncells = len(cells)
-    returnedList = [np.zeros(ncells)]*6
+    poses = list()
+    tensile = list()
+    compressive = list()
+    columnB = list()
+    shearB = list()
+    skinB = list()
+    loads_pos = il.pos_loadcase()
+    loads_neg = il.neg_loadcase()
 
     for i in range(ncells):
         #0. cell start position
-        returnedList[0][i] = cells[i].startPos
+        poses.append(cells[i].startPos)
 
         #1 and 2. tensile and compressive stress
-        tensileStress, compressiveStress, bendingMoment = tc.tensionCompressionStresses()
-        returnedList[1][i] = min(c.YIELD_SIGMA/tensileStress/yieldSF, c.ULTIMATE_SIGMA/tensileStress/fractureSF)
-        returnedList[2][i] = min(c.YIELD_SIGMA/compressiveStress/yieldSF, c.ULTIMATE_SIGMA/tensileStress/fractureSF)
+        normalStresses = tc.tensionCompressionStresses(cells[i], loads_neg, loads_pos)
+        # tensile.append(min(c.YIELD_SIGMA/normalStresses['p+']/yieldSF, c.ULTIMATE_SIGMA/normalStresses['p+']/1)) #1 is for nult nmax correction
+        # compressive.append(min(c.YIELD_SIGMA/normalStresses['p-']/yieldSF, c.ULTIMATE_SIGMA/normalStresses['p-']/1))#1 is for nult nmax correction
+        tensile.append(c.ULTIMATE_SIGMA/normalStresses['p+'])
+        compressive.append(c.ULTIMATE_SIGMA/normalStresses['p-'])
 
         #3. column buckling of stringers
         if i == ncells-1: #accounting for the boundary conditions
-            colBucklCritStress = cb.crit_buckling_stress(cells[i], True)
+            colBucklCritStress = min(cb.crit_buckling_stress(cells[i], True)) #only works when our stringers are same
         else:
-            colBucklCritStress = cb.crit_buckling_stress(cells[i], True)
+            colBucklCritStress = min(cb.crit_buckling_stress(cells[i], True))
         #since we always have a stringer at maximum stress position, so we will reuse compressiveStress
-        returnedList[3][i] = colBucklCritStress/compressiveStress/colBucklSF
+        columnB.append(colBucklCritStress/normalStresses['p-']/colBucklSF)
 
         #4. shearBucklSF
         critTau = sb.crit_shear_stress(cells[i])
+        appliedTauPos, appliedTauNeg = sb.max_shear_stress(cells[i], loads_neg, loads_pos)
+        #the most critical shear stress
+        prevmof = 100 #previous margin of safety
+        for j in range(len(critTau)): #the len can be 2 or 3, depends on whether you have a midspar or not
+            newmof = min(abs(critTau[j])/abs(appliedTauNeg[j]/shearBucklSF), abs(critTau[j])/abs(appliedTauPos[j]/shearBucklSF)) #the more constraining of the two
+            if newmof<prevmof: #updating the margin of safety if this one is most constraining
+                prevmof = newmof
+        shearB.append(prevmof) #now that the most costraining mof for this mode is determined, we can add it
+
+        #5. skinBuckling
+        skinB.append(min(sk.MOS_skin_buckling(normalStresses['p-'], cells[i].wingboxThicknesses['b'], cells[i].edges['fb'], cells[i].edges['ob'])/skinBucklSF,
+                                 sk.MOS_skin_buckling(normalStresses['n-'], cells[i].wingboxThicknesses['t'], cells[i].edges['ft'],cells[i].edges['ot'])/skinBucklSF))
         
+    return (poses, tensile, compressive, columnB, shearB, skinB)
+
 
 
 if __name__ == "__main__":
