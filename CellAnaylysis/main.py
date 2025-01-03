@@ -31,7 +31,7 @@ plot = True #do we want to plot
 ribStations = [0, 3.3, 3.9, 5.1, c.ENGINESPANWISEPOS*halfspan, 0.6*halfspan, 17.62, 17.92, 22.42, halfspan]
 
 #change this, the columns left as zeros are there for a reason - the spacing between the enforced spars is just small.
-ribBetweenCounts = [2, 0, 0, 1, 7, 3, 0, 6, 0] #amount of ribs between the ribs from ribStations
+ribBetweenCounts = [3, 0, 0, 1, 7, 3, 0, 6, 0] #amount of ribs between the ribs from ribStations
 
 #generating rib positions
 ribPoses = [0] #this is intentional to account for the rib at root
