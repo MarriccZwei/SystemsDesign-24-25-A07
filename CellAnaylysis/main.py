@@ -214,9 +214,9 @@ def intersparVolume( b, cr, tr, A2c2=0.038):
     return A2c2*b*cr*cr/3*(1+tr+tr*tr)
 
 '''re-obtaining the fuel volume'''
-wbVol = wbMass/c.DENSITY #reverse-obtaining the total structural volume by dividing by material density
+#wbVol = wbMass/c.DENSITY #reverse-obtaining the total structural volume by dividing by material density
 #the volume not occupied by the wingbox structure
-freeIntersparVolume = intersparVolume(planform.b, planform.cr, planform.TR) - wbVol
-fuelVolume = freeIntersparVolume/1.1 #dividing by a safety factor for piping and fuel tank walls
+fuelVolume = intersparVolume(planform.b, planform.cr, planform.TR)*0.85
+#fuelVolume = freeIntersparVolume/1.1 #dividing by a safety factor for piping and fuel tank walls
 
 print(f"The mass of the wing structure is: {wbMass}, the fuel volume is: {fuelVolume}")
