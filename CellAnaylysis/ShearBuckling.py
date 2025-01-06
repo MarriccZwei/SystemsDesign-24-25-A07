@@ -47,8 +47,6 @@ for i in range(len(Ks_data_unsorted)): #sorting
     Ks_data_y.append(Ks_data_unsorted[i][1])
 
 
-# plt.plot(Ks_data_x, Ks_data_y) #plots the data
-# plt.show()
 
 #cnsts
 v = c.POISSON_RATIO
@@ -62,6 +60,19 @@ def interpolateKs():
     f = si.CubicSpline(Ks_data_x, Ks_data_y)
     return(f)
 
+K=[]
+ab = []
+for i in np.arange(1.01, 4.99, 0.05):  # Start at 1, stop before 5, step by 0.05
+    K.append(interpolateKs()(i))
+    ab.append(i)
+
+# plt.plot(ab, K) #plots the data
+# plt.grid(True)
+# plt.xlabel("a/b")
+# plt.ylabel("$k_{s}$")
+# plt.show()
+
+# print(len(Ks_data_x))
 
 def crit_shear_stress(cell:Cell.Cell):
     tau_crit = []
