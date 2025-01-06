@@ -47,7 +47,7 @@ midsCoffIdx = sum(ribBetweenCounts[:4])+5-1 #the selected and the enforced ribs 
 #design with index 0 is design option 1, etc.
 stringerDesign = {'w':0.10, 'h':0.10, 't':0.009, 'sb':0.15, 'st':0.15}
 
-print(f'Number of Ribs {len(ribPoses)}')
+print(f'Number of Ribs {2*len(ribPoses)}')
 
 #same indexing as stringerDesign
 thicknesses = {'f':t, 'r':t, 'b':t, 't':t}
