@@ -373,12 +373,3 @@ print()
 print(f"vertical Tail: S: {verticalTail.S}, span:{verticalTail.b}, Root Chord: {verticalTail.cr}, Tip Chord: {verticalTail.ct}, Quarter chord sweep [deg]: {np.degrees(verticalTail.sweepC4)}, Taper Ratio: {verticalTail.TR}, aspect ratio: {verticalTail.AR}, xPos: {consts.XV}")
 print("Next to that add: HLD deflections (at toff and landing), hldTypes, airfoils for all 3 planforms, landing gear dimensions")
 print(f"design point WS: {WSselected} N/m2, TWR: {TWselected} ")
-
-
-
-#TODO Finish this function; add the contribution of the spars. I dont know if the syntax is correct
-def final_wing_mass(fb_instance: fb.FlexBox, ribThickness: float) -> float:
-    rib_mass = fb_instance.ribMass(ribThickness)  # Call ribMass method
-    final_mass = rib_mass + 100.0  # Example: Add other contributions to wing mass
-
-    return final_mass
