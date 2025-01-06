@@ -205,7 +205,7 @@ print(margins_of_safety[4])
 def final_wing_mass(cells:List[cell.Cell], ribThickness: float) -> float:
     mass = cells[0].wingbox(0).ribMass(ribThickness) #counting the root rib
     for ce in cells: #adding outboard rib mass and cell mass
-        mass += ce.mass + ce.wingbox(1).ribMass(ribThickness)
+        mass += 2*(ce.mass + ce.wingbox(1).ribMass(ribThickness))
 
     return mass
 
