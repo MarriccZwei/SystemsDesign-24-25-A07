@@ -11,6 +11,7 @@ import OOP.Cell as cell
 import OOP.Planform as pf
 import matplotlib.pyplot as plt
 import scipy.interpolate as si
+import numpy as np
 
 K_data_unsorted = [[0.7723396840415656,14.839244412502758], #list of coordinates of K graph
 [0.7876282837892491,14.3654933267152],
@@ -72,6 +73,18 @@ for i in range(len(K_data_unsorted)): #sorts both x and y coordinates from unsor
 def interpolateKs():
     f = si.CubicSpline(K_data_x, K_data_y)
     return(f)
+
+# K=[]
+# ab = []
+# for i in np.arange(0.77, 4.99, 0.05):  # Start at 1, stop before 5, step by 0.05
+#     K.append(interpolateKs()(i))
+#     ab.append(i)
+
+# plt.plot(ab, K) #plots the data
+# plt.grid(True)
+# plt.xlabel("a/b")
+# plt.ylabel("$k_{c}$")
+# plt.show()
 
 #
 #plt.plot(K_data_x, K_data_y) #plots the data
