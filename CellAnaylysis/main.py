@@ -46,6 +46,9 @@ midsCoffIdx = sum(ribBetweenCounts[:4])+5-1 #the selected and the enforced ribs 
 #design with index 0 is design option 1, etc.
 stringerDesign = {'w':0.1, 'h':0.1, 't':0.007, 'sb':0.12, 'st':0.17}
 
+
+print(f'Rib Number {len(ribPoses)}' )
+
 #same indexing as stringerDesign
 thicknesses = {'f':0.01, 'r':0.01, 'b':0.012, 't':0.012, 'm':0.01}
 
@@ -198,4 +201,24 @@ if plot:
     plt.show()
     #print(margins_of_safety)
 
-'''TODO Add a code that computes the mass of the design!'''
+'''Add a code that computes the mass of the design!'''
+def final_wing_mass(cells:List[cell.Cell], ribThickness: float) -> float:
+    mass = cells[0].wingbox(0).ribMass(ribThickness) #counting the root rib
+    for ce in cells: #adding outboard rib mass and cell mass
+        mass += ce.mass + ce.wingbox(1).ribMass(ribThickness)
+
+    return mass
+
+wbMass = final_wing_mass(cells, c.rib_thickness) #assigning the final wingbox mass
+
+#from wp2
+def intersparVolume( b, cr, tr, A2c2=0.038):
+    return A2c2*b*cr*cr/3*(1+tr+tr*tr)
+
+'''re-obtaining the fuel volume'''
+#wbVol = wbMass/c.DENSITY #reverse-obtaining the total structural volume by dividing by material density
+#the volume not occupied by the wingbox structure
+fuelVolume = intersparVolume(planform.b, planform.cr, planform.TR)*0.85
+#fuelVolume = freeIntersparVolume/1.1 #dividing by a safety factor for piping and fuel tank walls
+
+print(f"The mass of the wing structure is: {wbMass}, the fuel volume is: {fuelVolume}")

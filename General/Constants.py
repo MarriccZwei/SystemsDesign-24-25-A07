@@ -152,6 +152,9 @@ LF = 0.90 # LOAD FACTOR MLG
 '''WP4'''
 engine_y_offset_from_wing = 1.1285
 
+'''WP5'''
+rib_thickness = 0.003
+
 '''MATERIAL PROPERTIES (AL2024-T81)'''
 DENSITY = 2780  #kg/m^3
 E_MODULUS = 72.4 * 10**9  # Pa
