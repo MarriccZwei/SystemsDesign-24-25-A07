@@ -43,7 +43,7 @@ midsCoffIdx = sum(ribBetweenCounts[:4])+5-1 #the selected and the enforced ribs 
 
 "wingboxDesigns"
 #design with index 0 is design option 1, etc.
-stringerDesign = {'w':0.1, 'h':0.1, 't':0.007, 'sb':0.12, 'st':0.17}
+stringerDesign = {'w':0.05, 'h':0.15, 't':0.007, 'sb':0.12, 'st':0.17}
 
 print(f'Number of Ribs {2*len(ribPoses) - 1}')
 
@@ -222,3 +222,4 @@ fuelVolume = intersparVolume(planform.b, planform.cr, planform.TR)*0.85
 #fuelVolume = freeIntersparVolume/1.1 #dividing by a safety factor for piping and fuel tank walls
 
 print(f"The mass of the wing structure is: {wbMass}, the fuel volume is: {fuelVolume}")
+print(f"The number of stringers in the root cell: top: {cells[0].stringerNumTop}, bottom: {cells[0].stringerNumBot}")
